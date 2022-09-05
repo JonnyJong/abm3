@@ -1,3 +1,7 @@
+'use strict'
+// 引入模块
+const { contextBridge, ipcRenderer } = require("electron")
+
 window.addEventListener('DOMContentLoaded', () => {
   const replaceText = (selector, text) => {
     const element = document.getElementById(selector)

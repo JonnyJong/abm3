@@ -1,11 +1,11 @@
 {
-  "name": "abm3-test",
+  "name": "abm3",
   "version": "3.1.0",
-  "build": "59",
-  "description": "",
+  "description": "A Bangumi Manager",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "author": "jonny",
   "license": "MIT",
@@ -17,5 +17,8 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "dependencies": {
+    "pug": "^3.0.2"
   }
 }
