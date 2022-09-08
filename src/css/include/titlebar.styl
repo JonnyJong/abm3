@@ -1,0 +1,47 @@
+.titlebar
+  width 100vw
+  height 50px
+  display flex
+  align-items center
+  app-region drag
+  position fixed
+  top 0
+  z-index 100
+  position relative
+  &>*
+    flex 0 0 auto
+    z-index 1
+  &:before
+    content ''
+    display block
+    position absolute
+    width 100%
+    height 100%
+    top 0
+    left 0
+    right 0
+    bottom 0
+    background var(--titlebar-bg)
+    backdrop-filter blur(100px) saturate(1.8)
+// .history-control
+// .app-title
+.searchbar
+  flex auto
+.window-control
+  app-region no-drag
+  height 50px
+  display flex
+.window-control-minimize
+.window-control-resize
+.window-control-close
+  width 46px
+  height 32px
+  &:hover
+    background #8884
+  &:active
+    background #8882
+.window-control-close
+  &:hover
+    background #e11
+  &:active
+    background #e11a

@@ -4,7 +4,7 @@ const { app, BrowserWindow, ipcMain, nativeTheme } = require('electron')
 const path = require('path')
 const pug = require('pug')
 const store = require('electron-store')
-const build = 61
+const build = 62
 
 // 设置
 const settings = (()=>{
@@ -63,7 +63,7 @@ const createWindow = ()=>{
     height: 2160,
     minWidth: 800,
     minHeight: 600,
-    // frame: false,
+    frame: false,
     resizable: true,
     fullscreenable: false,
     title: '番剧管理器',
@@ -97,17 +97,20 @@ const createWindow = ()=>{
     }
   })
   ipcMain.on('window:close', ()=>{
-    parseWin.close()
     win.close()
     // app.quit()
   })
   ipcMain.on('window:size', ()=>{
-    win.webContents.send('mainWin-max', win.isMaximized())
+    win.webContents.send('window:isMaximized', win.isMaximized())
+  })
+  win.on('blur',()=>{
+    win.webContents.send('window:isFocus', false)
+  })
+  win.on('focus',()=>{
+    win.webContents.send('window:isFocus', true)
   })
 
-  // 通用
   // 获取模板
-  ipcMain.handle('i18n:get', (event)=>{})
   ipcMain.handle('layout:get', (event, path, option)=>{
     option = Object.assign({
       lang: locales.get()
@@ -129,6 +132,22 @@ const createWindow = ()=>{
   })
   nativeTheme.addListener('updated', ()=>{
     win.setBackgroundColor(nativeTheme.shouldUseDarkColors ? '#202020' : '#fff')
+  })
+
+  // 语言
+  ipcMain.handle('lang:get', () => {
+    return locales.get()
+  })
+  ipcMain.handle('lang:refresh', () => {
+    return locales.refresh()
+  })
+
+  // 设置
+  ipcMain.handle('settings:get', (key) => {
+    return settings.get(key)
+  })
+  ipcMain.handle('settings:set', (key, value) => {
+    return settings.set(key,value)
   })
 }
 

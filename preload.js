@@ -2,16 +2,21 @@
 // 引入模块
 const { contextBridge, ipcRenderer } = require("electron")
 
-window.addEventListener('DOMContentLoaded', () => {
-  const replaceText = (selector, text) => {
-    const element = document.getElementById(selector)
-    if (element) element.innerText = text
-  }
-
-  for (const type of ['chrome', 'node', 'electron']) {
-    replaceText(`${type}-version`, process.versions[type])
-  }
+// 载入
+ipcRenderer.invoke('layout:get', 'main').then(data=>{
+  document.documentElement.innerHTML = data
+  Init()
 })
+ipcRenderer.invoke('lang:get').then(lang=>{
+  document.documentElement.lang = lang.current
+})
+
+// 初始化
+const Init = ()=>{
+  document.querySelector('.window-control-minimize').addEventListener('click',()=>{ipcRenderer.send('window:minimize')},false)
+  document.querySelector('.window-control-resize').addEventListener('click',()=>{ipcRenderer.send('window:resize')},false)
+  document.querySelector('.window-control-close').addEventListener('click',()=>{ipcRenderer.send('window:close')},false)
+}
 
 // 暗色模式
 contextBridge.exposeInMainWorld('darkMode', {

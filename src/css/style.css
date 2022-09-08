@@ -1,5 +1,76 @@
+:root {
+  --font-color: #000;
+  --titlebar-bg: rgba(243,243,243,0.69);
+}
 @media (prefers-color-scheme: dark) {
-  body {
-    color: #fff;
+  :root {
+    --font-color: #fff;
+    --titlebar-bg: rgba(32,32,32,0.69);
   }
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  color: var(--font-color);
+  user-select: none;
+}
+.titlebar {
+  width: 100vw;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  app-region: drag;
+  position: fixed;
+  top: 0;
+  z-index: 100;
+  position: relative;
+}
+.titlebar>* {
+  flex: 0 0 auto;
+  z-index: 1;
+}
+.titlebar:before {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--titlebar-bg);
+  backdrop-filter: blur(100px) saturate(1.8);
+}
+.searchbar {
+  flex: auto;
+}
+.window-control {
+  app-region: no-drag;
+  height: 50px;
+  display: flex;
+}
+.window-control-minimize,
+.window-control-resize,
+.window-control-close {
+  width: 46px;
+  height: 32px;
+}
+.window-control-minimize:hover,
+.window-control-resize:hover,
+.window-control-close:hover {
+  background: rgba(136,136,136,0.267);
+}
+.window-control-minimize:active,
+.window-control-resize:active,
+.window-control-close:active {
+  background: rgba(136,136,136,0.133);
+}
+.window-control-close:hover {
+  background: #e11;
+}
+.window-control-close:active {
+  background: rgba(238,17,17,0.667);
 }
