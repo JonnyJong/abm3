@@ -5,7 +5,7 @@ const path = require('path')
 const pug = require('pug')
 const store = require('electron-store')
 const packageJson = require('./package.json')
-const build = 65
+const build = 66
 let win = null
 
 // 单例限制
@@ -95,6 +95,7 @@ const createWindow = ()=>{
     fullscreenable: false,
     transparent: true,
     title: '番剧管理器',
+    icon: './src/assets/icons/icon.ico',
     enableLargerThanScreen: false,
     webPreferences:{
       preload: path.join(__dirname, 'startupScreen.js')
@@ -112,7 +113,7 @@ const createWindow = ()=>{
     fullscreenable: false,
     title: '番剧管理器',
     backgroundColor: nativeTheme.shouldUseDarkColors ? '#202020' : '#fff',
-    // icon: "",
+    icon: './src/assets/icons/icon.ico',
     enableLargerThanScreen: false,
     webPreferences: {
       spellcheck: true,
@@ -123,11 +124,11 @@ const createWindow = ()=>{
   win.on('ready-to-show',()=>{
     win.webContents.openDevTools()
     if (startupScreen) {
-      startupScreen.hide()
       startupScreen.close()
       startupScreen = null
     }
     win.maximize()
+    win.focus()
   })
 
   // 载入
