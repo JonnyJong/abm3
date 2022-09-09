@@ -71,7 +71,8 @@ const createWindow = ()=>{
     // icon: "",
     enableLargerThanScreen: false,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      spellcheck: true,
+      preload: path.join(__dirname, 'preload.js'),
     }
   })
   
