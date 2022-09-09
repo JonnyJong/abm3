@@ -5,7 +5,7 @@ const path = require('path')
 const pug = require('pug')
 const store = require('electron-store')
 const packageJson = require('./package.json')
-const build = 64
+const build = 65
 let win = null
 
 // 单例限制
@@ -119,12 +119,14 @@ const createWindow = ()=>{
       preload: path.join(__dirname, 'preload.js'),
     }
   })
-  
-  win.webContents.openDevTools()
 
   win.on('ready-to-show',()=>{
-    startupScreen.hide()
-    startupScreen = null
+    win.webContents.openDevTools()
+    if (startupScreen) {
+      startupScreen.hide()
+      startupScreen.close()
+      startupScreen = null
+    }
     win.maximize()
   })
 
