@@ -1,0 +1,48 @@
+*
+  box-sizing border-box
+body
+  margin 0
+  overflow hidden
+  app-region drag
+  color #fff
+
+img
+  position absolute
+  width 100vw
+  height 100vh
+  object-fit cover
+
+.app-name
+  font-size 34px
+  font-weight bold
+.app-version
+  font-size 14px
+  font-weight 100
+.info
+  position relative
+  padding 60px
+  display flex
+  height 100vh
+  width 100vw
+  flex-direction column
+  justify-content center
+  background linear-gradient(to right, #0004, #0000)
+
+@keyframes ui-loader-progress
+  0%
+    left -10%
+    width 10%
+  50%
+    left 35%
+    width 30%
+  100%
+    left 100%
+    width 10%
+
+.ui-loader-progress
+  position fixed
+  bottom 0
+  height 6px
+  background #0008
+  animation ui-loader-progress 2s linear infinite
+  border-radius 6px

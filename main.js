@@ -4,6 +4,7 @@ const { app, BrowserWindow, ipcMain, nativeTheme } = require('electron')
 const path = require('path')
 const pug = require('pug')
 const store = require('electron-store')
+const packageJson = require('./package.json')
 const build = 64
 let win = null
 
@@ -69,9 +70,36 @@ const locales = (()=>{
   }
 })()
 
+// 模板
+const layout = (name, option)=>{
+  option = Object.assign({
+    lang: locales.get(),
+    app: {
+      version: packageJson.version,
+      build: build,
+    },
+  }, option)
+  return pug.renderFile(('./src/layout/' + name + '.pug'), option)
+}
+
 // 创建窗口
 const createWindow = ()=>{
   // 初始化窗口
+  // 启动屏幕
+  let startupScreen = new BrowserWindow({
+    show: false,
+    width: 600,
+    height: 300,
+    frame: false,
+    resizable: false,
+    fullscreenable: false,
+    transparent: true,
+    title: '番剧管理器',
+    enableLargerThanScreen: false,
+    webPreferences:{
+      preload: path.join(__dirname, 'startupScreen.js')
+    }
+  })
   // 主窗口
   win = new BrowserWindow({
     show: false,
@@ -95,11 +123,16 @@ const createWindow = ()=>{
   win.webContents.openDevTools()
 
   win.on('ready-to-show',()=>{
+    startupScreen.hide()
+    startupScreen = null
     win.maximize()
   })
 
   // 载入
+  startupScreen.loadFile('index.html')
   win.loadFile('index.html')
+  startupScreen.webContents.send('layout', layout('startupScreen', {startupImage: './src/assets/defaultStartupScreenImage.png'}))
+  startupScreen.show()
 
   // 通信
   // 主窗口
@@ -128,11 +161,8 @@ const createWindow = ()=>{
   })
 
   // 获取模板
-  ipcMain.handle('layout:get', (event, path, option)=>{
-    option = Object.assign({
-      lang: locales.get()
-    }, option)
-    return pug.renderFile(('./src/layout/' + path + '.pug'), option)
+  ipcMain.handle('layout:get', (event, name, option)=>{
+    return layout(name, option)
   })
 
   // 暗色模式
