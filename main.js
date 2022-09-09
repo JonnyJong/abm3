@@ -4,7 +4,23 @@ const { app, BrowserWindow, ipcMain, nativeTheme } = require('electron')
 const path = require('path')
 const pug = require('pug')
 const store = require('electron-store')
-const build = 62
+const build = 64
+let win = null
+
+// 单例限制
+const singleInstanceLock = app.requestSingleInstanceLock()
+if (!singleInstanceLock) {
+  app.quit()
+}else{
+  app.on('second-instance', (event, commandLine, workingDirectory, additionalData)=>{
+    if (win) {
+      if (win.isMinimized()) {
+        win.restore()
+      }
+      win.focus()
+    }
+  })
+}
 
 // 设置
 const settings = (()=>{
@@ -33,7 +49,7 @@ const locales = (()=>{
 
   const setLanguage = (languageName = settings.get('language'))=>{
     return (new store({
-      name: languageList.findIndex(name => name == languageName) > -1 ? languageName : defaultLanguage,
+      name: languageList.findIndex(name => name === languageName) > -1 ? languageName : defaultLanguage,
       fileExtension: 'json',
       cwd: path.join(__dirname, 'src/locales/')
     })).store
@@ -57,7 +73,7 @@ const locales = (()=>{
 const createWindow = ()=>{
   // 初始化窗口
   // 主窗口
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     show: false,
     width: 3840,
     height: 2160,
