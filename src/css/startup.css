@@ -17,9 +17,12 @@ img {
   font-size: 34px;
   font-weight: bold;
 }
-.app-version {
+.app-version,
+.startup-info {
   font-size: 14px;
   font-weight: 100;
+  line-height: 18px;
+  min-height: 18px;
 }
 .info {
   position: relative;

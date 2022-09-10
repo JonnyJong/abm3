@@ -6,3 +6,8 @@ const { ipcRenderer } = require("electron")
 ipcRenderer.on('layout',(_, data)=>{
   document.documentElement.innerHTML = data
 })
+
+// 启动信息
+ipcRenderer.on('info',(_, data)=>{
+  document.querySelector('.startup-info').innerText = data
+})

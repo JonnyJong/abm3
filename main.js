@@ -5,7 +5,7 @@ const path = require('path')
 const pug = require('pug')
 const store = require('electron-store')
 const packageJson = require('./package.json')
-const build = 66
+const build = 67
 let win = null
 
 // 单例限制
