@@ -7,8 +7,9 @@ const path = require('path')
 const pug = require('pug')
 const store = require('electron-store')
 const packageJson = require('./package.json')
-const build = 68
+const build = 69
 let win = null
+let startupScreen = null
 let db = null
 
 // 单例限制
@@ -132,9 +133,8 @@ const layout = (name, option)=>{
 }
 
 // 初始化
-const init = ()=>{
-  // 启动屏幕
-  let startupScreen = new BrowserWindow({
+const readyInit = ()=>{
+  startupScreen = new BrowserWindow({
     show: false,
     width: 600,
     height: 300,
@@ -162,8 +162,15 @@ const init = ()=>{
       return './src/assets/defaultStartupScreenImage.png'
     }
   })()}))
-  startupScreen.show()
-  
+  startupScreen.on('ready-to-show',()=>{
+    startupScreen.show()
+    init()
+  })
+}
+const init = ()=>{
+  // 报告启动信息：加载数据库
+  startupScreen.webContents.send('info',locales.get().startup_screen.loading_database)
+
   // 数据库
   db = new store({
     name: 'database',
@@ -174,36 +181,44 @@ const init = ()=>{
         type: 'object',
         properties: {
           item: {
-            type: 'number',
+            type: 'integer',
             default: 0,
           },
           tag: {
-            type: 'number',
+            type: 'integer',
             default: 0,
           },
           category: {
-            type: 'number',
+            type: 'integer',
             default: 0,
           },
-        }
+        },
+        default: {
+          item: 0,
+          tag: 0,
+          category: 0,
+        },
       },
       items: {
         type: 'array',
         items: {
           type: 'object',
-        }
+        },
+        default: [],
       },
       tags: {
         type: 'array',
         items: {
-          type: 'number',
-        }
+          type: 'object',
+        },
+        default: [],
       },
       categorize: {
         type: 'array',
         items: {
-          type: 'number',
-        }
+          type: 'object',
+        },
+        default: [],
       },
       recommendation: {
         type: 'object',
@@ -213,13 +228,19 @@ const init = ()=>{
             default: 0,
           },
           id: {
-            type: 'number',
-            default: null
+            type: 'integer',
+            default: -1
           },
           weights: {
             type: 'array',
+            default: [],
           },
-        }
+        },
+        default: {
+          generationTime: 0,
+          id: -1,
+          weights: [],
+        },
       },
       favorites: {
         type: 'array',
@@ -705,7 +726,7 @@ const init = ()=>{
     let items = db.get('items')
     let tags = db.get('tags')
     let categorize = db.get('categorize')
-    let id = db.get('id')
+    let newId = db.get('id')
     let item = items.find(item=>item.id === id)
     if (item && data.seasons.length > 0) {
       item.title = String(data.title)
@@ -721,9 +742,9 @@ const init = ()=>{
             tag.items.push(item.id)
           }
         }else{
-          newItemTags.push(id.tag)
-          tags.push({id:id.tag, name: tagName, items: item.id})
-          id.tag++
+          newItemTags.push(newId.tag)
+          tags.push({id:newId.tag, name: tagName, items: item.id})
+          newId.tag++
         }
       })
       item.tags = newItemTags
@@ -739,14 +760,14 @@ const init = ()=>{
             category.items.push(item.id)
           }
         }else{
-          newItemCategorize.push(id.category)
-          categorize.push({id:id.category, name: categorizeName, items: item.id})
-          id.category++
+          newItemCategorize.push(newId.category)
+          categorize.push({id:newId.category, name: categorizeName, items: item.id})
+          newId.category++
         }
       })
       item.categorize = newItemCategorize
       db.set('categorize', categorize)
-      db.set('id',id)
+      db.set('id',newId)
       // 设置季
       let seasonId = 0
       let newSeasons = []
@@ -916,7 +937,7 @@ const init = ()=>{
   // 获取每周推荐
   ipcMain.handle('db:getWeeklyRecommend', ()=>{
     let itemId = db.get('recommendation').id
-    if (itemId === null) {
+    if (itemId < 0) {
       return null
     }else{
       let result = db.get('items').find(item=>item.id === itemId)
@@ -933,7 +954,7 @@ const init = ()=>{
   // 生成每周推荐
   const generateWeeklyRecommendation = ()=>{
     let now = new Date()
-    let nextTime = new Date(nowTime.getTime() - nowTime.getDay() * 86400000)
+    let nextTime = new Date(now.getTime() - now.getDay() * 86400000)
     let rec = db.get('recommendation')
     let items = db.get('items')
     let tags = db.get('tags')
@@ -965,8 +986,8 @@ const init = ()=>{
     if ((now.getTime() - rec.generationTime) / 604800000 > 1) {
       // 检查番剧数量
       if (items.length === 0) {
-        rec.id = null
-        return null
+        rec.id = -1
+        return -1
       }else{
         // 若有喜爱的番剧或已设置标签或归类权重
         if (recTags.length > 0 || (isRecCate && recCate.length > 0) || favorites.length > 0) {
@@ -1013,16 +1034,16 @@ const init = ()=>{
           db.get('recommendation', rec)
           return rec.id
         }else{
-          rec.id = null
-          return null
+          rec.id = -1
+          return -1
         }
       }
     }
   }
   generateWeeklyRecommendation()
 
-  // 报告启动信息：加载中
-  startupScreen.webContents.send('info',locales.get().startup_screen.loading)
+  // 报告启动信息：完成
+  startupScreen.webContents.send('info',locales.get().startup_screen.ready)
 
   // 主窗口
   win = new BrowserWindow({
@@ -1083,11 +1104,11 @@ const init = ()=>{
 
 // 当程序就绪时
 app.whenReady().then(() => {
-  init()
+  readyInit()
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      init()
+      readyInit()
     }
   })
 })

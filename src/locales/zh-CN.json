@@ -6,6 +6,7 @@
     "loading": "载入中...",
     "loading_database": "正在载入数据库...",
     "init_method": "正在初始化功能...",
-    "reparing_weekly_recommendation": "正在准备本周推荐..."
+    "reparing_weekly_recommendation": "正在准备本周推荐...",
+    "ready": "准备就绪..."
   }
 }
