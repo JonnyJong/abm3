@@ -2,9 +2,29 @@
   .history-control
     .history-control-back
     .history-control-home
+    img.app-icon(src="./src/assets/icons/24.png")
     .app-title=lang.abm
   .searchbar
+  .user-control
+    .user-action
+      img.avatar(src=settings.userAvatar draggable="false")
+    .user-menu
+      .user-info
+        img.avatar(src=settings.userAvatar draggable="false")
+        div
+          .greet
+          .username(src=settings.username)
+      .menu-items
+        each items in app.config.userMenu
+          .menu-group
+            each item in items.items
+              .menu-item(onclick=item.onclick)
+                i(class=item.icon)
+                .menu-name=getLangByKey(item.name)
   .window-control
     .window-control-minimize
+      i.icon.icon-chrome-minimize
     .window-control-resize
+      i.icon.icon-chrome-restore
     .window-control-close
+      i.icon.icon-chrome-close

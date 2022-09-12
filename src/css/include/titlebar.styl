@@ -22,20 +22,30 @@
     right 0
     bottom 0
     background var(--titlebar-bg)
-    backdrop-filter blur(100px) saturate(1.8)
-// .history-control
-// .app-title
+    backdrop-filter var(--blur-filter)
+  .app-icon
+    margin 0 10px
+body.blur
+  color var(--titlebar-color-nofocus)
+.history-control
+  display flex
+  align-items center
 .searchbar
   flex auto
 .window-control
   app-region no-drag
   height 50px
   display flex
+  i
+    font-size 12px
 .window-control-minimize
 .window-control-resize
 .window-control-close
   width 46px
   height 32px
+  line-height 32px
+  text-align center
+  transition .1s background
   &:hover
     background #8884
   &:active
@@ -45,3 +55,72 @@
     background #e11
   &:active
     background #e11a
+.user-action
+  height 32px
+  width 32px
+  margin 0 10px
+  border-radius 100%
+  .avatar
+    height 100%
+    width 100%
+.user-menu
+  position absolute
+  top 40px
+  border-radius var(--border-radius)
+  right -10px
+  overflow hidden
+  background var(--bg-alpha)
+  backdrop-filter var(--blur-filter)
+  width 320px
+  max-height 0px
+  transition .2s max-height
+.user-info
+  display flex
+  width 100%
+  align-items center
+  padding 10px 20px
+  gap 16px
+  .avatar
+    height 48px
+    width 48px
+.menu-group:not(:first-child)
+.menu-items
+  position relative
+  &:not(:empty)
+    padding-top 2px
+    &:before
+      content ''
+      height 1px
+      top -2px
+      width 100%
+      background #8884
+      display block
+      position absolute
+.menu-items
+  padding 4px
+.menu-group
+  display flex
+  flex-direction column
+  gap 2px
+  &:not(:last-child)
+    padding-bottom 6px
+.menu-item
+  display flex
+  border-radius var(--border-radius)
+  height 29px
+  align-items center
+  i
+    width 29px
+    flex 0 0 auto
+  &:hover
+    background #8884
+.menu-name
+  width calc(100% - 29px)
+.user-control
+  app-region no-drag
+  position relative
+  &.open
+    .user-action
+      outline 2px solid var(--theme-color)
+    .user-menu
+      max-height var(--inner-height, max-content)

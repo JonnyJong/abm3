@@ -1,13 +1,13 @@
 'use strict'
 // 引入模块
-const { app, BrowserWindow, ipcMain, nativeTheme } = require('electron')
+const { app, BrowserWindow, ipcMain, nativeTheme, systemPreferences } = require('electron')
 const fs = require('fs')
 const https = require('https')
 const path = require('path')
 const pug = require('pug')
 const store = require('electron-store')
 const packageJson = require('./package.json')
-const build = 70
+const build = 71
 let win = null
 let startupScreen = null
 let db = null
@@ -84,12 +84,21 @@ const settings = (()=>{
         type: 'number',
         default: 1,
         minimum: 0,
-      }
+      },
+      userAvatar: {
+        type: 'string',
+        default: './src/assets/defaultAvatar.bmp',
+      },
+      username: {
+        type: 'string',
+        default: '',
+      },
     },
   })
   return{
     get:(key)=>{return data.get(key)},
     set:(key, value)=>{return data.set(key, value)},
+    store:()=>{return data.store}
   }
 })()
 
@@ -100,11 +109,11 @@ const locales = (()=>{
   let language
 
   const setLanguage = (languageName = settings.get('language'))=>{
-    return (new store({
+    return new store({
       name: languageList.findIndex(name => name === languageName) > -1 ? languageName : defaultLanguage,
       fileExtension: 'json',
       cwd: path.join(__dirname, 'src/locales/')
-    })).store
+    })
   }
 
   language = setLanguage()
@@ -112,14 +121,52 @@ const locales = (()=>{
   return{
     get:(key)=>{
       if (key) {
-        return setLanguage()
+        return language.get(key)
       }else{
-        return language
+        return language.store
       }
     },
     refresh:()=>{language = setLanguage()}
   }
 })()
+
+// 基本设置
+const CONFIG = {
+  userMenu: [
+    {
+      items: [
+        {
+          name: 'user.menu.try_luck',
+          icon: 'icon icon-emoji-hand',
+          onclick: '',
+        }
+      ],
+    },
+    {
+      items: [
+        {
+          name: 'user.menu.add_item',
+          icon: 'icon icon-add',
+          onclick: '',
+        },
+      ]
+    },
+    {
+      items: [
+        {
+          name: 'user.menu.edit_item',
+          icon: 'icon icon-edit',
+          onclick: '',
+        },
+        {
+          name: 'user.menu.delete_item',
+          icon: 'icon icon-delete',
+          onclick: '',
+        },
+      ]
+    },
+  ]
+}
 
 // 模板
 const layout = (name, option)=>{
@@ -128,7 +175,14 @@ const layout = (name, option)=>{
     app: {
       version: packageJson.version,
       build: build,
+      config: CONFIG,
     },
+    system: {
+      accentColor: systemPreferences.getAccentColor().slice(0, 6),
+      accentColorWithAlpha: systemPreferences.getAccentColor(),
+    },
+    settings: settings.store(),
+    getLangByKey: (key)=>{return locales.get(key)},
   }, option)
   return pug.renderFile((`./src/layout/${name}.pug`), option)
 }
@@ -1065,13 +1119,13 @@ const init = ()=>{
       preload: path.join(__dirname, 'preload.js'),
     }
   })
-  win.webContents.openDevTools()
   ipcMain.on('window:ready', ()=>{
     if (startupScreen) {
       startupScreen.close()
       startupScreen = null
     }
     if (!initialized) {
+      win.webContents.openDevTools()
       initialized = true
       win.maximize()
     }
@@ -1095,8 +1149,8 @@ const init = ()=>{
     win.close()
     // app.quit()
   })
-  ipcMain.on('window:size', ()=>{
-    win.webContents.send('window:isMaximized', win.isMaximized())
+  win.on('resize', ()=>{
+    win.webContents.send('window:size', win.isMaximized())
   })
   win.on('blur',()=>{
     win.webContents.send('window:isFocus', false)

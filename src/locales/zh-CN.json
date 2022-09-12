@@ -8,5 +8,19 @@
     "init_method": "正在初始化功能...",
     "reparing_weekly_recommendation": "正在准备本周推荐...",
     "ready": "准备就绪..."
+  },
+  "user": {
+    "greet": {
+      "morning": ["早上好！"],
+      "noon": ["中午好！"],
+      "afternoon": ["下午好！"],
+      "evening": ["晚上好！"]
+    },
+    "menu": {
+      "try_luck": "试试手气",
+      "add_item": "添加入库",
+      "edit_item": "编辑此番剧",
+      "delete_item": "删除此番剧"
+    }
   }
 }
