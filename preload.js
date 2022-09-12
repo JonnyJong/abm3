@@ -16,6 +16,8 @@ const Init = ()=>{
   document.querySelector('.window-control-minimize').addEventListener('click',()=>{ipcRenderer.send('window:minimize')},false)
   document.querySelector('.window-control-resize').addEventListener('click',()=>{ipcRenderer.send('window:resize')},false)
   document.querySelector('.window-control-close').addEventListener('click',()=>{ipcRenderer.send('window:close')},false)
+
+  ipcRenderer.send('window:ready')
 }
 
 // 暗色模式

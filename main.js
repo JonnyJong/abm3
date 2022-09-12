@@ -7,10 +7,11 @@ const path = require('path')
 const pug = require('pug')
 const store = require('electron-store')
 const packageJson = require('./package.json')
-const build = 69
+const build = 70
 let win = null
 let startupScreen = null
 let db = null
+let initialized = false
 
 // 单例限制
 const singleInstanceLock = app.requestSingleInstanceLock()
@@ -1064,13 +1065,16 @@ const init = ()=>{
       preload: path.join(__dirname, 'preload.js'),
     }
   })
-  win.on('ready-to-show',()=>{
-    win.webContents.openDevTools()
+  win.webContents.openDevTools()
+  ipcMain.on('window:ready', ()=>{
     if (startupScreen) {
       startupScreen.close()
       startupScreen = null
     }
-    win.maximize()
+    if (!initialized) {
+      initialized = true
+      win.maximize()
+    }
     win.focus()
   })
   // 载入
