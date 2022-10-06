@@ -165,6 +165,18 @@ const CONFIG = {
         },
       ]
     },
+    {
+      items: [
+        {
+          name: 'user.menu.settings',
+          icon: 'icon icon-settings',
+        },
+        {
+          name: 'user.menu.about',
+          icon: 'icon icon-info',
+        },
+      ]
+    }
   ]
 }
 
@@ -220,6 +232,11 @@ const readyInit = ()=>{
   startupScreen.on('ready-to-show',()=>{
     startupScreen.show()
     init()
+  })
+  startupScreen.on('close',()=>{
+    if (!initialized) {
+      app.quit()
+    }
   })
 }
 const init = ()=>{
@@ -365,6 +382,9 @@ const init = ()=>{
 
   // 模板
   ipcMain.handle('layout:get', (event, name, option)=>{
+    option = Object.assign({
+      db: db.store,
+    }, option)
     return layout(name, option)
   })
 
@@ -1120,14 +1140,14 @@ const init = ()=>{
     }
   })
   ipcMain.on('window:ready', ()=>{
-    if (startupScreen) {
-      startupScreen.close()
-      startupScreen = null
-    }
     if (!initialized) {
       win.webContents.openDevTools()
       initialized = true
       win.maximize()
+    }
+    if (startupScreen) {
+      startupScreen.close()
+      startupScreen = null
     }
     win.focus()
   })

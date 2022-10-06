@@ -1,0 +1,34 @@
+if db.recommendation.id === -1
+  .home-recommendation.home-recommendation-nothing
+    .background
+    .info
+      h2.title=lang.recommendation.no_recommendation
+      .subtitle=lang.recommendation.subtitle
+else
+  -
+    let coverSrc = null
+    let headerSrc = null
+    let item = db.items.find(item=>item.id === db.recommendation.id)
+    for(let i = 0; i < item.seasons.length; i++) {
+      if (item.seasons[i].cover !== '' && coverSrc !== null) {
+        coverSrc = item.seasons[i].cover
+      }
+      if (item.seasons[i].header !== '' && headerSrc !== null) {
+        headerSrc = item.seasons[i].header
+      }
+    }
+    if (coverSrc === null) {
+      coverSrc = './src/assets/defaultCover.png'
+    }
+    if (headerSrc === null) {
+      headerSrc = coverSrc
+    }
+  -
+  .home-recommendation
+    .background
+      img(src=headerSrc draggable="false")
+    .info
+      h2.title=lang.recommendation.no_recommendation
+      .subtitle=lang.recommendation.subtitle
+      button=lang.recommendation.check
+      img.cover(src=coverSrc draggable="false")

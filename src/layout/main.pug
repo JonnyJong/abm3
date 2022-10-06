@@ -9,4 +9,6 @@ html(lang=lang.current)
     link(rel="stylesheet", href="./src/assets/fonticon/fonticon.css")
     link(rel="stylesheet" href="./src/css/style.css")
   body(style="--theme-color: #" + system.accentColor + ';')
-    include include/titlebar.pug
+    include includes/titlebar.pug
+    .pages
+      include includes/home.pug

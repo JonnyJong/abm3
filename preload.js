@@ -7,9 +7,11 @@ let lang
 ipcRenderer.invoke('lang:get').then(data=>{
   lang = data
 })
-ipcRenderer.invoke('layout:get', 'main').then(data=>{
-  document.write(data)
-  Init()
+ipcRenderer.invoke('db:getWeeklyRecommend').then(item=>{
+  ipcRenderer.invoke('layout:get', 'main', {recommendItem: item}).then(data=>{
+    document.write(data)
+    Init()
+  })
 })
 
 // 问候欢迎
@@ -46,7 +48,6 @@ const Init = ()=>{
   document.querySelector('.window-control-close').addEventListener('click',()=>{ipcRenderer.send('window:close')},false)
   // 用户控制
   document.querySelector('.user-action').addEventListener('click', ()=>{
-    document.querySelector('.user-control').style.setProperty('--inner-height', document.querySelector('.user-menu').scrollHeight + 'px')
     document.querySelector('.user-control').classList.toggle('open')
   })
   document.querySelector('.greet').innerHTML = greet()

@@ -66,17 +66,20 @@ body.blur
   .avatar
     height 100%
     width 100%
-.user-menu
+.user-menu-shell
+  overflow hidden
   position absolute
   top 40px
-  border-radius var(--border-radius)
   right -10px
-  overflow hidden
+.user-menu
+  position relative
+  border-radius var(--border-radius)
   background var(--bg-alpha)
   backdrop-filter var(--blur-filter)
   width 320px
-  max-height 0px
-  transition .2s max-height
+  transform translateY(-100%)
+  pointer-events none
+  transition .2s transform cubic-bezier(0, 0.7, 0, 1)
 .user-info
   display flex
   width 100%
@@ -123,11 +126,16 @@ body.blur
 .user-control
   app-region no-drag
   position relative
+  .user-action
+    transition .1s transform
+    &:active
+      transform scale(.9)
   &.open
     .user-action
       outline 2px solid var(--theme-color)
     .user-menu
-      max-height var(--inner-height, max-content)
+      transform translateY(0%)
+      pointer-events all
 .history-control>*
   app-region no-drag
   height 36px
@@ -145,23 +153,20 @@ body.blur
     border 1px solid #8884
   &:active
     transform scale(.9)
-// .app-info
-//   margin-right 74px
-//   transition .1s margin
 .searchbar
   flex auto
   padding-left 74px
   transition .1s padding
 .show-history-back .searchbar
   padding-left 32px
-.show-history-home .searchbar
+.show-history-back.show-history-home .searchbar
   padding-left 0px
   padding-right 10px
   @media screen and (max-width:950px)
     padding-left 10px
     padding-right 0px
 .show-history-back .history-control-back
-.show-history-home .history-control-home
+.show-history-back.show-history-home .history-control-home
   margin-left 6px
   opacity 1
   pointer-events all

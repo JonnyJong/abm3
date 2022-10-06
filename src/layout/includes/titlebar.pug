@@ -15,19 +15,20 @@
   .user-control
     .user-action
       img.avatar(src=settings.userAvatar draggable="false")
-    .user-menu
-      .user-info
-        img.avatar(src=settings.userAvatar draggable="false")
-        div
-          .greet
-          .username(src=settings.username)
-      .menu-items
-        each items in app.config.userMenu
-          .menu-group
-            each item in items.items
-              .menu-item(onclick=item.onclick)
-                i(class=item.icon)
-                .menu-name=getLangByKey(item.name)
+    .user-menu-shell
+      .user-menu
+        .user-info
+          img.avatar(src=settings.userAvatar draggable="false")
+          div
+            .greet
+            .username(src=settings.username)
+        .menu-items
+          each items in app.config.userMenu
+            .menu-group
+              each item in items.items
+                .menu-item(onclick=item.onclick)
+                  i(class=item.icon)
+                  .menu-name=getLangByKey(item.name)
   .window-control
     .window-control-minimize
       i.icon.icon-chrome-minimize

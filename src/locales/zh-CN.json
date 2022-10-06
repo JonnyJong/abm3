@@ -20,10 +20,17 @@
       "try_luck": "试试手气",
       "add_item": "添加入库",
       "edit_item": "编辑此番剧",
-      "delete_item": "删除此番剧"
+      "delete_item": "删除此番剧",
+      "settings": "设置",
+      "about": "关于"
     }
   },
   "search": {
     "placeholder": "检索番剧..."
+  },
+  "recommendation": {
+    "no_recommendation": "本周暂无推荐",
+    "subtitle": "本周推荐",
+    "check": "查看详情"
   }
 }
