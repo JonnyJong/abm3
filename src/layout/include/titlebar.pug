@@ -1,10 +1,17 @@
 .titlebar
   .history-control
     .history-control-back
+      i.icon.icon-chevron-left
     .history-control-home
+      i.icon.icon-home
+  .app-info
     img.app-icon(src="./src/assets/icons/24.png")
     .app-title=lang.abm
   .searchbar
+    .input
+      i.icon.icon-search.input-left
+      input(type="text" placeholder=lang.search.placeholder spellcheck="false")
+      i.icon.icon-dismiss.input-right
   .user-control
     .user-action
       img.avatar(src=settings.userAvatar draggable="false")

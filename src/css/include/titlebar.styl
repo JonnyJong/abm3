@@ -25,13 +25,16 @@
     backdrop-filter var(--blur-filter)
   .app-icon
     margin 0 10px
+  .input
+    app-region no-drag
+    max-width 520px
+    margin auto
 body.blur
   color var(--titlebar-color-nofocus)
+.app-info
 .history-control
   display flex
   align-items center
-.searchbar
-  flex auto
 .window-control
   app-region no-drag
   height 50px
@@ -112,6 +115,7 @@ body.blur
   i
     width 29px
     flex 0 0 auto
+    text-align center
   &:hover
     background #8884
 .menu-name
@@ -124,3 +128,40 @@ body.blur
       outline 2px solid var(--theme-color)
     .user-menu
       max-height var(--inner-height, max-content)
+.history-control>*
+  app-region no-drag
+  height 36px
+  width 36px
+  line-height 38px
+  text-align center
+  border-radius var(--border-radius)
+  border 1px solid #8880
+  margin-left -36px
+  opacity 0
+  pointer-events none
+  transition .1s margin, .1s transform, .1s opacity
+  &:hover
+    background #8882
+    border 1px solid #8884
+  &:active
+    transform scale(.9)
+// .app-info
+//   margin-right 74px
+//   transition .1s margin
+.searchbar
+  flex auto
+  padding-left 74px
+  transition .1s padding
+.show-history-back .searchbar
+  padding-left 32px
+.show-history-home .searchbar
+  padding-left 0px
+  padding-right 10px
+  @media screen and (max-width:950px)
+    padding-left 10px
+    padding-right 0px
+.show-history-back .history-control-back
+.show-history-home .history-control-home
+  margin-left 6px
+  opacity 1
+  pointer-events all

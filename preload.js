@@ -8,11 +8,8 @@ ipcRenderer.invoke('lang:get').then(data=>{
   lang = data
 })
 ipcRenderer.invoke('layout:get', 'main').then(data=>{
-  document.documentElement.innerHTML = data
+  document.write(data)
   Init()
-})
-ipcRenderer.invoke('lang:get').then(lang=>{
-  document.documentElement.lang = lang.current
 })
 
 // 问候欢迎

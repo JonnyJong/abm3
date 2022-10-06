@@ -1,0 +1,39 @@
+.icon
+  font-size 16px
+
+.input
+  position relative
+  input
+    border var(--input-border)
+    border-bottom var(--input-border-bottom)
+    background var(--input-bg)
+    height 36px
+    border-radius var(--border-radius)
+    width 100%
+    padding 0 36px
+    color var(--font-color)
+    &::placeholder
+      color #cfcfcf
+    &:hover
+      background var(--input-bg-hover)
+    &:focus
+      background var(--input-bg-focus)
+      border-bottom var(--input-border-bottom-focus)
+      outline 0
+      &::placeholder
+        color #969696
+  .input-left
+  .input-right
+    position absolute
+    margin 3px
+    height 30px
+    width 30px
+    line-height 30px
+    text-align center
+    border-radius var(--border-radius)
+    &:hover
+      background #8882
+  .input-left
+    left 0
+  .input-right
+    right 0

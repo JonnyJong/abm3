@@ -22,5 +22,8 @@
       "edit_item": "编辑此番剧",
       "delete_item": "删除此番剧"
     }
+  },
+  "search": {
+    "placeholder": "检索番剧..."
   }
 }
