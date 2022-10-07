@@ -2,8 +2,9 @@ if db.recommendation.id === -1
   .home-recommendation.home-recommendation-nothing
     .background
     .info
-      h2.title=lang.recommendation.no_recommendation
-      .subtitle=lang.recommendation.subtitle
+      .info-left
+        h2.title=lang.recommendation.no_recommendation
+        .subtitle=lang.recommendation.subtitle
 else
   -
     let coverSrc = null
@@ -28,7 +29,17 @@ else
     .background
       img(src=headerSrc draggable="false")
     .info
-      h2.title=lang.recommendation.no_recommendation
-      .subtitle=lang.recommendation.subtitle
-      button=lang.recommendation.check
+      .info-left
+        h2.title=lang.recommendation.no_recommendation
+        .subtitle=lang.recommendation.subtitle
+        button=lang.recommendation.check
       img.cover(src=coverSrc draggable="false")
+//- .home-recommendation.home-recommendation-nothing
+//-   .background
+//-     img(src="./test/a.png" draggable="false")
+//-   .info
+//-     .info-left
+//-       h2.title="关于 ABM 3.1 开发的那档事"
+//-       .subtitle=lang.recommendation.subtitle
+//-       button=lang.recommendation.check
+//-     img.cover(src="./test/a.png" draggable="false")

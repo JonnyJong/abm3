@@ -40,3 +40,20 @@
     left 0
   .input-right
     right 0
+button
+  height 32px
+  background var(--button-bg)
+  color var(--font-color)
+  border var(--button-border)
+  border-bottom var(--button-border-bottom)
+  outline none
+  padding 10px 12px
+  height max-content
+  border-radius 6px
+  app-region no-drag
+  white-space nowrap
+  transition .1s background
+  &:hover
+    background var(--button-bg-hover)
+  &:active
+    background var(--button-bg-active)

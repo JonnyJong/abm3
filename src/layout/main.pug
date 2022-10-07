@@ -1,5 +1,5 @@
 doctype html
-html(lang=lang.current)
+html(lang=lang.current style="--theme-color: #" + system.accentColor + ';')
   head
     meta(charset="UTF-8")
     meta(http-equiv="X-UA-Compatible", content="IE=edge")
@@ -8,7 +8,7 @@ html(lang=lang.current)
     //- link(rel="stylesheet" href="https://at.alicdn.com/t/c/font_3643871_krah3dflcka.css")
     link(rel="stylesheet", href="./src/assets/fonticon/fonticon.css")
     link(rel="stylesheet" href="./src/css/style.css")
-  body(style="--theme-color: #" + system.accentColor + ';')
+  body
     include includes/titlebar.pug
     .pages
       include includes/home.pug

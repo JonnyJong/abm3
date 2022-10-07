@@ -6,6 +6,8 @@
   --border-radius 6px
   // 高斯模糊背景
   --blur-filter blur(100px) saturate(1.8)
+  // 背景色
+  --bg #fff
 
   // 颜色
   --font-color #000
@@ -21,8 +23,18 @@
   --input-bg-hover #f6f6f6
   --input-bg-focus #fff
   --input-border-bottom-focus 1px solid var(--theme-color)
+
+  // 主页配色
+  --home-rcm-bg #fff9
+  --home-rcm-bg-c #fffc
+  --home-rcm-sub #666
+  --home-rcm-btn-hover #ccc2
+  --home-rcm-btn-active #5551
 @media (prefers-color-scheme: dark)
   :root
+    // 背景色
+    --bg #202020
+
     // 颜色
     --font-color #fff
     --bg-alpha #202020b0
@@ -36,3 +48,15 @@
     --input-bg #2b2b2b
     --input-bg-hover #323232
     --input-bg-focus #1f1f1f
+    --button-border 1px solid #353535
+    --button-border-bottom 1px solid #303030
+    --button-bg #2d2d2d
+    --button-bg-hover #323232
+    --button-bg-active #272727
+
+    // 主页配色
+    --home-rcm-bg #20202099
+    --home-rcm-bg-c #202020cc
+    --home-rcm-sub #ccc
+    --home-rcm-btn-hover #fff2
+    --home-rcm-btn-active #fff1
