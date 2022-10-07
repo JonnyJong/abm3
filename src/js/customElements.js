@@ -327,6 +327,13 @@ class ScrollElement extends HTMLElement {
       this.#target.addEventListener('resize', this.#scrollListener)
       this.#scrollListener()
     }
+    this.#scrollbox.addEventListener('click',(ev)=>{
+      if (this.#target) {
+        if (!ev.composedPath().includes(this.#scrollbar)) {
+          this.#target.scrollTo({top: (ev.layerY - this.#scrollbar.offsetHeight / 2) / this.#scrollbox.offsetHeight * this.#target.scrollHeight, behavior: 'smooth'})
+        }
+      }
+    })
   }
   // 获取滚动项
   get target() {
