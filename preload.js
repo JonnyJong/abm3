@@ -1,4 +1,5 @@
 'use strict'
+
 // 引入模块
 const { contextBridge, ipcRenderer } = require("electron")
 let lang
