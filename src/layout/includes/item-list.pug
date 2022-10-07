@@ -1,0 +1,42 @@
+mixin pagination(page, pages, pageFnName)
+  if pages > 1
+    .pagination
+      if page === 1
+        .icon.icon-chevron-left.current
+      else
+        .icon.icon-chevron-left(onclick=pageFnName + "(1)")
+      - let current = 1
+      while current <= pages
+        if current === page
+          .num.current=current
+        else
+          .num(onclick=pageFnName + "(" + current + ")")=current
+        - current++
+      if page === pages
+        .icon.icon-chevron-right.current
+      else
+        .icon.icon-chevron-right(onclick=pageFnName + "(" + pages + ")")
+-
+  if (!items) {
+    let items = db.items.splice(0, settings.itemPrePage)
+  }
+  if (!pages) {
+    let pages = Math.max(Math.ceil(db.items.length / settings.itemPrePage), 1)
+  }
+  if (!page) {
+    let page = 1
+  }
+  if (!pageFnName) {
+    let pageFnName = 'window.getPage'
+  }
+-
+.item-list-container
+  if items && items.length > 0
+    +pagination(page, pages)
+    .item-list
+      - let i = 0
+      while i < items.length
+        - let item = items[i]
+        include ./item.pug
+        - i++
+    +pagination(page, pages)

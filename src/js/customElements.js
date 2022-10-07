@@ -233,9 +233,9 @@ class ScrollElement extends HTMLElement {
   #scrollListener = ()=>{
     if (!this.#draging) {
       if (this.#target.offsetHeight === this.#target.scrollHeight) {
-        this.#scrolltrack.classList.add('hide')
+        this.#scrollbox.classList.add('hide')
       }else{
-        this.#scrolltrack.classList.remove('hide')
+        this.#scrollbox.classList.remove('hide')
       }
       this.#scrollbar.style.height = this.#target.offsetHeight / this.#target.scrollHeight * 100 + '%'
       this.#scrollbar.style.top = this.#target.scrollTop / this.#target.scrollHeight * 100 + '%'

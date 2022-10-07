@@ -19,6 +19,7 @@
   --home-rcm-sub: #666;
   --home-rcm-btn-hover: rgba(204,204,204,0.133);
   --home-rcm-btn-active: rgba(85,85,85,0.067);
+  --home-lib-dtl: rgba(32,32,32,0.8);
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -42,6 +43,7 @@
     --home-rcm-sub: #ccc;
     --home-rcm-btn-hover: rgba(255,255,255,0.133);
     --home-rcm-btn-active: rgba(255,255,255,0.067);
+    --home-lib-dtl: rgba(255,255,255,0.8);
   }
 }
 @-moz-keyframes home-rcm-bg-breathe {
@@ -207,8 +209,7 @@ button:active {
   padding: 35px 55px;
   height: 100%;
   display: flex;
-  justify-content: space-around;
-  gap: 100px;
+  justify-content: space-between;
 }
 .home-recommendation .cover {
   height: 100%;
@@ -270,6 +271,39 @@ button:active {
   top: 0;
   background: var(--theme-color);
 }
+.home-library {
+  position: relative;
+  padding: 35px 55px;
+}
+.home-library h1 {
+  margin: 0;
+  font-size: 24px;
+}
+.home-library .detail {
+  color: var(--home-lib-dtl);
+}
+.home-library .progress {
+  width: 100%;
+  height: 3px;
+  position: relative;
+}
+.home-library .progress:before,
+.home-library .progress:after {
+  content: '';
+  position: absolute;
+  display: block;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--theme-color);
+  opacity: 0.25;
+}
+.home-library .progress:after {
+  width: var(--p);
+  opacity: 1;
+}
 .pages,
 .page {
   position: fixed;
@@ -330,7 +364,7 @@ button:active {
   max-width: 520px;
   margin: auto;
 }
-body.blur {
+body.blur .titlebar {
   color: var(--titlebar-color-nofocus);
 }
 .app-info,

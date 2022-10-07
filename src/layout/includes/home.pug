@@ -1,3 +1,21 @@
 .page.page-home
   ui-scroll(target=".page.page-home").page-scroll
   include ./recommendation.pug
+  .home-library
+    h1=lang.page_home.library
+    .detail
+      span=lang.page_home.detail_before_total
+      span=' ' + db.items.length + ' '
+      span=lang.page_home.detail_between_total_and_finish
+      span=' ' + db.finished.count + ' '
+      span=lang.page_home.detail_between_finish_and_percent
+      if db.items.length === 0
+        span=' 0% '
+      else
+        span=' ' + (db.finished.count / db.items.length * 100) + '% '
+      span=lang.page_home.detail_after_percent
+    if db.items.length === 0
+      .progress(style="--p:0%")
+    else
+      .progress(style="--p:" + (db.finished.count / db.items.length * 100) + "%")
+    include ./item-list.pug

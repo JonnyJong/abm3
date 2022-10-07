@@ -1,0 +1,17 @@
+.item(onclick="window.getItem(" + item.id + ")")
+  -
+    let coverSrc = null
+    for(let i = 0; i < item.seasons.length; i++) {
+      if (item.seasons[i].cover !== '' && coverSrc !== null) {
+        coverSrc = item.seasons[i].cover
+      }
+    }
+    if (coverSrc === null) {
+      coverSrc = './src/assets/defaultCover.png'
+    }
+  -
+  img.cover(src=coverSrc draggable="false")
+  .info
+    .title=item.title
+    .evaluation
+    .mark

@@ -7,7 +7,7 @@ const path = require('path')
 const pug = require('pug')
 const store = require('electron-store')
 const packageJson = require('./package.json')
-const build = 78
+const build = 79
 let win = null
 let startupScreen = null
 let db = null
@@ -318,6 +318,40 @@ const init = ()=>{
         type: 'array',
         default: [],
       },
+      finished: {
+        type: 'object',
+        properties: {
+          categoryId: {
+            type: 'number',
+            default: -1,
+          },
+          count: {
+            type: 'number',
+            default: 0,
+          },
+        },
+        default: {
+          categoryId: -1,
+          count: 0,
+        },
+      },
+      payable: {
+        type: 'object',
+        properties: {
+          categoryId: {
+            type: 'number',
+            default: -1,
+          },
+          count: {
+            type: 'number',
+            default: 0,
+          },
+        },
+        default: {
+          categoryId: -1,
+          count: 0,
+        },
+      }
     },
   })
 

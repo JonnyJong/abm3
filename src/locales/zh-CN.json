@@ -28,9 +28,14 @@
   "search": {
     "placeholder": "检索番剧..."
   },
-  "recommendation": {
+  "page_home": {
     "no_recommendation": "本周暂无推荐",
-    "subtitle": "本周推荐",
-    "check": "查看详情"
+    "recommendation_subtitle": "本周推荐",
+    "check_recommendation": "查看详情",
+    "library": "库",
+    "detail_before_total": "当前库中有",
+    "detail_between_total_and_finish": "部番剧，看完了",
+    "detail_between_finish_and_percent": "部番剧，占",
+    "detail_after_percent": ""
   }
 }
