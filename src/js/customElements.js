@@ -312,7 +312,7 @@ class ScrollElement extends HTMLElement {
       this.#target = document.querySelector(this.getAttribute('target'))
     }
     // 设置滚动条
-    this.#scrolltrack.addEventListener('wheel',(ev)=>{
+    this.#scrollbox.addEventListener('wheel',(ev)=>{
       if (this.#target) {
         if (ev.deltaY > 0) {
           this.#target.scrollTop += 100
