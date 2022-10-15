@@ -223,23 +223,17 @@ class ScrollElement extends HTMLElement {
   #scrolltrack
   #scrollbox
   #target = null
-  #draging = false
-  #dragListener = ()=>{
-    this.#draging = true
-    this.#target.scrollTop = (this.#scrollbar.offsetTop - 6) / this.#scrollbar.offsetHeight * this.#target.scrollHeight
-    this.#draging = false
-    this.#scrollListener()
+  #dragListener = (ev)=>{
+    this.#target.scrollTop = ev.y / (this.#scrolltrack.offsetHeight - this.#scrollbar.offsetHeight) * (this.#target.scrollHeight - this.#target.offsetHeight)
   }
   #scrollListener = ()=>{
-    if (!this.#draging) {
-      if (this.#target.offsetHeight === this.#target.scrollHeight) {
-        this.#scrollbox.classList.add('hide')
-      }else{
-        this.#scrollbox.classList.remove('hide')
-      }
-      this.#scrollbar.style.height = this.#target.offsetHeight / this.#target.scrollHeight * 100 + '%'
-      this.#scrollbar.style.top = this.#target.scrollTop / this.#target.scrollHeight * 100 + '%'
+    if (this.#target.offsetHeight === this.#target.scrollHeight) {
+      this.#scrollbox.classList.add('hide')
+    }else{
+      this.#scrollbox.classList.remove('hide')
     }
+    this.#scrollbar.style.height = this.#target.offsetHeight / this.#target.scrollHeight * this.#scrolltrack.offsetHeight + 'px'
+    this.#scrollbar.style.top = this.#target.scrollTop / (this.#target.scrollHeight - this.#target.offsetHeight) * (this.#scrolltrack.offsetHeight - this.#scrollbar.offsetHeight) + 'px'
   }
   constructor() {
     super()

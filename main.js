@@ -7,7 +7,7 @@ const path = require('path')
 const pug = require('pug')
 const store = require('electron-store')
 const packageJson = require('./package.json')
-const build = 79
+const build = 80
 let win = null
 let startupScreen = null
 let db = null
@@ -195,6 +195,28 @@ const layout = (name, option)=>{
     },
     settings: settings.store(),
     getLangByKey: (key)=>{return locales.get(key)},
+    getItemCoverHeader: (item)=>{
+      let cover = null
+      let header = null
+      for (let i = 0; i < item.seasons.length; i++) {
+        if (cover === null && item.seasons[i].cover) {
+          cover = path.join(settings.get('dataPath'), '/covers/', item.seasons[i].cover)
+        }
+        if (header === null && item.seasons[i].header) {
+          header = path.join(settings.get('dataPath'), '/headers/', item.seasons[i].header)
+        }
+      }
+      if (cover === null) {
+        cover = './src/assets/defaultCover.png'
+      }
+      if (header === null) {
+        header = cover
+      }
+      return {cover, header}
+    },
+    test:(...args)=>{
+      console.log(...args)
+    }
   }, option)
   return pug.renderFile((`./src/layout/${name}.pug`), option)
 }
@@ -355,22 +377,111 @@ const init = ()=>{
     },
   })
 
+  // 数据储存目录
+  const initDir = (dir)=>{
+    try {
+      fs.readdirSync(path.join(settings.get('dataPath'), `/${dir}/`))
+      return true
+    } catch (error) {
+      try {
+        fs.mkdirSync(path.join(settings.get('dataPath'), `/${dir}/`))
+        return true
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    return false
+  }
+  initDir('covers')
+  initDir('headers')
+  initDir('startup_images')
+
   // 报告启动信息：初始化功能
   startupScreen.webContents.send('info',locales.get().startup_screen.init_method)
 
   // 保存图片
+  let waitQueue = []
+  let imgSaveQuests = []
+  let waitImgQueue = []
+  const addQuest = (itemId)=>{
+    if (!waitQueue.includes(itemId)) {
+      waitQueue.push(itemId)
+    }
+  }
+  const reduceQueue = (itemId)=>{
+    waitQueue.splice(waitQueue.findIndex(id=>id===itemId), 1)
+    if (imgSaveQuests.find(quest=>quest.itemId === itemId)) {
+      let items = db.get('items')
+      let item = items.find(item=>item.id === itemId)
+      if (item) {
+        imgSaveQuests.forEach(quest=>{
+          if (quest.itemId === itemId && item.seasons[quest.seasonId]) {
+            switch (quest.type) {
+              case 'header':
+                item.seasons[quest.seasonId].header = quest.data
+                break
+              case 'cover':
+                item.seasons[quest.seasonId].cover = quest.data
+                break
+            }
+          }
+          imgSaveQuests.splice(imgSaveQuests.findIndex(q=>q===quest), 1)
+        })
+      }
+      db.set('items', items)
+    }
+  }
+  const submitQuest = (itemId, seasonId, type, data)=>{
+    if (waitQueue.includes(itemId)) {
+      imgSaveQuests.push({itemId, seasonId, type, data})
+    }else{
+      let items = db.get('items')
+      let item = items.find(item=>item.id === itemId)
+      if (item && item.seasons[seasonId]) {
+        switch (type) {
+          case 'header':
+            item.seasons[seasonId].header = data
+            break
+          case 'cover':
+            item.seasons[seasonId].cover = data
+            break
+        }
+        db.set('items', items)
+      }
+    }
+  }
+  const addImgQuest = (itemId)=>{
+    let quest = waitImgQueue.find(quest=>quest.itemId===itemId)
+    if (quest) {
+      quest.counter++
+    }else{
+      waitImgQueue.push({itemId, counter: 1})
+    }
+  }
+  const reduceImgQuest = (itemId)=>{
+    let quest = waitImgQueue.find(quest=>quest.itemId===itemId)
+    if (quest) {
+      quest.counter--
+      if (quest.counter === 0) {
+        waitImgQueue.splice(waitImgQueue.findIndex(q=>q===quest), 1)
+        if (win.webContents) {
+          win.webContents.send('db:img-ready', itemId)
+        }
+      }
+    }
+  }
   const getImgSuffix = (data)=>{
     const imgBufHeaders = [
-      { bufBegin: [0x42, 0x4d], suffix: '.bmp' },
-      { bufBegin: [0x47, 0x49, 0x46, 0x38, 0x39, 0x61], suffix: '.gif' },
-      { bufBegin: [0x47, 0x49, 0x46, 0x38, 0x37, 0x61], suffix: '.gif' },
-      { bufBegin: [0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x20, 0x20], suffix: '.ico' },
-      { bufBegin: [0xff, 0xd8], bufEnd: [0xff, 0xd9], suffix: '.jpg' },
-      { bufBegin: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a], suffix: '.png' },
-      { bufBegin: [0x3c, 0x73, 0x76, 0x67], suffix: '.svg' },
-      { bufBegin: [0x49, 0x49], suffix: '.tif' },
-      { bufBegin: [0x4d, 0x4d], suffix: '.tif' },
-      { bufBegin: [0x52, 0x49, 0x46, 0x46], suffix: '.webp' },
+      { bufBegin: [0x42, 0x4d], suffix: 'bmp' },
+      { bufBegin: [0x47, 0x49, 0x46, 0x38, 0x39, 0x61], suffix: 'gif' },
+      { bufBegin: [0x47, 0x49, 0x46, 0x38, 0x37, 0x61], suffix: 'gif' },
+      { bufBegin: [0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x20, 0x20], suffix: 'ico' },
+      { bufBegin: [0xff, 0xd8], bufEnd: [0xff, 0xd9], suffix: 'jpg' },
+      { bufBegin: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a], suffix: 'png' },
+      { bufBegin: [0x3c, 0x73, 0x76, 0x67], suffix: 'svg' },
+      { bufBegin: [0x49, 0x49], suffix: 'tif' },
+      { bufBegin: [0x4d, 0x4d], suffix: 'tif' },
+      { bufBegin: [0x52, 0x49, 0x46, 0x46], suffix: 'webp' },
     ]
     for (const imgBufHeader of imgBufHeaders) {
       let isEqual
@@ -390,28 +501,44 @@ const init = ()=>{
     }
     return ''
   }
-  const saveImg = (url, type, label) => {
-    https.get(url, (res)=>{
-      let data = ''
-      res.setEncoding('binary')
-      res.on('data', (chunk)=>{
-        data += chunk
-      })
-      res.on('end', ()=>{
-        let suffix = getImgSuffix(new Buffer.from(data, 'binary'))
-        if (suffix.length === 0) {
-          return ''
-        }else{
-          fs.writeFile(path.join(settings.get('dataPath'), (type ? '/covers/' : '/headers/'), `${label}${suffix}`), data, 'binary', (error=>{
-            if (error) {
+  const saveImg = (url, type, itemId, seasonId) => {
+    let dir
+    switch (type) {
+      case 'cover':
+        dir = '/covers/'
+        break
+      case 'header':
+        dir = '/headers/'
+        break
+    }
+    if (dir) {
+      addImgQuest(itemId)
+      https.get(url, (res)=>{
+        let data = ''
+        res.setEncoding('binary')
+        res.on('data', (chunk)=>{
+          data += chunk
+        })
+        res.on('end', ()=>{
+          let suffix = getImgSuffix(new Buffer.from(data, 'binary'))
+          if (suffix.length === 0) {
+            reduceImgQuest(itemId)
+            return ''
+          }else{
+            try {
+              fs.writeFileSync(path.join(settings.get('dataPath'), dir, `${itemId}_${seasonId}.${suffix}`), data, 'binary')
+              submitQuest(itemId, seasonId, type, `${itemId}_${seasonId}.${suffix}`)
+              reduceImgQuest(itemId)
+              return `${itemId}_${seasonId}.${suffix}`
+            } catch (error) {
+              console.error(error)
+              reduceImgQuest(itemId)
               return ''
-            }else{
-              return `${label}${suffix}`
             }
-          }))
-        }
+          }
+        })
       })
-    })
+    }
   }
 
   // 模板
@@ -743,92 +870,102 @@ const init = ()=>{
     return result
   })
   // 添加番剧
-  ipcMain.handle('db:addItem', (data) => {
-    // 若番剧中未定义季，返回 null
-    if (!data.seasons || data.seasons.length === 0) {
+  ipcMain.handle('db:addItem', (_, data) => {
+    let backup = db.store
+    try {
+      // 若番剧中未定义季，返回 null
+      if (!data.seasons || data.seasons.length === 0) {
+        return null
+      }
+      // 初始化番剧对象
+      let item = {
+        id: db.get('id.item'),
+        title: String(data.title),
+        content: String(data.content),
+        favorite: false,
+        stars: 0,
+        tags: [],
+        categorize: [],
+        seasons: [],
+      }
+      let seasonId = 0
+      // 分配 id
+      db.set('id.item', db.get('id.item') + 1)
+      // 加入等待队列
+      addQuest(item.id)
+      // 设置标签
+      if (data.tags && data.tags.length > 0) {
+        data.tag = Array.from(new Set(data.tag))
+        let tags = db.get('tags')
+        data.tags.forEach(tagName=>{
+          let oldTag = tags.find(tag=>tag.name === tagName)
+          if (oldTag) {
+            oldTag.items.push(item.id)
+          }else{
+            tags.push({id: db.get('id.tag'), name: tagName, items: [item.id]})
+            db.set('id.tag', db.get('id.tag') + 1)
+          }
+        })
+        db.set('tags', tags)
+      }
+      // 设置分类
+      if (data.categorize && data.categorize.length > 0) {
+        data.categorize = Array.from(new Set(data.categorize))
+        let categorize = db.get('categorize')
+        data.categorize.forEach(categoryName=>{
+          let oldCategory = categorize.find(category=>category.name === categoryName)
+          if (oldCategory) {
+            oldCategory.items.push(item.id)
+          }else{
+            categorize.push({id: db.get('id.category'), name: categoryName, items: [item.id]})
+            db.set('id.category', db.get('id.category') + 1)
+          }
+        })
+        db.set('categorize', categorize)
+      }
+      // 设置季
+      data.seasons.forEach(season=>{
+        let newSeason = {
+          title: String(season.title),
+          cover: '',
+          header: '',
+          links: [],
+        }
+        if (parseInt(season.set) === NaN) {
+          newSeason.set = 1
+        }else{
+          newSeason.set = Math.min(parseInt(season.set), 1)
+        }
+        if (parseInt(season.finished) === NaN) {
+          newSeason.finished = 0
+        }else{
+          newSeason.finished = Math.min(parseInt(season.finished), 0)
+        }
+        if (typeof season.cover === 'string' && season.cover.length > 0) {
+          saveImg(season.cover, 'cover', item.id, seasonId)
+        }
+        if (typeof season.header === 'string' && season.header.length > 0) {
+          saveImg(season.header, 'header', item.id, seasonId)
+        }
+        if (season.links && season.links.length === 0) {
+          season.links.forEach(link=>{
+            newSeason.links.push({name: String(link.name), url: String(link.url)})
+          })
+        }
+        seasonId++
+        item.seasons.push(newSeason)
+      })
+      // 保存并返回番剧 id
+      let items = db.get('items')
+      items.push(item)
+      db.set('items', items)
+      reduceQueue(item.id)
+      return item.id
+    } catch (error) {
+      console.error(error)
+      db.store = backup
       return null
     }
-    // 初始化番剧对象
-    let item = {
-      id: db.get('id.item'),
-      title: String(data.title),
-      content: String(data.content),
-      favorite: false,
-      stars: 0,
-      tags: [],
-      categorize: [],
-      seasons: [],
-    }
-    let seasonId = 0
-    // 分配 id
-    db.set('id.item', db.get('id.item')++)
-    // 设置标签
-    if (data.tags && data.tags.length > 0) {
-      data.tag = Array.from(new Set(data.tag))
-      let tags = db.get('tags')
-      data.tags.forEach(tagName=>{
-        let oldTag = tags.find(tag=>tag.name === tagName)
-        if (oldTag) {
-          oldTag.items.push(item.id)
-        }else{
-          tags.push({id: db.get('id.tag'), name: tagName, items: [item.id]})
-          db.set('id.tag', db.get('id.tag')++)
-        }
-      })
-      db.set('tags', tags)
-    }
-    // 设置分类
-    if (data.categorize && data.categorize.length > 0) {
-      data.categorize = Array.from(new Set(data.categorize))
-      let categorize = db.get('categorize')
-      data.categorize.forEach(categoryName=>{
-        let oldCategory = categorize.find(category=>category.name === categoryName)
-        if (oldCategory) {
-          oldCategory.items.push(item.id)
-        }else{
-          categorize.push({id: db.get('id.category'), name: categoryName, items: [item.id]})
-          db.set('id.category', db.get('id.category')++)
-        }
-      })
-      db.set('categorize', categorize)
-    }
-    // 设置季
-    data.seasons.forEach(season=>{
-      let newSeason = {
-        title: String(season.title),
-        cover: '',
-        header: '',
-        links: [],
-      }
-      if (parseInt(season.set) === NaN) {
-        newSeason.set = 1
-      }else{
-        newSeason.set = Math.min(parseInt(season.set), 1)
-      }
-      if (parseInt(season.finished) === NaN) {
-        newSeason.finished = 0
-      }else{
-        newSeason.finished = Math.min(parseInt(season.finished), 0)
-      }
-      if (typeof season.cover === 'string' && season.cover.length > 0) {
-        newSeason.cover = saveImg(season.cover, true, `${item.id}_${seasonId}`)
-      }
-      if (typeof season.header === 'string' && season.header.length > 0) {
-        newSeason.header = saveImg(season.header, false, `${item.id}_${seasonId}`)
-      }
-      if (season.links && season.links.length === 0) {
-        season.links.forEach(link=>{
-          newSeason.links.push({name: String(link.name), url: String(link.url)})
-        })
-      }
-      seasonId++
-      item.seasons.push(newSeason)
-    })
-    // 保存并返回番剧 id
-    let items = db.get('items')
-    items.push(item)
-    db.set('items', items)
-    return item.id
   })
   // 设置番剧
   ipcMain.handle('db:setItem', (id, data) => {
@@ -838,6 +975,8 @@ const init = ()=>{
     let newId = db.get('id')
     let item = items.find(item=>item.id === id)
     if (item && data.seasons.length > 0) {
+      // 加入等待队列
+      addQuest(item.id)
       item.title = String(data.title)
       item.content = String(data.content)
       // 设置标签
@@ -899,14 +1038,16 @@ const init = ()=>{
         }
         if (!item.seasons[seasonId] || item.seasons[seasonId].cover !== season.cover) {
           if (typeof season.cover === 'string' && season.cover.length > 0) {
-            newSeason.cover = saveImg(season.cover, true, `${item.id}_${seasonId}`)
+            saveImg(season.cover, 'cover', item.id, seasonId)
+            newSeason.cover = ''
           } else if (item.seasons[seasonId] || item.seasons[seasonId].cover) {
             fs.unlink(path.join(settings.get('dataPath'), '/covers/', item.seasons[seasonId].cover))
           }
         }
         if (!item.seasons[seasonId] || item.seasons[seasonId].header !== season.header) {
           if (typeof season.header === 'string' && season.header.length > 0) {
-            newSeason.header = saveImg(season.header, false, `${item.id}_${seasonId}`)
+            saveImg(season.header, 'header', item.id, seasonId)
+            newSeason.header = ''
           } else if (item.seasons[seasonId] || item.seasons[seasonId].header) {
             fs.unlink(path.join(settings.get('dataPath'), '/header/', item.seasons[seasonId].header))
           }
@@ -933,6 +1074,7 @@ const init = ()=>{
       item.seasons = newSeasons
       // 保存结果并返回 true
       db.set('items', items)
+      reduceQueue(item.id)
       return true
     }else{
       // 不存在此番剧或没有设置季返回 false
