@@ -281,11 +281,13 @@ button:active {
 }
 .home-library .detail {
   color: var(--home-lib-dtl);
+  margin-bottom: 8px;
 }
 .home-library .progress {
   width: 100%;
   height: 3px;
   position: relative;
+  margin-bottom: 12px;
 }
 .home-library .progress:before,
 .home-library .progress:after {
@@ -303,6 +305,62 @@ button:active {
 .home-library .progress:after {
   width: var(--p);
   opacity: 1;
+}
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.pagination>* {
+  border-radius: var(--border-radius);
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+}
+.item-list {
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+}
+.item {
+  padding: 14px;
+  border-radius: var(--border-radius);
+  transition: 0.2s ease box-shadow, 0.2s ease background, 0.2s ease transform;
+}
+.item:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.533);
+  transform: translateY(-4px);
+  background: #272727;
+}
+.item:active {
+  transform: translateY(-4px) scale(0.98);
+}
+.item img {
+  height: 320px;
+  width: 240px;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+}
+.item .info {
+  margin-top: 4px;
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.item .title {
+  font-size: 16px;
+}
+.item .evaluation {
+  opacity: 0.8;
+  display: flex;
+  gap: 8px;
+}
+.item .mark {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
 }
 .pages,
 .page {
@@ -378,7 +436,7 @@ body.blur .titlebar {
   display: flex;
 }
 .window-control i {
-  font-size: 12px;
+  font-size: 13px;
 }
 .window-control-minimize,
 .window-control-resize,

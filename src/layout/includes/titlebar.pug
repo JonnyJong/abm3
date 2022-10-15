@@ -10,10 +10,10 @@
   .searchbar
     .input
       i.icon.icon-search.input-left
-      input(type="text" placeholder=lang.search.placeholder spellcheck="false")
+      input#searchbar(type="text" placeholder=lang.search.placeholder spellcheck="false")
       i.icon.icon-dismiss.input-right
   .user-control
-    .user-action
+    .user-action(tabindex="0")
       img.avatar(src=settings.userAvatar draggable="false")
     .user-menu-shell
       .user-menu

@@ -9,10 +9,7 @@ ipcRenderer.invoke('lang:get').then(data=>{
   lang = data
 })
 ipcRenderer.invoke('db:getWeeklyRecommend').then(item=>{
-  ipcRenderer.invoke('layout:get', 'main', {recommendItem: item}).then(data=>{
-    document.write(data)
-    Init()
-  })
+  ipcRenderer.invoke('layout:get', 'main', {recommendItem: item}).then(data=>document.write(data))
 })
 
 // 问候欢迎
@@ -31,7 +28,7 @@ const greet = ()=>{
 }
 
 // 初始化
-const Init = ()=>{
+const init = ()=>{
   // 标题栏
   // 窗口控制
   ipcRenderer.on('window:size', (_,isMax)=>{
@@ -52,6 +49,16 @@ const Init = ()=>{
     document.querySelector('.user-control').classList.toggle('open')
   })
   document.querySelector('.greet').innerHTML = greet()
+  // 搜索框
+  window.addEventListener('keyup',(ev)=>{
+    if (ev.key === '/' && !document.querySelector(':focus')) {
+      document.querySelector('#searchbar').focus()
+    }
+  })
+  // 自动刷新
+  ipcRenderer.on('db:img-ready',()=>{
+    console.log('done')
+  })
   
   // 完成
   ipcRenderer.send('window:ready')
@@ -60,5 +67,11 @@ const Init = ()=>{
 // 暗色模式
 contextBridge.exposeInMainWorld('darkMode', {
   toggle: () => ipcRenderer.invoke('dark-mode:toggle'),
-  system: () => ipcRenderer.invoke('dark-mode:system')
+  system: () => ipcRenderer.invoke('dark-mode:system'),
+})
+// 初始化
+contextBridge.exposeInMainWorld('init', init)
+// TEST
+contextBridge.exposeInMainWorld('add',(data)=>{
+  ipcRenderer.invoke('db:addItem', data).then(d=>console.log(d))
 })

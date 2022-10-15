@@ -1,3 +1,24 @@
+include ./generateItem.pug
+//- 初始化变量
+- let gItems = items
+- let gPages = pages
+- let gPage = page
+- let gPageFnName = pageFnName
+-
+  if (!items) {
+    gItems = db.items.splice(0, settings.itemPrePage)
+  }
+  if (!pages) {
+    gPages = Math.max(Math.ceil(db.items.length / settings.itemPrePage), 1)
+  }
+  if (!page) {
+    gPage = 1
+  }
+  if (!pageFnName) {
+    gPageFnName = 'window.getPage'
+  }
+-
+//- 生成分页
 mixin pagination(page, pages, pageFnName)
   if pages > 1
     .pagination
@@ -16,27 +37,13 @@ mixin pagination(page, pages, pageFnName)
         .icon.icon-chevron-right.current
       else
         .icon.icon-chevron-right(onclick=pageFnName + "(" + pages + ")")
--
-  if (!items) {
-    let items = db.items.splice(0, settings.itemPrePage)
-  }
-  if (!pages) {
-    let pages = Math.max(Math.ceil(db.items.length / settings.itemPrePage), 1)
-  }
-  if (!page) {
-    let page = 1
-  }
-  if (!pageFnName) {
-    let pageFnName = 'window.getPage'
-  }
--
+//- 生成列表
 .item-list-container
-  if items && items.length > 0
-    +pagination(page, pages)
+  if gItems && gItems.length > 0
+    +pagination(gPage, gPages, gPageFnName)
     .item-list
       - let i = 0
-      while i < items.length
-        - let item = items[i]
-        include ./item.pug
+      while i < gItems.length
+        +generateItem(gItems[i])
         - i++
-    +pagination(page, pages)
+    +pagination(gPage, gPages, gPageFnName)
