@@ -9,6 +9,10 @@
   padding-top 50px
   overflow hidden scroll
   pointer-events none
+  opacity 0
+  transition .2s opacity, .2s transform
+  &:not(.page-current)
+    transform translateY(30px)
 .page-scroll
   height calc(100vh - 50px)
   width 14px
@@ -20,4 +24,8 @@
   &:hover *
     width 6px
 .page-current
+  opacity 1
   pointer-events all
+.page-hidding
+  opacity 0
+  transition .1s opacity, 0s .1s transform

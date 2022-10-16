@@ -240,12 +240,20 @@ button:disabled {
   line-height: 30px;
   padding: 0;
 }
+.pagination .current {
+  border: var(--button-border-disabled);
+  background: var(--button-bg-disabled);
+  color: var(--button-color-disabled);
+  pointer-events: none;
+}
 .item-list {
   --item-width: 268px;
   display: grid;
   justify-content: space-evenly;
   grid-template-columns: repeat(auto-fill, var(--item-width));
   gap: 12px 0;
+  opacity: 1;
+  transition: 0.1s opacity;
 }
 @media (max-width: 1717px) {
   .item-list {
@@ -261,6 +269,9 @@ button:disabled {
   .item-list {
     --item-width: 200px;
   }
+}
+.item-list-hide {
+  opacity: 0;
 }
 .item {
   padding: 14px;
@@ -596,6 +607,13 @@ button:disabled {
   border-radius: var(--border-radius);
   border: var(--block-border);
 }
+.page-item-cover-anima {
+  position: fixed;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+  transition: 0.2s height, 0.2s width, 0.2s top cubic-bezier(0, 0.5, 0.2, 1.2), 0.2s left, 0.1s opacity;
+  z-index: 10;
+}
 .pages,
 .page {
   position: fixed;
@@ -608,6 +626,11 @@ button:disabled {
   padding-top: 50px;
   overflow: hidden scroll;
   pointer-events: none;
+  opacity: 0;
+  transition: 0.2s opacity, 0.2s transform;
+}
+.page:not(.page-current) {
+  transform: translateY(30px);
 }
 .page-scroll {
   height: calc(100vh - 50px);
@@ -622,7 +645,12 @@ button:disabled {
   width: 6px;
 }
 .page-current {
+  opacity: 1;
   pointer-events: all;
+}
+.page-hidding {
+  opacity: 0;
+  transition: 0.1s opacity, 0s 0.1s transform;
 }
 .titlebar {
   width: 100vw;
@@ -669,7 +697,6 @@ body.blur .titlebar {
   align-items: center;
 }
 .window-control {
-  app-region: no-drag;
   height: 50px;
   display: flex;
 }
@@ -679,6 +706,7 @@ body.blur .titlebar {
 .window-control-minimize,
 .window-control-resize,
 .window-control-close {
+  app-region: no-drag;
   width: 46px;
   height: 32px;
   line-height: 32px;

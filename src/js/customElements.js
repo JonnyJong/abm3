@@ -271,6 +271,14 @@ class ScrollElement extends HTMLElement {
       background: #0008;
       border-radius: 100vw;
     }
+    .scrollbar::before{
+      content: '';
+      position: absolute;
+      width: calc(100% + 6px);
+      height: calc(100% + 6px);
+      left: -3px;
+      top: -3px;
+    }
     .scrollbar:active{
       background: #000d;
     }
@@ -384,3 +392,40 @@ class ScrollElement extends HTMLElement {
   }
 }
 customElements.define('ui-scroll', ScrollElement)
+// 自动关闭
+windowEvent.add('click',(ev)=>{
+  document.querySelectorAll('[auto-close]').forEach(e=>{
+    // TODO
+    // ev.composedPath(e) doesn't work!
+    if (!ev.path.includes(e) && e.getAttribute('auto-close')) {
+      e.classList.remove(e.getAttribute('auto-close'))
+    }
+  })
+})
+// 按键
+const keyborad = (()=>{
+  let lastKey = null
+  let keyDown = 0
+  windowEvent.add('keydown', ev=>{
+    keyDown++
+    if (lastKey !== null) {
+      lastKey = 'NULL'
+    }else{
+      lastKey = ev.key
+    }
+  })
+  windowEvent.add('keyup',(ev)=>{
+    keyDown--
+    if (lastKey === ev.key && keyDown === 0) {
+      document.querySelectorAll(`[keyborad="${ev.key}"]`).forEach(e=>e.click())
+    }
+    if (keyDown < 1) {
+      keyDown = 0
+      lastKey = null
+    }
+  })
+  windowEvent.add('blur',()=>{
+    keyDown = 0
+    lastKey = null
+  })
+})()

@@ -13,18 +13,27 @@
     text-align center
     line-height 30px
     padding 0
+  .current
+    border var(--button-border-disabled)
+    background var(--button-bg-disabled)
+    color var(--button-color-disabled)
+    pointer-events none
 .item-list
   --item-width 268px
   display grid
   justify-content space-evenly
   grid-template-columns repeat(auto-fill, var(--item-width))
   gap 12px 0
+  opacity 1
+  transition .1s opacity
   @media (max-width: 1717px)
     --item-width 230px
   @media (max-width: 1489px)
     --item-width 210px
   @media (max-width: 1369px)
     --item-width 200px
+.item-list-hide
+  opacity 0
 .item
   padding 14px
   border-radius var(--border-radius)

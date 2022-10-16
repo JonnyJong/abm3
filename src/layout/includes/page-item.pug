@@ -5,18 +5,18 @@ if item
     - var className = 'show'
     each season in item.seasons
       if season.header
-        img(class=className src=getRealSrc(season.header, 'header'))
+        img(class=className src=getRealSrc(season.header, 'header') draggable="false")
       else
-        img(class=className src=defaultImg.header)
+        img(class=className src=defaultImg.header draggable="false")
       - className = ''
   .page-item-info
     .cover
       - var className = 'show'
       each season in item.seasons
         if season.cover
-          img(class=className src=getRealSrc(season.cover, 'cover'))
+          img(class=className src=getRealSrc(season.cover, 'cover') draggable="false")
         else
-          img(class=className src=defaultImg.cover)
+          img(class=className src=defaultImg.cover draggable="false")
         - className = ''
     .detail
       .title=item.title

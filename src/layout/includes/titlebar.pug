@@ -1,8 +1,8 @@
 .titlebar
   .history-control
-    .history-control-back
+    .history-control-back(onclick="page.back()")
       i.icon.icon-chevron-left
-    .history-control-home
+    .history-control-home(onclick="page.home()")
       i.icon.icon-home
   .app-info
     img.app-icon(src="./src/assets/icons/24.png")
@@ -12,8 +12,8 @@
       i.icon.icon-search.input-left
       input#searchbar(type="text" placeholder=lang.search.placeholder spellcheck="false")
       i.icon.icon-dismiss.input-right
-  .user-control
-    .user-action(tabindex="0")
+  .user-control(auto-close="open")
+    .user-action(keyborad="Alt")
       img.avatar(src=settings.userAvatar draggable="false")
     .user-menu-shell
       .user-menu

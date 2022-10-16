@@ -132,3 +132,10 @@
   background var(--block-bg)
   border-radius var(--border-radius)
   border var(--block-border)
+
+.page-item-cover-anima
+  position fixed
+  object-fit cover
+  border-radius var(--border-radius)
+  transition .2s height, .2s width, .2s top cubic-bezier(0, 0.5, 0.2, 1.2), .2s left, .1s opacity
+  z-index 10

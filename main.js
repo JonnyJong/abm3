@@ -7,7 +7,7 @@ const path = require('path')
 const pug = require('pug')
 const store = require('electron-store')
 const packageJson = require('./package.json')
-const build = 84
+const build = 85
 let win = null
 let startupScreen = null
 let db = null
@@ -231,7 +231,7 @@ const layout = (name, option)=>{
     markdown: (data)=>{
       return data
     },
-    getItems: (items, page)=>{
+    getItems: (items, page, pageFnName)=>{
       if (items && typeof items === 'object' && items.length === 0) {
         return ''
       }else{
@@ -241,14 +241,20 @@ const layout = (name, option)=>{
         if (!page) {
           page = 0
         }
-        items.reverse()
-        return layout('includes/item-list', {items, page})
+        if (!pageFnName) {
+          pageFnName = 'getPage'
+        }
+        return layout('includes/item-list', {items, page, pageFnName})
       }
     },
-    getPagination: (itemNum, page)=>{
-      return layout('includes/pagination', {pages: Math.ceil(itemNum / settings.get('itemPrePage')), page: page + 1})
+    getPagination: (itemNum, page, pageFnName)=>{
+      return layout('includes/pagination', {pages: Math.ceil(itemNum / settings.get('itemPrePage')), page: page + 1, pageFnName})
     },
     getItemList: (items, page)=>{
+      if (!items) {
+        items = db.get('items')
+      }
+      items.reverse()
       return layout('includes/generate-item-list', {items: items.slice(settings.get('itemPrePage') * page, settings.get('itemPrePage') * (page + 1))})
     },
   }, option)
@@ -702,15 +708,15 @@ const init = ()=>{
     return db.store.items
   })
   // 通过 id 获取番剧
-  ipcMain.handle('db:getItemById', (id) => {
+  ipcMain.handle('db:getItemById', (_,id) => {
     return db.store.items.find(item=>item.id === parseInt(id))
   })
   // 通过标签 id 获取番剧
-  ipcMain.handle('db:getItemsByTagId', (id) => {
+  ipcMain.handle('db:getItemsByTagId', (_,id) => {
     return getItemsByTagIdOrCategoryId(id, 'tags')
   })
   // 通过归类 id 获取番剧
-  ipcMain.handle('db:getItemsByCategoryId', (id) => {
+  ipcMain.handle('db:getItemsByCategoryId', (_,id) => {
     return getItemsByTagIdOrCategoryId(id, 'categorize')
   })
   // 获取所有标签
@@ -722,7 +728,7 @@ const init = ()=>{
     return db.store.categorize
   })
   // 获取页面
-  ipcMain.handle('db:getPage', (page) => {
+  ipcMain.handle('db:getPage', (_,page) => {
     page = parseInt(page)
     if (!page) {
       page = 0
@@ -730,7 +736,7 @@ const init = ()=>{
     return db.store.items.slice(settings.get('itemPrePage') * page, settings.get('itemPrePage') * (page + 1))
   })
   // 获取相关番剧
-  ipcMain.handle('db:getRelated',(id)=>{
+  ipcMain.handle('db:getRelated',(_,id)=>{
     let item = db.store.items.find(item=>item.id === parseInt(id))
     let hits = []
     let result = []
@@ -754,7 +760,7 @@ const init = ()=>{
     return result
   })
   // 搜索番剧
-  ipcMain.handle('db:search', (option) => {
+  ipcMain.handle('db:search', (_,option) => {
     option = Object.assign({
       keywords: [],
       includeTags: [],
@@ -1005,7 +1011,7 @@ const init = ()=>{
     }
   })
   // 设置番剧
-  ipcMain.handle('db:setItem', (id, data) => {
+  ipcMain.handle('db:setItem', (_,id, data) => {
     let items = db.get('items')
     let tags = db.get('tags')
     let categorize = db.get('categorize')
@@ -1119,7 +1125,7 @@ const init = ()=>{
     }
   })
   // 设置番剧喜爱或未喜爱
-  ipcMain.handle('db:setItemFavorite', (id, data) => {
+  ipcMain.handle('db:setItemFavorite', (_,id, data) => {
     let items = db.get('items')
     let favorites = db.get('favorites')
     let item = items.find(item=>item.id === id)
@@ -1139,7 +1145,7 @@ const init = ()=>{
     }
   })
   // 设置番剧分级
-  ipcMain.handle('db:setItemStars', (id, data) => {
+  ipcMain.handle('db:setItemStars', (_,id, data) => {
     let items = db.get('items')
     let item = items.find(item=>item.id === id)
     let stars = parseInt(data)
@@ -1155,23 +1161,23 @@ const init = ()=>{
     }
   })
   // 设置标签名称
-  ipcMain.handle('db:setTag', (id, name) => {
+  ipcMain.handle('db:setTag', (_,id, name) => {
     return setTagOrCategory(id, name, 'tags')
   })
   // 设置分类名称
-  ipcMain.handle('db:setCategory', (id, name) => {
+  ipcMain.handle('db:setCategory', (_,id, name) => {
     return setTagOrCategory(id, name, 'categorize')
   })
   // 合并标签
-  ipcMain.handle('db:mergeTag', (mainId, margedId)=>{
+  ipcMain.handle('db:mergeTag', (_,mainId, margedId)=>{
     return margeTagOrCategory(mainId, margedId, 'tags')
   })
   // 合并分类
-  ipcMain.handle('db:mergeCategory', (mainId, margedId)=>{
+  ipcMain.handle('db:mergeCategory', (_,mainId, margedId)=>{
     return margeTagOrCategory(mainId, margedId, 'categorize')
   })
   // 删除番剧
-  ipcMain.handle('db:removeItem', (id) => {
+  ipcMain.handle('db:removeItem', (_,id) => {
     let items = db.get('items')
     let itemIndex = items.findIndex(item=>item.id === id)
     let item = items[itemIndex]
@@ -1215,11 +1221,11 @@ const init = ()=>{
     }
   })
   // 移除标签
-  ipcMain.handle('db:removeTag', (id) => {
+  ipcMain.handle('db:removeTag', (_,id) => {
     return removeTagOrCategory(id, 'tags')
   })
   // 移除分类
-  ipcMain.handle('db:removeCategory', (id) => {
+  ipcMain.handle('db:removeCategory', (_,id) => {
     return removeTagOrCategory(id, 'categorize')
   })
   // 获取每周推荐
