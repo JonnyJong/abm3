@@ -71,6 +71,14 @@ contextBridge.exposeInMainWorld('darkMode', {
 })
 // 初始化
 contextBridge.exposeInMainWorld('init', init)
+// 项目页
+contextBridge.exposeInMainWorld('pageItemScroll',(ev)=>{
+  ev.target.querySelector('.page-item-header').style.setProperty('--top', ev.scrollTop + 'px')
+})
+// 打开外部链接
+contextBridge.exposeInMainWorld('openUrl', (url)=>{
+  ipcRenderer.send('open:url', url)
+})
 // TEST
 contextBridge.exposeInMainWorld('add',(data)=>{
   ipcRenderer.invoke('db:addItem', data).then(d=>console.log(d))

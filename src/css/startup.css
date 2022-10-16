@@ -43,6 +43,27 @@ img {
   animation: ui-loader-progress 2s linear infinite;
   border-radius: 6px;
 }
+.window-control-close {
+  width: 46px;
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
+  transition: 0.1s background;
+  position: fixed;
+  right: 0;
+  top: 0;
+  app-region: no-drag;
+  z-index: 100;
+}
+.window-control-close:hover {
+  background: #e11;
+}
+.window-control-close:active {
+  background: rgba(238,17,17,0.667);
+}
+.window-control-close i {
+  font-size: 13px;
+}
 @-moz-keyframes ui-loader-progress {
   0% {
     left: -10%;

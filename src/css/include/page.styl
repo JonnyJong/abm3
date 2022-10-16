@@ -8,6 +8,7 @@
 .page
   padding-top 50px
   overflow hidden scroll
+  pointer-events none
 .page-scroll
   height calc(100vh - 50px)
   width 14px
@@ -18,3 +19,5 @@
   z-index 1
   &:hover *
     width 6px
+.page-current
+  pointer-events all

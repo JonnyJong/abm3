@@ -50,3 +50,21 @@ img
   backdrop-filter invert(1)
   animation ui-loader-progress 2s linear infinite
   border-radius 6px
+
+.window-control-close
+  width 46px
+  height 32px
+  line-height 32px
+  text-align center
+  transition .1s background
+  position fixed
+  right 0
+  top 0
+  app-region no-drag
+  z-index 100
+  &:hover
+    background #e11
+  &:active
+    background #e11a
+  i
+    font-size 13px

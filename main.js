@@ -1,13 +1,13 @@
 'use strict'
 // 引入模块
-const { app, BrowserWindow, ipcMain, nativeTheme, systemPreferences } = require('electron')
+const { app, BrowserWindow, ipcMain, nativeTheme, systemPreferences, shell } = require('electron')
 const fs = require('fs')
 const https = require('https')
 const path = require('path')
 const pug = require('pug')
 const store = require('electron-store')
 const packageJson = require('./package.json')
-const build = 83
+const build = 84
 let win = null
 let startupScreen = null
 let db = null
@@ -194,6 +194,9 @@ const layout = (name, option)=>{
       accentColorWithAlpha: systemPreferences.getAccentColor(),
     },
     settings: settings.store(),
+    test:(...args)=>{
+      console.log(...args)
+    },
     getLangByKey: (key)=>{return locales.get(key)},
     getItemCoverHeader: (item)=>{
       let cover = null
@@ -214,9 +217,40 @@ const layout = (name, option)=>{
       }
       return {cover, header}
     },
-    test:(...args)=>{
-      console.log(...args)
-    }
+    getRealSrc: (src, type)=>{
+      switch (type) {
+        case 'header':
+          type = '/headers/'
+          break
+        case 'cover':
+          type = '/covers/'
+          break
+      }
+      return path.join(settings.get('dataPath'), type, src)
+    },
+    markdown: (data)=>{
+      return data
+    },
+    getItems: (items, page)=>{
+      if (items && typeof items === 'object' && items.length === 0) {
+        return ''
+      }else{
+        if (!items) {
+          items = db.get('items')
+        }
+        if (!page) {
+          page = 0
+        }
+        items.reverse()
+        return layout('includes/item-list', {items, page})
+      }
+    },
+    getPagination: (itemNum, page)=>{
+      return layout('includes/pagination', {pages: Math.ceil(itemNum / settings.get('itemPrePage')), page: page + 1})
+    },
+    getItemList: (items, page)=>{
+      return layout('includes/generate-item-list', {items: items.slice(settings.get('itemPrePage') * page, settings.get('itemPrePage') * (page + 1))})
+    },
   }, option)
   return pug.renderFile((`./src/layout/${name}.pug`), option)
 }
@@ -259,6 +293,9 @@ const readyInit = ()=>{
     if (!initialized) {
       app.quit()
     }
+  })
+  ipcMain.on('startup:close',()=>{
+    startupScreen.close()
   })
 }
 const init = ()=>{
@@ -562,7 +599,7 @@ const init = ()=>{
     nativeTheme.themeSource = 'system'
   })
   nativeTheme.addListener('updated', ()=>{
-    win.setBackgroundColor(nativeTheme.shouldUseDarkColors ? '#202020' : '#fff')
+    win.setBackgroundColor(nativeTheme.shouldUseDarkColors ? '#202020' : '#f3f3f3')
   })
 
   // 语言
@@ -1307,7 +1344,7 @@ const init = ()=>{
     resizable: true,
     fullscreenable: false,
     title: '番剧管理器',
-    backgroundColor: nativeTheme.shouldUseDarkColors ? '#202020' : '#fff',
+    backgroundColor: nativeTheme.shouldUseDarkColors ? '#202020' : '#f3f3f3',
     icon: './src/assets/icons/icon.ico',
     enableLargerThanScreen: false,
     webPreferences: {
@@ -1353,6 +1390,11 @@ const init = ()=>{
   })
   win.on('focus',()=>{
     win.webContents.send('window:isFocus', true)
+  })
+
+  // 打开外部链接
+  ipcMain.on('open:url',(_,url)=>{
+    shell.openExternal(url)
   })
 }
 

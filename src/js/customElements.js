@@ -223,6 +223,7 @@ class ScrollElement extends HTMLElement {
   #scrolltrack
   #scrollbox
   #target = null
+  #scrollEvent = null
   #dragListener = (ev)=>{
     this.#target.scrollTop = ev.y / (this.#scrolltrack.offsetHeight - this.#scrollbar.offsetHeight) * (this.#target.scrollHeight - this.#target.offsetHeight)
   }
@@ -234,6 +235,9 @@ class ScrollElement extends HTMLElement {
     }
     this.#scrollbar.style.height = this.#target.offsetHeight / this.#target.scrollHeight * this.#scrolltrack.offsetHeight + 'px'
     this.#scrollbar.style.top = this.#target.scrollTop / (this.#target.scrollHeight - this.#target.offsetHeight) * (this.#scrolltrack.offsetHeight - this.#scrollbar.offsetHeight) + 'px'
+    if (typeof this.#scrollEvent === 'function') {
+      this.#scrollEvent({scrollTop: this.#target.scrollTop, target: this.#target})
+    }
   }
   constructor() {
     super()
@@ -306,6 +310,10 @@ class ScrollElement extends HTMLElement {
     if (this.hasAttribute('target')) {
       this.#target = document.querySelector(this.getAttribute('target'))
     }
+    // 设置滚动事件
+    if (this.hasAttribute('event') && typeof window[this.getAttribute('event')] === 'function') {
+      this.#scrollEvent = window[this.getAttribute('event')]
+    }
     // 设置滚动条
     this.#scrollbox.addEventListener('wheel',(ev)=>{
       if (this.#target) {
@@ -352,6 +360,19 @@ class ScrollElement extends HTMLElement {
       this.#target.addEventListener('resize', this.#scrollListener)
     }
     return this.#target
+  }
+  // 获取事件
+  get event() {
+    return this.#scrollEvent
+  }
+  // 设置事件
+  set event(fn) {
+    if (typeof fn === 'function') {
+      this.#scrollEvent = fn
+    }else{
+      this.#scrollEvent = null
+    }
+    return this.#scrollEvent
   }
   // 移除时
   disconnectedCallback() {

@@ -30,3 +30,27 @@
     filter: blur(40px) brightness(1.2);
   }
 }
+@-moz-keyframes item-header {
+  0%, 20% {
+    transform: scale(1.1);
+    opacity: 0;
+  }
+}
+@-webkit-keyframes item-header {
+  0%, 20% {
+    transform: scale(1.1);
+    opacity: 0;
+  }
+}
+@-o-keyframes item-header {
+  0%, 20% {
+    transform: scale(1.1);
+    opacity: 0;
+  }
+}
+@keyframes item-header {
+  0%, 20% {
+    transform: scale(1.1);
+    opacity: 0;
+  }
+}

@@ -1,4 +1,4 @@
-.page.page-home
+.page.page-home.page-current
   ui-scroll(target=".page.page-home").page-scroll
   include ./recommendation.pug
   .home-library
@@ -18,4 +18,6 @@
       .progress(style="--p:0%")
     else
       .progress(style="--p:" + (db.finished.count / db.items.length * 100) + "%")
-    include ./item-list.pug
+    //- include ./item-list.pug
+    .item-list-container
+      !=getItems()

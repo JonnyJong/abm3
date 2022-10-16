@@ -10,6 +10,8 @@ html(lang=lang.current style="--theme-color: #" + system.accentColor + ';')
   body
     include includes/titlebar.pug
     .pages
-      include includes/home.pug
+      include includes/page-home.pug
+      .page.page-item
+        include includes/page-item.pug
     script(src="./src/js/customElements.js")
     script='window.init()'

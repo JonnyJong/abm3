@@ -1,0 +1,17 @@
+if pages > 1
+  .pagination
+    if page === 1
+      button.icon.icon-chevron-left.current(disabled)
+    else
+      button.icon.icon-chevron-left(onclick=pageFnName + "(1)")
+    - let current = 1
+    while current <= pages
+      if current === page
+        button.num.current(disabled)=current
+      else
+        button.num(onclick=pageFnName + "(" + current + ")")=current
+      - current++
+    if page === pages
+      button.icon.icon-chevron-right.current(disabled)
+    else
+      button.icon.icon-chevron-right(onclick=pageFnName + "(" + pages + ")")
