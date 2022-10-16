@@ -23,20 +23,20 @@ mixin pagination(page, pages, pageFnName)
   if pages > 1
     .pagination
       if page === 1
-        .icon.icon-chevron-left.current
+        button.icon.icon-chevron-left.current(disabled)
       else
-        .icon.icon-chevron-left(onclick=pageFnName + "(1)")
+        button.icon.icon-chevron-left(onclick=pageFnName + "(1)")
       - let current = 1
       while current <= pages
         if current === page
-          .num.current=current
+          button.num.current(disabled)=current
         else
-          .num(onclick=pageFnName + "(" + current + ")")=current
+          button.num(onclick=pageFnName + "(" + current + ")")=current
         - current++
       if page === pages
-        .icon.icon-chevron-right.current
+        button.icon.icon-chevron-right.current(disabled)
       else
-        .icon.icon-chevron-right(onclick=pageFnName + "(" + pages + ")")
+        button.icon.icon-chevron-right(onclick=pageFnName + "(" + pages + ")")
 //- 生成列表
 .item-list-container
   if gItems && gItems.length > 0

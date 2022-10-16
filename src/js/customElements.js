@@ -281,8 +281,9 @@ class ScrollElement extends HTMLElement {
     }
     .scrollbox:active,
     .scrollbox:hover{
-      background: #0004;
+      background: #0002;
       width: 12px;
+      backdrop-filter: blur(12px)
     }
     .hide{
       pointer-events: none;
