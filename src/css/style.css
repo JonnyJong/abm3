@@ -222,6 +222,61 @@ button:disabled {
   background: var(--theme-color);
   color: var(--theme-font-color);
 }
+.menu-group:not(:first-child),
+.menu-items {
+  position: relative;
+}
+.menu-group:not(:first-child):not(:empty),
+.menu-items:not(:empty) {
+  padding-top: 2px;
+}
+.menu-group:not(:first-child):not(:empty):before,
+.menu-items:not(:empty):before {
+  content: '';
+  height: 1px;
+  top: -2px;
+  width: 100%;
+  background: rgba(136,136,136,0.267);
+  display: block;
+  position: absolute;
+}
+.menu-items {
+  padding: 4px;
+  outline: 0;
+}
+.menu-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.menu-group:not(:last-child) {
+  padding-bottom: 6px;
+}
+.menu-item {
+  all: unset;
+  display: flex;
+  border-radius: var(--border-radius);
+  height: 29px;
+  align-items: center;
+}
+.menu-item i {
+  width: 29px;
+  flex: 0 0 auto;
+  text-align: center;
+}
+.menu-item:hover:not(:disabled),
+.menu-item:focus:not(:disabled) {
+  background: rgba(136,136,136,0.267);
+}
+.menu-item:active:not(:disabled) {
+  background: rgba(136,136,136,0.133);
+}
+.menu-no-hover .menu-item:hover:not(:disabled):not(:focus) {
+  background: rgba(136,136,136,0);
+}
+.menu-name {
+  width: calc(100% - 29px);
+}
 .item-list-container {
   display: flex;
   flex-direction: column;
@@ -765,52 +820,6 @@ body.blur .titlebar {
 .user-info .avatar {
   height: 48px;
   width: 48px;
-}
-.menu-group:not(:first-child),
-.menu-items {
-  position: relative;
-}
-.menu-group:not(:first-child):not(:empty),
-.menu-items:not(:empty) {
-  padding-top: 2px;
-}
-.menu-group:not(:first-child):not(:empty):before,
-.menu-items:not(:empty):before {
-  content: '';
-  height: 1px;
-  top: -2px;
-  width: 100%;
-  background: rgba(136,136,136,0.267);
-  display: block;
-  position: absolute;
-}
-.menu-items {
-  padding: 4px;
-}
-.menu-group {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.menu-group:not(:last-child) {
-  padding-bottom: 6px;
-}
-.menu-item {
-  display: flex;
-  border-radius: var(--border-radius);
-  height: 29px;
-  align-items: center;
-}
-.menu-item i {
-  width: 29px;
-  flex: 0 0 auto;
-  text-align: center;
-}
-.menu-item:hover {
-  background: rgba(136,136,136,0.267);
-}
-.menu-name {
-  width: calc(100% - 29px);
 }
 .user-control {
   app-region: no-drag;

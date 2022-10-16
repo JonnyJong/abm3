@@ -69,3 +69,46 @@ button
 ::selection
   background var(--theme-color)
   color var(--theme-font-color)
+
+.menu-group:not(:first-child)
+.menu-items
+  position relative
+  &:not(:empty)
+    padding-top 2px
+    &:before
+      content ''
+      height 1px
+      top -2px
+      width 100%
+      background #8884
+      display block
+      position absolute
+.menu-items
+  padding 4px
+  outline 0
+.menu-group
+  display flex
+  flex-direction column
+  gap 2px
+  &:not(:last-child)
+    padding-bottom 6px
+.menu-item
+  all unset
+  display flex
+  border-radius var(--border-radius)
+  height 29px
+  align-items center
+  i
+    width 29px
+    flex 0 0 auto
+    text-align center
+  &:hover:not(:disabled)
+  &:focus:not(:disabled)
+    background #8884
+  &:active:not(:disabled)
+    background #8882
+.menu-no-hover .menu-item
+  &:hover:not(:disabled):not(:focus)
+    background #8880
+.menu-name
+  width calc(100% - 29px)

@@ -86,14 +86,15 @@ const init = ()=>{
   // 用户控制
   document.querySelector('.user-action').addEventListener('click', ()=>{
     document.querySelector('.user-control').classList.toggle('open')
-  })
-  document.querySelector('.greet').innerHTML = greet()
-  // 搜索框
-  window.addEventListener('keyup',(ev)=>{
-    if (ev.key === '/' && !document.querySelector(':focus')) {
-      document.querySelector('#searchbar').focus()
+    if (document.querySelector('.user-control').classList.contains('open')) {
+      document.querySelector('.menu-items').focus()
+    }else{
+      if (document.querySelector(':focus')) {
+        document.querySelector(':focus').blur()
+      }
     }
   })
+  document.querySelector('.greet').innerHTML = greet()
   // 自动刷新
   ipcRenderer.on('db:img-ready',()=>{
     console.log('done')

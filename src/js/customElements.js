@@ -417,7 +417,7 @@ const keyborad = (()=>{
   windowEvent.add('keyup',(ev)=>{
     keyDown--
     if (lastKey === ev.key && keyDown === 0) {
-      document.querySelectorAll(`[keyborad="${ev.key}"]`).forEach(e=>e.click())
+      document.querySelectorAll(`[keyborad="${ev.key}"]`).forEach((e)=>e[e.getAttribute('keyborad-event')]())
     }
     if (keyDown < 1) {
       keyDown = 0
@@ -429,3 +429,43 @@ const keyborad = (()=>{
     lastKey = null
   })
 })()
+// 菜单
+class MenuElement extends HTMLDivElement {
+  constructor(){
+    super()
+    this.addEventListener('keydown',(ev)=>{
+      let now = this.querySelector((this.classList.contains('menu-no-hover') ? '' : '.menu-item:hover, ') + '.menu-item:focus')
+      let all = Array.apply(null, this.querySelectorAll('.menu-item'))
+      this.classList.add('menu-no-hover')
+      switch (ev.key) {
+        case 'ArrowDown':
+          if (now && all.length > 1) {
+            if (all.indexOf(now) !== all.length - 1) {
+              all[all.indexOf(now) + 1].focus()
+            }else{
+              all[0].focus()
+            }
+          }else if (all.length > 0) {
+            all[0].focus()
+          }
+          break
+        case 'ArrowUp':
+          if (now && all.length > 1) {
+            if (all.indexOf(now) !== 0) {
+              all[all.indexOf(now) - 1].focus()
+            }else{
+              all[all.length - 1].focus()
+            }
+          }else if (all.length > 0) {
+            all[all.length - 1].focus()
+          }
+          break
+      }
+    })
+    this.addEventListener('pointermove',()=>{
+      this.focus()
+      this.classList.remove('menu-no-hover')
+    })
+  }
+}
+customElements.define('ui-menu', MenuElement, {extends: 'div'})

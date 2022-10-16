@@ -89,40 +89,6 @@ body.blur .titlebar
   .avatar
     height 48px
     width 48px
-.menu-group:not(:first-child)
-.menu-items
-  position relative
-  &:not(:empty)
-    padding-top 2px
-    &:before
-      content ''
-      height 1px
-      top -2px
-      width 100%
-      background #8884
-      display block
-      position absolute
-.menu-items
-  padding 4px
-.menu-group
-  display flex
-  flex-direction column
-  gap 2px
-  &:not(:last-child)
-    padding-bottom 6px
-.menu-item
-  display flex
-  border-radius var(--border-radius)
-  height 29px
-  align-items center
-  i
-    width 29px
-    flex 0 0 auto
-    text-align center
-  &:hover
-    background #8884
-.menu-name
-  width calc(100% - 29px)
 .user-control
   app-region no-drag
   position relative

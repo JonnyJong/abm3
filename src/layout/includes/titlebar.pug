@@ -10,10 +10,10 @@
   .searchbar
     .input
       i.icon.icon-search.input-left
-      input#searchbar(type="text" placeholder=lang.search.placeholder spellcheck="false")
+      input#searchbar(type="text" placeholder=lang.search.placeholder spellcheck="false" keyborad="/" keyborad-event="focus")
       i.icon.icon-dismiss.input-right
   .user-control(auto-close="open")
-    .user-action(keyborad="Alt")
+    .user-action(keyborad="Alt" keyborad-event="click")
       img.avatar(src=settings.userAvatar draggable="false")
     .user-menu-shell
       .user-menu
@@ -22,11 +22,11 @@
           div
             .greet
             .username(src=settings.username)
-        .menu-items
+        .menu-items.menu-no-hover(is="ui-menu" tabindex="-1")
           each items in app.config.userMenu
             .menu-group
               each item in items.items
-                .menu-item(onclick=item.onclick)
+                button.menu-item(onclick=item.onclick tabindex="-1")
                   i(class=item.icon)
                   .menu-name=getLangByKey(item.name)
   .window-control
