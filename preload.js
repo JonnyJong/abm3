@@ -15,21 +15,92 @@ ipcRenderer.invoke('db:getWeeklyRecommend').then(item=>{
 // 历史记录
 const history = (()=>{
   let history = [{page: 'home'}]
-  const push = (page, option)=>{
-    history.push({page, option})
-    setNavbar()
-  }
+  let lock = false
   const back = ()=>{
-    history.pop()
-    console.log(history[history.length - 1])
-    setNavbar()
+    if (lock) return false
+    if (history.length > 1) {
+      lock = true
+      history.pop()
+      if (history[history.length - 1].page === 'item') {
+        openItem(history[history.length - 1].option)
+      }else{
+        pageAnima()
+      }
+      setNavbar()
+    }
   }
   const home = ()=>{
+    if (lock) return false
+    lock = true
     history = [{page: 'home'}]
+    pageAnima()
     setNavbar()
   }
-  const open = (page, option)=>{
-    push({page, option})
+  const open = (page, option, el)=>{
+    if (lock || !document.querySelector(`.page-${page}`)) return false
+    lock = true
+    history.push({page, option})
+    setNavbar()
+    if (page === 'item' && el && typeof el === 'object' && el instanceof HTMLElement) {
+      openItem(option, el)
+    }else{
+      pageAnima()
+    }
+  }
+  const openItem = (id, el)=>{
+    ipcRenderer.invoke('db:getItemById', id).then(item=>{
+      ipcRenderer.invoke('layout:get', 'includes/page-item', {item}).then(data=>{
+        document.querySelector('.page-item').innerHTML = data
+        if (el && typeof el === 'object' && el instanceof HTMLElement) {
+          let from = el.querySelector('img').getBoundingClientRect()
+          let to = document.querySelector('.page-item .page-item-info .cover img').getBoundingClientRect()
+          let img = el.querySelector('img').cloneNode()
+          img.className = 'page-item-cover-anima'
+          img.style.top = from.top + 'px'
+          img.style.left = from.left + 'px'
+          img.style.height = from.height + 'px'
+          img.style.width = from.width + 'px'
+          img.style.opacity = 0
+          document.body.appendChild(img)
+          setTimeout(() => {
+            document.querySelector('.page-current').classList.add('page-hidding')
+            document.querySelector('.page-current').classList.remove('page-current')
+            img.style.opacity = 1
+          }, 10)
+          setTimeout(()=>{
+            document.querySelector('.page-hidding').classList.remove('page-hidding')
+            img.style.top = to.top + document.querySelector('.page-item').scrollTop + 'px'
+            img.style.left = to.left + 'px'
+            img.style.height = to.height + 'px'
+            img.style.width = to.width + 'px'
+          }, 110)
+          setTimeout(() => {
+            document.querySelector('.page-item').scrollTop = 0
+            document.querySelector('.page-item').classList.add('page-current')
+            img.style.top = document.querySelector('.page-item-header').offsetHeight - 100 + 'px'
+            img.style.transition = '.1s top linear, .1s opacity linear'
+          }, 310)
+          setTimeout(() => {
+            img.style.opacity = 0
+          }, 410)
+          setTimeout(() => {
+            img.remove()
+            lock = false
+          }, 470)
+        }else{
+          pageAnima()
+        }
+      })
+    })
+  }
+  const pageAnima = ()=>{
+    document.querySelector('.page-current').classList.add('page-hidding')
+    document.querySelector('.page-current').classList.remove('page-current')
+    setTimeout(()=>{
+      document.querySelector('.page-hidding').classList.remove('page-hidding')
+      document.querySelector(`.page-${history[history.length - 1].page}`).classList.add('page-current')
+      lock = false
+    }, 100)
   }
   const setNavbar = ()=>{
     if (history.length === 2) {
@@ -45,7 +116,6 @@ const history = (()=>{
   }
   return{
     open: open,
-    push: push,
     back: back,
     home: home,
   }
@@ -132,55 +202,7 @@ contextBridge.exposeInMainWorld('openUrl', (url)=>{
 })
 // 打开项目页
 contextBridge.exposeInMainWorld('getItem', (id, el)=>{
-  ipcRenderer.invoke('db:getItemById', id).then(item=>{
-    ipcRenderer.invoke('layout:get', 'includes/page-item', {item}).then(data=>{
-      document.querySelector('.page-item').innerHTML = data
-      history.push('item', id)
-      if (el) {
-        let from = el.querySelector('img').getBoundingClientRect()
-        let to = document.querySelector('.page-item .page-item-info .cover img').getBoundingClientRect()
-        let img = el.querySelector('img').cloneNode()
-        img.className = 'page-item-cover-anima'
-        img.style.top = from.top + 'px'
-        img.style.left = from.left + 'px'
-        img.style.height = from.height + 'px'
-        img.style.width = from.width + 'px'
-        img.style.opacity = 0
-        document.body.appendChild(img)
-        setTimeout(() => {
-          document.querySelector('.page-current').classList.add('page-hidding')
-          document.querySelector('.page-current').classList.remove('page-current')
-          img.style.opacity = 1
-        }, 10)
-        setTimeout(()=>{
-          document.querySelector('.page-hidding').classList.remove('page-hidding')
-          img.style.top = to.top + document.querySelector('.page-item').scrollTop + 'px'
-          img.style.left = to.left + 'px'
-          img.style.height = to.height + 'px'
-          img.style.width = to.width + 'px'
-        }, 110)
-        setTimeout(() => {
-          document.querySelector('.page-item').scrollTop = 0
-          document.querySelector('.page-item').classList.add('page-current')
-          img.style.top = document.querySelector('.page-item-header').offsetHeight - 100 + 'px'
-          img.style.transition = '.1s top linear, .1s opacity linear'
-        }, 310)
-        setTimeout(() => {
-          img.style.opacity = 0
-        }, 410)
-        setTimeout(() => {
-          img.remove()
-        }, 470)
-      }else{
-        document.querySelector('.page-current').classList.add('page-hidding')
-        document.querySelector('.page-current').classList.remove('page-current')
-        setTimeout(()=>{
-          document.querySelector('.page-hidding').classList.remove('page-hidding')
-          document.querySelector('.page-item').classList.add('page-current')
-        }, 100)
-      }
-    })
-  })
+  history.open('item', id, el)
 })
 // 获取库分页
 contextBridge.exposeInMainWorld('getPage',(page)=>{
