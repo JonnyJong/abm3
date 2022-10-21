@@ -1,13 +1,14 @@
 'use strict'
 // 引入模块
 const { app, BrowserWindow, ipcMain, nativeTheme, systemPreferences, shell } = require('electron')
+const { Worker } = require('worker_threads')
 const fs = require('fs')
 const https = require('https')
 const path = require('path')
 const pug = require('pug')
 const store = require('electron-store')
-const packageJson = require('./package.json')
-const build = 87
+const { version } = require('./package.json')
+const build = 88
 let win = null
 let startupScreen = null
 let db = null
@@ -185,7 +186,7 @@ const layout = (name, option)=>{
   option = Object.assign({
     lang: locales.get(),
     app: {
-      version: packageJson.version,
+      version: version,
       build: build,
       config: CONFIG,
     },

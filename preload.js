@@ -41,10 +41,10 @@ const history = (()=>{
     lock = true
     history.push({page, option})
     setNavbar()
-    if (page === 'item' && el && typeof el === 'object' && el instanceof HTMLElement) {
+    if (page === 'item') {
       openItem(option, el)
     }else{
-      pageAnima()
+      pageAnima(true)
     }
   }
   const openItem = (id, el)=>{
@@ -79,24 +79,27 @@ const history = (()=>{
             document.querySelector('.page-item').classList.add('page-current')
             img.style.top = document.querySelector('.page-item-header').offsetHeight - 100 + 'px'
             img.style.transition = '.1s top linear, .1s opacity linear'
+            lock = false
           }, 310)
           setTimeout(() => {
             img.style.opacity = 0
           }, 410)
           setTimeout(() => {
             img.remove()
-            lock = false
           }, 470)
         }else{
-          pageAnima()
+          pageAnima(true)
         }
       })
     })
   }
-  const pageAnima = ()=>{
+  const pageAnima = (top)=>{
     document.querySelector('.page-current').classList.add('page-hidding')
     document.querySelector('.page-current').classList.remove('page-current')
     setTimeout(()=>{
+      if (top) {
+        document.querySelector(`.page-${history[history.length - 1].page}`).scrollTop = 0
+      }
       document.querySelector('.page-hidding').classList.remove('page-hidding')
       document.querySelector(`.page-${history[history.length - 1].page}`).classList.add('page-current')
       lock = false
