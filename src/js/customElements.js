@@ -274,9 +274,9 @@ class ScrollElement extends HTMLElement {
     .scrollbar::before{
       content: '';
       position: absolute;
-      width: calc(100% + 6px);
+      width: calc(100% + 8px);
       height: calc(100% + 6px);
-      left: -3px;
+      left: -4px;
       top: -3px;
     }
     .scrollbar:active{
@@ -290,6 +290,14 @@ class ScrollElement extends HTMLElement {
       margin: 0 1px;
       border-radius: 100vw;
       transition: .1s width, .1s background, .1s opacity;
+    }
+    .scrollbox::before{
+      content: '';
+      position: absolute;
+      width: calc(100% + 1px);
+      height: 100%;
+      left: 0;
+      top: 0;
     }
     .scrollbox:active,
     .scrollbox:hover{
