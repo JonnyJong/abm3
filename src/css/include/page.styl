@@ -13,6 +13,8 @@
   transition .2s opacity, .2s transform
   &:not(.page-current)
     transform translateY(30px)
+  &:not(.page-home):not(.page-item):not(.page-edit)
+    padding 50px 50px 0
 .page-scroll
   height calc(100vh - 50px)
   width 14px

@@ -8,7 +8,7 @@ const path = require('path')
 const pug = require('pug')
 const store = require('electron-store')
 const { version } = require('./package.json')
-const build = 89
+const build = 90
 let win = null
 let startupScreen = null
 let db = null
@@ -139,7 +139,7 @@ const CONFIG = {
         {
           name: 'user.menu.try_luck',
           icon: 'icon icon-emoji-hand',
-          onclick: '',
+          onclick: 'getRandomItem()',
         }
       ],
     },
@@ -148,7 +148,7 @@ const CONFIG = {
         {
           name: 'user.menu.add_item',
           icon: 'icon icon-add',
-          onclick: '',
+          onclick: 'page.open("add")',
         },
       ]
     },
@@ -157,7 +157,7 @@ const CONFIG = {
         {
           name: 'user.menu.edit_item',
           icon: 'icon icon-edit',
-          onclick: '',
+          onclick: 'page.open("edit")',
         },
         {
           name: 'user.menu.delete_item',
@@ -175,6 +175,7 @@ const CONFIG = {
         {
           name: 'user.menu.about',
           icon: 'icon icon-info',
+          onclick: 'page.open("about")',
         },
       ]
     }
@@ -259,7 +260,12 @@ const layout = (name, option)=>{
       return layout('includes/generate-item-list', {items: items.slice(settings.get('itemPrePage') * page, settings.get('itemPrePage') * (page + 1))})
     },
   }, option)
-  return pug.renderFile((`./src/layout/${name}.pug`), option)
+  try {
+    return pug.renderFile((`./src/layout/${name}.pug`), option)
+  } catch (error) {
+    console.error(error)
+    return ''
+  }
 }
 
 // 初始化
@@ -719,6 +725,10 @@ const init = ()=>{
   // 通过归类 id 获取番剧
   ipcMain.handle('db:getItemsByCategoryId', (_,id) => {
     return getItemsByTagIdOrCategoryId(id, 'categorize')
+  })
+  // 随机获取番剧
+  ipcMain.handle('db:getItemIdByRandom',()=>{
+    return db.store.items[Math.floor(Math.random() * db.store.items.length)].id
   })
   // 获取所有标签
   ipcMain.handle('db:getAllTags', () => {
@@ -1402,6 +1412,12 @@ const init = ()=>{
   // 打开外部链接
   ipcMain.on('open:url',(_,url)=>{
     shell.openExternal(url)
+  })
+
+  // TEST
+  // 监听 css 变更
+  require('fs').watch('./src/css/style.css', ()=>{
+    win.webContents.send('test:css')
   })
 }
 

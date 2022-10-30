@@ -1,0 +1,47 @@
+.page-edit
+  &.page
+    padding 0
+    overflow hidden
+  .page-scroll
+    height calc(100vh - 90px)
+    top 90px
+  ui-tab
+    height 100vh
+    width 100vw
+    &:before
+      content attr(tip)
+      position fixed
+      height 100vh
+      width 100vw
+      top 0px
+      left 0px
+      pointer-events none
+      line-height 100vh
+      text-align center
+      opacity 0
+  ui-tab-bar
+    position fixed
+    top 50px
+    padding 0 50px
+    backdrop-filter var(--blur-filter)
+    background var(--titlebar-bg)
+    z-index 1
+    display flex
+    align-items center
+    height 40px
+    &:before
+      left calc(var(--left, 0px) + 20px)
+  ui-tab-item
+    &:active
+      transform scale(.95)
+  ui-tab-content
+    padding 90px 50px 0
+    position fixed
+    width 100%
+    height 100%
+    padding-top 90px
+    overflow scroll
+    top 0px
+  .tab-empty
+    &:before
+      opacity .6

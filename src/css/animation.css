@@ -54,3 +54,43 @@
     opacity: 0;
   }
 }
+@-moz-keyframes notice {
+  from {
+    width: 100%;
+  }
+}
+@-webkit-keyframes notice {
+  from {
+    width: 100%;
+  }
+}
+@-o-keyframes notice {
+  from {
+    width: 100%;
+  }
+}
+@keyframes notice {
+  from {
+    width: 100%;
+  }
+}
+@-moz-keyframes notice-show {
+  from {
+    opacity: 0;
+  }
+}
+@-webkit-keyframes notice-show {
+  from {
+    opacity: 0;
+  }
+}
+@-o-keyframes notice-show {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes notice-show {
+  from {
+    opacity: 0;
+  }
+}

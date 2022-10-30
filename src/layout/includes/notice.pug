@@ -1,0 +1,14 @@
+.title
+  case notice.type
+    when 'info'
+      .icon.icon-info
+      div=lang.notice.info
+    when 'warn'
+      .icon.icon-warning
+      div=lang.notice.warn
+    when 'error'
+      .icon.icon-warning
+      div=lang.notice.error
+.content
+  !=notice.value
+.prog

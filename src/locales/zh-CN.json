@@ -19,8 +19,8 @@
     "menu": {
       "try_luck": "试试手气",
       "add_item": "添加入库",
-      "edit_item": "编辑此番剧",
-      "delete_item": "删除此番剧",
+      "edit_item": "编辑番剧",
+      "delete_item": "删除番剧",
       "settings": "设置",
       "about": "关于"
     }
@@ -37,5 +37,37 @@
     "detail_between_total_and_finish": "部番剧，看完了",
     "detail_between_finish_and_percent": "部番剧，占",
     "detail_after_percent": ""
+  },
+  "page_about": {
+    "about": "关于",
+    "detail": "详细信息",
+    "version": "版本号：",
+    "source_code": "源代码：",
+    "build": "build："
+  },
+  "item_edit": {
+    "now_editing_before": "正在编辑《",
+    "now_editing_after": "》",
+    "add": "添加番剧",
+    "basic_info": "基本信息",
+    "title": "标题",
+    "tags": "标签",
+    "categorize": "分类",
+    "content": "内容",
+    "season_info": "剧集",
+    "season_title": "季标题",
+    "header": "页眉图像",
+    "cover": "封面",
+    "total_sets": "总集数",
+    "finished": "已看集数",
+    "link_url": "链接",
+    "link_name": "名称",
+    "nothing_editing_tip": "当前没有正在编辑的番剧。打开任意一部番剧，然后再点击“编辑番剧”即可编辑。"
+  },
+  "notice": {
+    "info": "信息",
+    "warn": "警告",
+    "error": "错误",
+    "edit_tab_too_much": "开启过多的番剧编辑标签页会导致卡顿！"
   }
 }

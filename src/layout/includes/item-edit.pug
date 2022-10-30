@@ -1,0 +1,21 @@
+include ./item-mod.pug
+.item-edit(data-id=item.id)
+  .flex-row
+    h2=lang.item_edit.basic_info
+    button.flex-auto.icon.icon-checkmark(onclick="editUI(this.parentNode.parentNode,'confirm')")
+    button.flex-auto.icon.icon-arrow-reset(onclick="editUI(this.parentNode.parentNode,'reset')")
+  input#item-title(placeholder=lang.item_edit.title value=item.title)
+  .flex-row.flex-stretch
+    ui-array#item-tags(no-repeat placeholder=lang.item_edit.tags)
+      each tag in item.tags
+        .array-item=tag
+    ui-array#item-categorize(no-repeat placeholder=lang.item_edit.categorize)
+      each category in item.categorize
+        .array-item=category
+  h2=lang.item_edit.content
+  textarea#item-content(value=item.content)
+  h2=lang.item_edit.season_info
+  ui-sort.flex-row.item-edit-seasons(row cell="2" gap="8")
+    each season in item.seasons
+      +item-season(season)
+    ui-sort-item.icon.icon-add.item-edit-season(no-sort onclick="editUI(this,'addSeason')")

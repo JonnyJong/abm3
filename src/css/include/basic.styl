@@ -1,27 +1,30 @@
 .icon
   font-size 16px
 
+input
+textarea
+  border var(--input-border)
+  border-bottom var(--input-border-bottom)
+  background var(--input-bg)
+  height 36px
+  border-radius var(--border-radius)
+  width 100%
+  padding 0 10px
+  color var(--font-color)
+  &::placeholder
+    color #cfcfcf
+  &:hover
+    background var(--input-bg-hover)
+  &:focus
+    background var(--input-bg-focus)
+    border-bottom var(--input-border-bottom-focus)
+    outline 0
+    &::placeholder
+      color #969696
 .input
   position relative
   input
-    border var(--input-border)
-    border-bottom var(--input-border-bottom)
-    background var(--input-bg)
-    height 36px
-    border-radius var(--border-radius)
-    width 100%
     padding 0 36px
-    color var(--font-color)
-    &::placeholder
-      color #cfcfcf
-    &:hover
-      background var(--input-bg-hover)
-    &:focus
-      background var(--input-bg-focus)
-      border-bottom var(--input-border-bottom-focus)
-      outline 0
-      &::placeholder
-        color #969696
   .input-left
   .input-right
     position absolute
@@ -40,6 +43,7 @@
     left 0
   .input-right
     right 0
+.array-item
 button
   height 32px
   background var(--button-bg)
@@ -112,3 +116,97 @@ button
     background #8880
 .menu-name
   width calc(100% - 29px)
+
+a
+  color var(--theme-color)
+  &:hover
+    text-decoration 0
+
+ui-array
+  display flex
+  flex-wrap wrap
+  gap 6px
+  // input
+.array-item
+  line-height 1.2
+  padding 8px 10px
+
+ui-sort
+  position relative
+  display block
+ui-sort-item
+  position absolute
+  display block
+  &[sorting]
+    transition none
+    z-index 1
+    ui-sort-grab
+      cursor grabbing
+  &[placeholder]
+    opacity .1
+  transition .2s top, .2s left
+ui-sort-grab
+  cursor grab
+  display block
+
+.flex-row
+  display flex
+  gap 8px
+  width 100%
+  align-items center
+  &>*
+    flex auto
+.flex-auto
+  flex 0 0 auto
+.flex-right
+  flex-direction row-reverse
+.flex-stretch
+  align-items stretch
+
+ui-tab
+  display block
+  height 100%
+  width 100%
+ui-tab-bar
+  width 100%
+  display block
+  position relative
+  overflow auto hidden
+  &:before
+    content ''
+    position absolute
+    display block
+    height 4px
+    width var(--width, 0px)
+    left var(--left, 0px)
+    top 34px
+    border-radius var(--border-radius)
+    background var(--theme-color)
+    transition .2s width cubic-bezier(1, 0, 0, 1), .2s left cubic-bezier(1, 0, 0, 1)
+    z-index 1
+ui-tab-item
+  width max-content
+  display flex
+  height 32px
+  align-items center
+  .info
+    padding 0 10px
+  .close
+    @extend button
+    height 32px
+    width 32px
+    text-align center
+    line-height 32px
+    padding 0
+    background none
+    border none
+  &:hover
+    background var(--button-bg-hover)
+ui-tab-content
+  display block
+  background var(--bg)
+  transition .1s .1s opacity
+  &:not(.ui-tab-current)
+    pointer-events none
+    opacity 0
+    transition .1s opacity
