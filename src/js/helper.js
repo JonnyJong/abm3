@@ -27,10 +27,3 @@ const editUI = (e,type)=>{
       break
   }
 }
-DOMObserver.on(()=>{
-  if (document.querySelector('.page-edit ui-tab-content')) {
-    document.querySelector('.page-edit ui-tab').classList.remove('tab-empty')
-  }else{
-    document.querySelector('.page-edit ui-tab').classList.add('tab-empty')
-  }
-})

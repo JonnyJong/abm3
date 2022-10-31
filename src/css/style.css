@@ -512,6 +512,9 @@ ui-tab-content:not(.ui-tab-current) {
 .edit-item-link {
   min-height: 34px;
 }
+.edit-item-link>* {
+  width: calc(50vw - 106px);
+}
 .item-edit-grab-link {
   width: 16px;
   height: 28px;

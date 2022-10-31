@@ -52,18 +52,21 @@ const windowEvent = new class{
     }
   }
 }
-// DOM 突变管理
-const DOMObserver = new class{
+// DOM 突变事件
+const ObserverEvent = new class{
   #observer
-  #missions = []
-  #active = ()=>{
-    this.#missions.forEach(m=>{
-      setTimeout(() => {
-        m()
-      }, 0)
+  #event
+  #active = (mutationList)=>{
+    mutationList.forEach(({target})=>{
+      target.dispatchEvent(this.#event)
     })
   }
-  constructor(){
+  constructor() {
+    this.#event = new Event('observer',{
+      bubbles: true,
+      cancelable: false,
+      composed: true,
+    })
     this.#observer = new MutationObserver(this.#active)
     this.#observer.observe(document.body, {
       attributes: true,
@@ -71,25 +74,6 @@ const DOMObserver = new class{
       subtree: true,
       characterData: true,
     })
-  }
-  on(fn){
-    if (typeof fn === 'function') {
-      if (!this.#missions.includes(fn)) {
-        this.#missions.push(fn)
-      }
-      return fn
-    }
-    return null
-  }
-  off(fn){
-    if (typeof fn === 'function') {
-      let i = this.#missions.findIndex(m=>m === fn)
-      if (i > -1) {
-        this.#missions.splice(i, 1)
-      }
-      return fn
-    }
-    return null
   }
 }
 // 获取元素
@@ -448,6 +432,7 @@ class ScrollElement extends HTMLElement {
       width: 100%;
       background: #0008;
       border-radius: 100vw;
+      transition: .1s height, .05s top;
     }
     .scrollbar::before{
       content: '';
@@ -459,6 +444,7 @@ class ScrollElement extends HTMLElement {
     }
     .scrollbar:active{
       background: #000d;
+      transition: .1s height;
     }
     .scrollbox{
       right: 0px;
@@ -524,10 +510,11 @@ class ScrollElement extends HTMLElement {
         this.#target.scrollTop = this.#scrollTop
       }
     })
+    windowEvent.add('resize', this.#scrollListener)
     dragEvent.add({target: this.#scrollbar, parent: this.#scrolltrack, draging: this.#dragListener})
     if (this.#target) {
       this.#target.addEventListener('scroll', this.#scrollListener)
-      this.#target.addEventListener('resize', this.#scrollListener)
+      this.#target.addEventListener('observer', this.#scrollListener)
       this.#target.addEventListener('wheel', this.#wheel)
       this.#scrollListener()
     }
@@ -547,7 +534,7 @@ class ScrollElement extends HTMLElement {
   set target(data) {
     if (this.#target) {
       this.#target.removeEventListener('scroll', this.#scrollListener)
-      this.#target.removeEventListener('resize', this.#scrollListener)
+      this.#target.removeEventListener('observer', this.#scrollListener)
       this.#target.removeEventListener('wheel', this.#wheel)
     }
     if (data instanceof HTMLElement) {
@@ -559,7 +546,7 @@ class ScrollElement extends HTMLElement {
     }
     if (this.#target) {
       this.#target.addEventListener('scroll', this.#scrollListener)
-      this.#target.addEventListener('resize', this.#scrollListener)
+      this.#target.addEventListener('observer', this.#scrollListener)
       this.#target.addEventListener('wheel', this.#wheel)
     }
     return this.#target
@@ -580,9 +567,10 @@ class ScrollElement extends HTMLElement {
   // 移除时
   disconnectedCallback() {
     dragEvent.remove(this.#scrollbar)
+    windowEvent.remove('resize', this.#scrollListener)
     if (this.hasAttribute('target')) {
       this.#target.removeEventListener('scroll', this.#scrollListener)
-      this.#target.removeEventListener('resize', this.#scrollListener)
+      this.#target.removeEventListener('observer', this.#scrollListener)
       this.#target.removeEventListener('wheel', this.#wheel)
     }
   }
@@ -800,7 +788,6 @@ class ArrayElement extends HTMLElement {
   }
 }
 customElements.define('ui-array', ArrayElement)
-
 // 排序
 class SortElement extends HTMLElement {
   static get observedAttributes() {return ['style'] }
@@ -869,7 +856,6 @@ class SortElement extends HTMLElement {
       this.style.width = 0
     }
   }
-  // #observer
   constructor() {
     super()
     this.#row = this.hasAttribute('row')
@@ -884,7 +870,8 @@ class SortElement extends HTMLElement {
       }
     }
     this.#sort()
-    DOMObserver.on(this.sort)
+    this.addEventListener('observer', this.sort)
+    windowEvent.add('resize', this.#sort)
   }
   attributeChangedCallback(){
     this.#sort()
@@ -937,18 +924,17 @@ class SortElement extends HTMLElement {
     return this.#gap
   }
   disconnectedCallback(){
-    DOMObserver.off(this.sort)
+    this.removeEventListener('observer', this.#sort)
+    windowEvent.remove('resize', this.#sort)
   }
   sort = ()=>{
     return this.#sort()
   }
   connectedCallback(){
     this.sort()
-    DOMObserver.on(this.sort)
   }
   adoptedCallback(){
     this.sort()
-    DOMObserver.on(this.sort)
   }
 }
 customElements.define('ui-sort', SortElement)
@@ -1054,6 +1040,7 @@ class TabElement extends HTMLElement {
       item.querySelector('.info').click()
     }
     this.#add.innerHTML = ''
+    this.classList.remove('tab-empty')
   }
   #click = (ev)=>{
     if (ev.target.parentNode !== this.#bar.querySelector('.ui-tab-current')) {
@@ -1079,6 +1066,7 @@ class TabElement extends HTMLElement {
     }else{
       setTimeout(() => {
         this.style.setProperty('--width', '0px')
+        this.classList.add('tab-empty')
       }, 100)
     }
     content.classList.remove('ui-tab-current')
@@ -1092,10 +1080,10 @@ class TabElement extends HTMLElement {
     this.#add = document.createElement('ui-tab-add')
     this.append(this.#bar)
     this.append(this.#add)
-    DOMObserver.on(this.#addTab)
+    this.#add.addEventListener('observer', this.#addTab)
   }
   disconnectedCallback(){
-    DOMObserver.off(this.#addTab)
+    this.#add.addEventListener('observer', this.#addTab)
   }
 }
 customElements.define('ui-tab',TabElement)

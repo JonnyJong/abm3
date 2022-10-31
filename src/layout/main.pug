@@ -15,7 +15,7 @@ html(lang=lang.current style="--theme-color: #" + system.accentColor + ';')
         include includes/page-item.pug
       .page.page-edit
         //- ui-scroll(target=".page.page-edit").page-scroll
-        ui-tab(tip=lang.item_edit.nothing_editing_tip)
+        ui-tab.tab-empty(tip=lang.item_edit.nothing_editing_tip)
     ui-sort.notices(gap="0 10")
     script(src="./src/js/customElements.js")
     script(src="./src/js/helper.js")
