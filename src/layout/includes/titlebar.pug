@@ -1,4 +1,4 @@
-.titlebar
+.titlebar(no-observer)
   .history-control
     .history-control-back(onclick="page.back()")
       i.icon.icon-chevron-left
@@ -12,7 +12,7 @@
       i.icon.icon-search.input-left
       input#searchbar(type="text" placeholder=lang.search.placeholder spellcheck="false" keyborad="/" keyborad-event="focus")
       i.icon.icon-dismiss.input-right
-  .user-control(auto-close="menu-open")
+  .user-control(auto-close="menu-open" no-observer)
     .user-action(keyborad="Alt" keyborad-event="click")
       img.avatar(src=settings.userAvatar draggable="false")
     .user-menu-shell
@@ -20,9 +20,9 @@
         .user-info
           img.avatar(src=settings.userAvatar draggable="false")
           div
-            .greet
+            .greet(no-observer)
             .username(src=settings.username)
-        .menu-items.menu-no-hover(is="ui-menu" tabindex="-1" menu-toggle=".user-control")
+        .menu-items.menu-no-hover(is="ui-menu" tabindex="-1" menu-toggle=".user-control" no-observer)
           each items in app.config.userMenu
             .menu-group
               each item in items.items

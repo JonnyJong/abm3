@@ -137,6 +137,7 @@ const history = (()=>{
           let to = document.querySelector('.page-item .page-item-info .cover img').getBoundingClientRect()
           let img = el.querySelector('img').cloneNode()
           img.className = 'page-item-cover-anima'
+          img.setAttribute('no-observer','')
           img.style.top = from.top + 'px'
           img.style.left = from.left + 'px'
           img.style.height = from.height + 'px'

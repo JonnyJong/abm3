@@ -1,13 +1,13 @@
 if item
   - let defaultImg = getItemCoverHeader(item)
   ui-scroll(target=".page.page-item" event="pageItemScroll").page-scroll
-  .page-item-header
+  .page-item-header(no-observer)
     - var className = 'show'
     each season in item.seasons
       if season.header
-        img(class=className src=getRealSrc(season.header, 'header') draggable="false")
+        img(class=className src=getRealSrc(season.header, 'header') draggable="false" no-observer)
       else
-        img(class=className src=defaultImg.header draggable="false")
+        img(class=className src=defaultImg.header draggable="false" no-observer)
       - className = ''
   .page-item-info
     .cover

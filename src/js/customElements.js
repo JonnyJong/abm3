@@ -58,6 +58,7 @@ const ObserverEvent = new class{
   #event
   #active = (mutationList)=>{
     mutationList.forEach(({target})=>{
+      if (target.hasAttribute('no-observer')) return
       target.dispatchEvent(this.#event)
     })
   }
@@ -380,10 +381,7 @@ class ScrollElement extends HTMLElement {
     this.#target.style.scrollBehavior = ''
     this.#target.scrollTop = ev.endY / (this.#scrolltrack.offsetHeight - this.#scrollbar.offsetHeight) * (this.#target.scrollHeight - this.#target.offsetHeight)
   }
-  #scrollListener = (ev)=>{
-    /* setTimeout(()=>{
-      windowEvent.fire('ui-scroll', ev)
-    },5) */
+  #scrollListener = ()=>{
     if (this.#target.offsetHeight === this.#target.scrollHeight) {
       this.#scrollbox.classList.add('hide')
     }else{
@@ -942,16 +940,23 @@ class SortGrabElement extends HTMLElement {
   #clone
   #sortItem
   #sort
-  #cooling = null
-  #cooler
+  #timeout
   #dragstart = ()=>{
     this.#clone = this.#sortItem.cloneNode(true)
     this.#clone.setAttribute('placeholder','')
     this.#sortItem.before(this.#clone)
     this.#sortItem.setAttribute('sorting','')
+    this.#sortItem.setAttribute('no-observer','')
+  }
+  #timer = (ev)=>{
+    if (this.#timeout) return
+    this.#timeout = setTimeout(()=>{
+      this.#draging(ev)
+      this.#timeout = null
+    },150)
   }
   #draging = (ev)=>{
-    let all = Array.from(this.#sort.children).filter(e => e.tagName === 'UI-SORT-ITEM' && !e.hasAttribute('sorting') && !e.hasAttribute('no-sort') && e !== this.#cooling)
+    let all = Array.from(this.#sort.children).filter(e => e.tagName === 'UI-SORT-ITEM' && !e.hasAttribute('sorting') && !e.hasAttribute('no-sort'))
     let child = all.filter(e => !e.hasAttribute('placeholder'))
     let path = getNodePath(this.#sortItem)
     let rect = this.#sortItem.getBoundingClientRect()
@@ -960,15 +965,11 @@ class SortGrabElement extends HTMLElement {
     for (const e of child) {
       let eRect = e.getBoundingClientRect()
       if (x >= eRect.left && x <= eRect.right && y >= eRect.top && y <= eRect.bottom) {
-        this.#cooling = e
         if (all.indexOf(this.#clone) < all.indexOf(e)) {
           e.after(this.#clone)
         }else{
           e.before(this.#clone)
         }
-        this.#cooler = setTimeout(() => {
-          this.#cooling = null
-        }, 180)
         break
       }
     }
@@ -989,8 +990,11 @@ class SortGrabElement extends HTMLElement {
     }
   }
   #dragend = ()=>{
+    clearTimeout(this.#timeout)
+    this.#timeout = null
     this.#clone.before(this.#sortItem)
     this.#clone.remove()
+    this.#sortItem.removeAttribute('no-observer','')
     this.#sortItem.removeAttribute('sorting')
   }
   constructor() {
@@ -1009,9 +1013,9 @@ class SortGrabElement extends HTMLElement {
       }
     }
     if (this.hasAttribute('inside')) {
-      dragEvent.add({target: this.#sortItem, dragstart: this.#dragstart, draging: this.#draging, dragend: this.#dragend, trigger: this})
+      dragEvent.add({target: this.#sortItem, dragstart: this.#dragstart, draging: this.#timer, dragend: this.#dragend, trigger: this})
     }else{
-      dragEvent.add({target: this.#sortItem, dragstart: this.#dragstart, draging: this.#draging, dragend: this.#dragend, trigger: this, top: -Infinity, left: -Infinity, right: -Infinity, bottom: -Infinity})
+      dragEvent.add({target: this.#sortItem, dragstart: this.#dragstart, draging: this.#timer, dragend: this.#dragend, trigger: this, top: -Infinity, left: -Infinity, right: -Infinity, bottom: -Infinity})
     }
   }
   adoptedCallback(){
