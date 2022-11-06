@@ -1,22 +1,23 @@
 if item
-  - let defaultImg = getItemCoverHeader(item)
+  - let img = getItemImg(item)
   ui-scroll(target=".page.page-item" event="pageItemScroll").page-scroll
-  .page-item-header(no-observer)
+  .page-item-header(no-observer page-item-switch)
     - var className = 'show'
-    each season in item.seasons
-      if season.header
-        img(class=className src=getRealSrc(season.header, 'header') draggable="false" no-observer)
-      else
-        img(class=className src=defaultImg.header draggable="false" no-observer)
+    each season, i in item.seasons
+      img(class=className src=img.header[i] draggable="false" no-observer)
+      //- if season.header
+      //- else
+      //-   img(class=className src=defaultImg.header draggable="false" no-observer)
       - className = ''
   .page-item-info
-    .cover
+    .cover(page-item-switch)
       - var className = 'show'
-      each season in item.seasons
-        if season.cover
-          img(class=className src=getRealSrc(season.cover, 'cover') draggable="false")
-        else
-          img(class=className src=defaultImg.cover draggable="false")
+      each season, i in item.seasons
+        img(class=className src=img.cover[i] draggable="false")
+        //- if season.cover
+        //-   img(class=className src=getRealSrc(season.cover, 'cover') draggable="false")
+        //- else
+        //-   img(class=className src=defaultImg.cover draggable="false")
         - className = ''
     .detail
       .title=item.title
@@ -39,7 +40,7 @@ if item
           .icon.icon-star(onclick="this.parentNode.setAttribute('data-stars', 3)")
           .icon.icon-star(onclick="this.parentNode.setAttribute('data-stars', 2)")
           .icon.icon-star(onclick="this.parentNode.setAttribute('data-stars', 1)")
-      .progress
+      .progress(page-item-switch)
         - var className = 'show'
         each season in item.seasons
           - var finished = season.finished ? season.finished : 0
@@ -49,14 +50,23 @@ if item
             .info
               span=finished
               span=set
-            .determinate(style="width:" + (finished / set) + "%;")
+            .determinate(style="width:" + (finished / set) * 100 + "%;")
           - className = ''
-      .links
+      .links(page-item-switch)
         - var className = 'show'
         each season in item.seasons
           div(class=className)
             each link in season.links
               button(onclick="openUrl("+link.url+")")=link.name
           - className = ''
+  if item.seasons.length > 1
+    .page-item-switch
+      each season, i in item.seasons
+        if i === 0
+          button.current(onclick="pageSeason(" + i + ")")=season.title
+        else
+          button(onclick="pageSeason(" + i + ")")=season.title
   if item.content
     article.page-item-content=markdown(item.content)
+  .page-item-related
+    !=getItemList(getRelated(item.id), false)

@@ -27,3 +27,14 @@ const editUI = (e,type)=>{
       break
   }
 }
+
+const pageSeason = (season)=>{
+  document.querySelector('.page-item-switch .current').classList.remove('current')
+  document.querySelectorAll('.page-item-header .show, .page-item-info .show').forEach(e=>{
+    e.classList.remove('show')
+  })
+  document.querySelectorAll('.page-item-switch button')[season].classList.add('current')
+  document.querySelectorAll('[page-item-switch]').forEach(e=>{
+    e.children[season].classList.add('show')
+  })
+}

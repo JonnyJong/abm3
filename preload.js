@@ -12,36 +12,36 @@ ipcRenderer.invoke('db:getWeeklyRecommend').then(item=>{
   ipcRenderer.invoke('layout:get', 'main', {recommendItem: item}).then(data=>document.write(data))
 })
 
-// 当前番剧
-// let nowItemId = null
-
 // 通知
 const notice = (()=>{
   let shell
-  const push = (value, type)=>{
-    ipcRenderer.invoke('layout:get','includes/notice', {notice:{value, type}}).then(data=>{
+  const push = (content, title, type, option)=>{
+    option = Object.assign({
+      duration: 5000
+    }, option)
+    ipcRenderer.invoke('layout:get','includes/notice', {notice:{content, title, type}}).then(data=>{
       let item = document.createElement('ui-sort-item')
       item.className = 'notice'
       item.innerHTML = data 
       shell.append(item)
+      item.style.setProperty('--duration', (option.duration / 1000) + 's')
       setTimeout(() => {
         item.classList.add('notice-fade')
         setTimeout(() => {
           item.remove()
         }, 100)
-      }, 4900)
+      }, option.duration - 100)
     })
   }
   return{
-    info(value){
-      console.log('d')
-      return push(value,'info')
+    info(content, title){
+      return push(content, title,'info')
     },
-    warn(value){
-      return push(value,'warn')
+    warn(content, title){
+      return push(content, title,'warn')
     },
-    error(value){
-      return push(value,'error')
+    error(content, title){
+      return push(content, title,'error')
     },
     init(){
       shell = document.querySelector('body>.notices')
@@ -132,9 +132,7 @@ const history = (()=>{
     ipcRenderer.invoke('db:getItemById', id).then(item=>{
       ipcRenderer.invoke('layout:get', 'includes/page-item', {item}).then(data=>{
         if (el && typeof el === 'object' && el instanceof HTMLElement) {
-          document.querySelector('.page-item').innerHTML = data
           let from = el.querySelector('img').getBoundingClientRect()
-          let to = document.querySelector('.page-item .page-item-info .cover img').getBoundingClientRect()
           let img = el.querySelector('img').cloneNode()
           img.className = 'page-item-cover-anima'
           img.setAttribute('no-observer','')
@@ -150,8 +148,11 @@ const history = (()=>{
             img.style.opacity = 1
           }, 10)
           setTimeout(()=>{
+            document.querySelector('.page-item').innerHTML = data
+            let to = document.querySelector('.page-item .page-item-info .cover img').getBoundingClientRect()
             document.querySelector('.page-hidding').classList.remove('page-hidding')
-            img.style.top = to.top + document.querySelector('.page-item').scrollTop + 'px'
+            // img.style.top = to.top + document.querySelector('.page-item').scrollTop + 'px'
+            img.style.top = document.querySelector('.page-item-header').offsetHeight - 96 + 'px'
             img.style.left = to.left + 'px'
             img.style.height = to.height + 'px'
             img.style.width = to.width + 'px'
@@ -390,7 +391,9 @@ contextBridge.exposeInMainWorld('editUIHelper',(e,type)=>{
       })
       break
     case 'confirm':
-      console.log(e)
+      ipcRenderer.invoke('db:setItem', e).then((data)=>{
+        console.log(data)
+      })
       break
   }
 })

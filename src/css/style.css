@@ -159,6 +159,26 @@
     opacity: 0;
   }
 }
+@-moz-keyframes home-rcm-button {
+  to {
+    left: 200%;
+  }
+}
+@-webkit-keyframes home-rcm-button {
+  to {
+    left: 200%;
+  }
+}
+@-o-keyframes home-rcm-button {
+  to {
+    left: 200%;
+  }
+}
+@keyframes home-rcm-button {
+  to {
+    left: 200%;
+  }
+}
 * {
   box-sizing: border-box;
 }
@@ -187,6 +207,7 @@ textarea {
   width: 100%;
   padding: 0 10px;
   color: var(--font-color);
+  font-family: message-box;
 }
 input::placeholder,
 textarea::placeholder {
@@ -205,6 +226,9 @@ textarea:focus {
 input:focus::placeholder,
 textarea:focus::placeholder {
   color: #969696;
+}
+textarea {
+  padding: 10px;
 }
 .input {
   position: relative;
@@ -444,6 +468,70 @@ ui-tab-content:not(.ui-tab-current) {
   opacity: 0;
   transition: 0.1s opacity;
 }
+.ui-spotlight,
+ui-spotlight {
+  --size: 100px;
+  position: relative;
+  overflow: hidden;
+}
+.ui-spotlight:before,
+ui-spotlight:before {
+  content: '';
+  position: absolute;
+  height: var(--size);
+  width: var(--size);
+  backdrop-filter: brightness(1.5);
+  --mask: radial-gradient(closest-side, #000, rgba(0,0,0,0));
+  -webkit-mask-image: var(--mask);
+  left: var(--x);
+  top: var(--y);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+@-moz-keyframes ui-spotlight-onclick {
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(5);
+  }
+}
+@-webkit-keyframes ui-spotlight-onclick {
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(5);
+  }
+}
+@-o-keyframes ui-spotlight-onclick {
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(5);
+  }
+}
+@keyframes ui-spotlight-onclick {
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(5);
+  }
+}
+@-moz-keyframes ui-spotlight-restore {
+  from {
+    opacity: 0;
+  }
+}
+@-webkit-keyframes ui-spotlight-restore {
+  from {
+    opacity: 0;
+  }
+}
+@-o-keyframes ui-spotlight-restore {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes ui-spotlight-restore {
+  from {
+    opacity: 0;
+  }
+}
 .item-edit {
   display: flex;
   flex-direction: column;
@@ -660,6 +748,7 @@ body>.notices .prog {
   height: 6px;
   background: var(--theme-color);
   animation: 5s notice linear;
+  animation-duration: var(--duration, 5s);
 }
 body>.notices .notice-fade {
   opacity: 0;
@@ -727,6 +816,15 @@ body>.notices .notice-fade {
   position: absolute;
   overflow: hidden;
   top: -50px;
+  --size: 100vw;
+}
+.home-recommendation .background ui-spotlight {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  --size: 100vw;
 }
 .home-recommendation .background img {
   position: absolute;
@@ -791,6 +889,8 @@ body>.notices .notice-fade {
   border-top: 1px solid rgba(255,255,255,0.067);
   box-shadow: 0 2px 2px rgba(0,0,0,0.267);
   transition: 0.2s background;
+  position: relative;
+  overflow: hidden;
 }
 .home-recommendation button:hover {
   background: var(--home-rcm-btn-hover);
@@ -798,6 +898,18 @@ body>.notices .notice-fade {
 .home-recommendation button:active {
   background: var(--home-rcm-btn-active);
   transition: 0.1s background;
+}
+.home-recommendation button:before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  height: 300%;
+  width: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.4), rgba(255,255,255,0));
+  rotate: 10deg;
+  animation: home-rcm-button 1.5s 2s;
 }
 .home-recommendation-nothing {
   height: 250px;
@@ -870,9 +982,10 @@ body>.notices .notice-fade {
   left: 0;
   top: calc(var(--top) / 2);
   animation: item-header 1s cubic-bezier(0, 0, 0, 1);
-  transition: opacity 0.1s;
+  transition: opacity 0.1s 0.1s;
 }
 .page-item-header .show {
+  transition: opacity 0.1s;
   opacity: 1;
 }
 .page-item-header:after {
@@ -895,8 +1008,10 @@ body>.notices .notice-fade {
   width: 300px;
   height: 400px;
   position: relative;
+  transition: opacity 0.1s 0.1s;
 }
 .page-item-info .cover .show {
+  transition: opacity 0.1s;
   opacity: 1;
 }
 .page-item-info img {
@@ -983,6 +1098,7 @@ body>.notices .notice-fade {
   transition: opacity 0.1s;
 }
 .page-item-info .progress .show {
+  transition: opacity 0.1s;
   opacity: 1;
 }
 .page-item-info .progress .info {
@@ -1011,6 +1127,22 @@ body>.notices .notice-fade {
   background: var(--block-bg);
   border-radius: var(--border-radius);
   border: var(--block-border);
+}
+.page-item-switch {
+  margin: 16px 50px;
+  display: flex;
+  gap: 16px;
+}
+.page-item-switch .current {
+  background: var(--theme-color);
+  color: var(--theme-font-color);
+  pointer-events: none;
+}
+.page-item-related {
+  margin: 16px 50px;
+}
+.page-item-related .item-list {
+  justify-content: start;
 }
 .page-item-cover-anima {
   position: fixed;

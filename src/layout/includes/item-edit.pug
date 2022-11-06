@@ -7,11 +7,11 @@ include ./item-mod.pug
   input#item-title(placeholder=lang.item_edit.title value=item.title)
   .flex-row.flex-stretch
     ui-array#item-tags(no-repeat placeholder=lang.item_edit.tags)
-      each tag in item.tags
-        .array-item=tag
+      each tagId in item.tags
+        .array-item=db.tags.find(tag=>tag.id === tagId).name
     ui-array#item-categorize(no-repeat placeholder=lang.item_edit.categorize)
-      each category in item.categorize
-        .array-item=category
+      each categoryId in item.categorize
+        .array-item=db.categorize.find(category=>category.id === categoryId).name
   h2=lang.item_edit.content
   textarea#item-content(value=item.content)
   h2=lang.item_edit.season_info

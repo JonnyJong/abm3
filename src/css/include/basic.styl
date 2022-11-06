@@ -11,6 +11,7 @@ textarea
   width 100%
   padding 0 10px
   color var(--font-color)
+  font-family message-box
   &::placeholder
     color #cfcfcf
   &:hover
@@ -21,6 +22,8 @@ textarea
     outline 0
     &::placeholder
       color #969696
+textarea
+  padding 10px
 .input
   position relative
   input
@@ -210,3 +213,48 @@ ui-tab-content
     pointer-events none
     opacity 0
     transition .1s opacity
+
+@keyframes ui-spotlight-onclick
+  to
+    opacity 0
+    transform translate(-50%, -50%) scale(5)
+@keyframes ui-spotlight-restore
+  from
+    opacity 0
+
+.ui-spotlight
+ui-spotlight
+  --size 100px
+  position relative
+  overflow hidden
+  &:before
+    content ''
+    position absolute
+    height var(--size)
+    width var(--size)
+    backdrop-filter brightness(1.5)
+    --mask radial-gradient(closest-side, #000f, #0000)
+    -webkit-mask-image var(--mask)
+    // mask-image var(--mask)
+    left var(--x)
+    top var(--y)
+    transform translate(-50%, -50%)
+    // opacity 0
+    // transition .1s opacity
+    // z-index 1
+    pointer-events none
+//   &:hover:before
+//     opacity 1
+// .ui-spotlight-full
+//   --size 100vmin
+// .ui-spotlight-onclick
+//   &:before
+//     animation ui-spotlight-onclick .4s
+// .ui-spotlight-restore
+//   &:before
+//     animation ui-spotlight-restore .4s
+// .ui-spotlight-reverse
+//   &:before
+//     backdrop-filter brightness(.5)
+// .ui-spotlight-large
+//   --size 100vmin

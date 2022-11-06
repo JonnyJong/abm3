@@ -6,40 +6,15 @@ if db.recommendation.id === -1
         h2.title=lang.page_home.no_recommendation
         .subtitle=lang.page_home.recommendation_subtitle
 else
-  -
-    let coverSrc = null
-    let headerSrc = null
-    let item = db.items.find(item=>item.id === db.recommendation.id)
-    for(let i = 0; i < item.seasons.length; i++) {
-      if (item.seasons[i].cover !== '' && coverSrc !== null) {
-        coverSrc = item.seasons[i].cover
-      }
-      if (item.seasons[i].header !== '' && headerSrc !== null) {
-        headerSrc = item.seasons[i].header
-      }
-    }
-    if (coverSrc === null) {
-      coverSrc = './src/assets/defaultCover.png'
-    }
-    if (headerSrc === null) {
-      headerSrc = coverSrc
-    }
-  -
+  - let item = getItemById(db.recommendation.id)
+  - let img = getItemImg(item)
   .home-recommendation
     .background
-      img(src=headerSrc draggable="false")
+      img(src=img.header[0] draggable="false")
+      ui-spotlight
     .info
       .info-left
-        h2.title=lang.page_home.no_recommendation
+        h2.title=item.title
         .subtitle=lang.page_home.recommendation_subtitle
-        button=lang.page_home.check_recommendation
-      img.cover(src=coverSrc draggable="false")
-//- .home-recommendation
-//-   .background
-//-     img(src="./test/a.png" draggable="false")
-//-   .info
-//-     .info-left
-//-       h2.title="关于 ABM 3.1 开发的那档事"
-//-       .subtitle=lang.page_home.recommendation_subtitle
-//-       button=lang.page_home.check_recommendation
-//-     img.cover(src="./test/a.png" draggable="false")
+        button(onclick="getItem(" + item.id + ", this.parentNode.parentNode)")=lang.page_home.check_recommendation
+      img.cover(src=img.cover[0] draggable="false")

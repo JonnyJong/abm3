@@ -1091,3 +1091,19 @@ class TabElement extends HTMLElement {
   }
 }
 customElements.define('ui-tab',TabElement)
+// 聚光灯
+class SpotlightElement extends HTMLElement {
+  #pointermove = (ev)=>{
+    let rect = this.getBoundingClientRect()
+    this.style.setProperty("--x", ev.x - rect.x + "px")
+    this.style.setProperty("--y", ev.y - rect.y + "px")
+  }
+  constructor(){
+    super()
+    windowEvent.add('pointermove',this.#pointermove)
+  }
+  disconnectedCallback(){
+    windowEvent.remove('pointermove',this.#pointermove)
+  }
+}
+customElements.define('ui-spotlight', SpotlightElement)

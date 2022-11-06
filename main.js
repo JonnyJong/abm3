@@ -3,15 +3,12 @@
 const { app, BrowserWindow, ipcMain, nativeTheme, systemPreferences, shell } = require('electron')
 const { Worker } = require('worker_threads')
 const fs = require('fs')
-const https = require('https')
 const path = require('path')
 const pug = require('pug')
+const utility = require('./src/lib/utility')
 const store = require('electron-store')
 const { version } = require('./package.json')
-const build = 92
-let win = null
-let startupScreen = null
-let db = null
+const build = 93
 let initialized = false
 
 // 单例限制
@@ -34,7 +31,7 @@ const settings = (()=>{
   let data = new store({
     name: 'settings',
     fileExtension: 'json',
-    cwd: path.join(app.getPath('home'),'/abm/'),
+    cwd: path.join(app.getPath('home'),'/.abm/'),
     schema: {
       language: {
         type: 'string',
@@ -42,7 +39,7 @@ const settings = (()=>{
       },
       dataPath: {
         type: 'string',
-        default: path.join(app.getPath('home'),'/abm/'),
+        default: path.join(app.getPath('home'),'/.abm/'),
       },
       itemPrePage: {
         type: 'number',
@@ -102,6 +99,7 @@ const settings = (()=>{
     store:()=>{return data.store}
   }
 })()
+utility.setGlobal('settings', settings)
 
 // 语言
 const locales = (()=>{
@@ -200,39 +198,6 @@ const layout = (name, option)=>{
       console.log(...args)
     },
     getLangByKey: (key)=>{return locales.get(key)},
-    getItemCoverHeader: (item)=>{
-      let cover = null
-      let header = null
-      for (let i = 0; i < item.seasons.length; i++) {
-        if (cover === null && item.seasons[i].cover) {
-          cover = path.join(settings.get('dataPath'), '/covers/', item.seasons[i].cover)
-        }
-        if (header === null && item.seasons[i].header) {
-          header = path.join(settings.get('dataPath'), '/headers/', item.seasons[i].header)
-        }
-      }
-      if (cover === null) {
-        cover = './src/assets/defaultCover.png'
-      }
-      if (header === null) {
-        header = cover
-      }
-      return {cover, header}
-    },
-    getRealSrc: (src, type)=>{
-      switch (type) {
-        case 'header':
-          type = '/headers/'
-          break
-        case 'cover':
-          type = '/covers/'
-          break
-      }
-      return path.join(settings.get('dataPath'), type, src)
-    },
-    markdown: (data)=>{
-      return data
-    },
     getItems: (items, page, pageFnName)=>{
       if (items && typeof items === 'object' && items.length === 0) {
         return ''
@@ -257,9 +222,12 @@ const layout = (name, option)=>{
         items = db.get('items')
       }
       items.reverse()
-      return layout('includes/generate-item-list', {items: items.slice(settings.get('itemPrePage') * page, settings.get('itemPrePage') * (page + 1))})
+      if (page !== false) {
+        items = items.slice(settings.get('itemPrePage') * page, settings.get('itemPrePage') * (page + 1))
+      }
+      return layout('includes/generate-item-list', {items})
     },
-  }, option)
+  }, utility.layout.get(), option)
   try {
     return pug.renderFile((`./src/layout/${name}.pug`), option)
   } catch (error) {
@@ -270,7 +238,7 @@ const layout = (name, option)=>{
 
 // 初始化
 const readyInit = ()=>{
-  startupScreen = new BrowserWindow({
+  const startupScreen = new BrowserWindow({
     show: false,
     width: 600,
     height: 300,
@@ -285,6 +253,7 @@ const readyInit = ()=>{
       preload: path.join(__dirname, 'startupScreen.js')
     }
   })
+  global.startupScreen = startupScreen
   startupScreen.loadFile('index.html')
   startupScreen.webContents.send('layout', layout('startupScreen', {startupImage: (()=>{
     try {
@@ -316,280 +285,18 @@ const init = ()=>{
   startupScreen.webContents.send('info',locales.get().startup_screen.loading_database)
 
   // 数据库
-  db = new store({
+  const db = new store({
     name: 'database',
     fileExtension: 'json',
     cwd: settings.get('dataPath'),
-    schema: {
-      id: {
-        type: 'object',
-        properties: {
-          item: {
-            type: 'integer',
-            default: 0,
-          },
-          tag: {
-            type: 'integer',
-            default: 0,
-          },
-          category: {
-            type: 'integer',
-            default: 0,
-          },
-        },
-        default: {
-          item: 0,
-          tag: 0,
-          category: 0,
-        },
-      },
-      items: {
-        type: 'array',
-        items: {
-          type: 'object',
-        },
-        default: [],
-      },
-      tags: {
-        type: 'array',
-        items: {
-          type: 'object',
-        },
-        default: [],
-      },
-      categorize: {
-        type: 'array',
-        items: {
-          type: 'object',
-        },
-        default: [],
-      },
-      recommendation: {
-        type: 'object',
-        properties: {
-          generationTime: {
-            type: 'number',
-            default: 0,
-          },
-          id: {
-            type: 'integer',
-            default: -1
-          },
-          weights: {
-            type: 'array',
-            default: [],
-          },
-        },
-        default: {
-          generationTime: 0,
-          id: -1,
-          weights: [],
-        },
-      },
-      favorites: {
-        type: 'array',
-        default: [],
-      },
-      finished: {
-        type: 'object',
-        properties: {
-          categoryId: {
-            type: 'number',
-            default: -1,
-          },
-          count: {
-            type: 'number',
-            default: 0,
-          },
-        },
-        default: {
-          categoryId: -1,
-          count: 0,
-        },
-      },
-      payable: {
-        type: 'object',
-        properties: {
-          categoryId: {
-            type: 'number',
-            default: -1,
-          },
-          count: {
-            type: 'number',
-            default: 0,
-          },
-        },
-        default: {
-          categoryId: -1,
-          count: 0,
-        },
-      }
-    },
+    schema: utility.DB_SCHEMA,
   })
-
-  // 数据储存目录
-  const initDir = (dir)=>{
-    try {
-      fs.readdirSync(path.join(settings.get('dataPath'), `/${dir}/`))
-      return true
-    } catch (error) {
-      try {
-        fs.mkdirSync(path.join(settings.get('dataPath'), `/${dir}/`))
-        return true
-      } catch (error) {
-        console.error(error)
-      }
-    }
-    return false
-  }
-  initDir('covers')
-  initDir('headers')
-  initDir('startup_images')
+  utility.setGlobal('db', db)
+  global.db = db
+  utility.initAssetsDir()
 
   // 报告启动信息：初始化功能
   startupScreen.webContents.send('info',locales.get().startup_screen.init_method)
-
-  // 保存图片
-  let waitQueue = []
-  let imgSaveQuests = []
-  let waitImgQueue = []
-  const addQuest = (itemId)=>{
-    if (!waitQueue.includes(itemId)) {
-      waitQueue.push(itemId)
-    }
-  }
-  const reduceQueue = (itemId)=>{
-    waitQueue.splice(waitQueue.findIndex(id=>id===itemId), 1)
-    if (imgSaveQuests.find(quest=>quest.itemId === itemId)) {
-      let items = db.get('items')
-      let item = items.find(item=>item.id === itemId)
-      if (item) {
-        imgSaveQuests.forEach(quest=>{
-          if (quest.itemId === itemId && item.seasons[quest.seasonId]) {
-            switch (quest.type) {
-              case 'header':
-                item.seasons[quest.seasonId].header = quest.data
-                break
-              case 'cover':
-                item.seasons[quest.seasonId].cover = quest.data
-                break
-            }
-          }
-          imgSaveQuests.splice(imgSaveQuests.findIndex(q=>q===quest), 1)
-        })
-      }
-      db.set('items', items)
-    }
-  }
-  const submitQuest = (itemId, seasonId, type, data)=>{
-    if (waitQueue.includes(itemId)) {
-      imgSaveQuests.push({itemId, seasonId, type, data})
-    }else{
-      let items = db.get('items')
-      let item = items.find(item=>item.id === itemId)
-      if (item && item.seasons[seasonId]) {
-        switch (type) {
-          case 'header':
-            item.seasons[seasonId].header = data
-            break
-          case 'cover':
-            item.seasons[seasonId].cover = data
-            break
-        }
-        db.set('items', items)
-      }
-    }
-  }
-  const addImgQuest = (itemId)=>{
-    let quest = waitImgQueue.find(quest=>quest.itemId===itemId)
-    if (quest) {
-      quest.counter++
-    }else{
-      waitImgQueue.push({itemId, counter: 1})
-    }
-  }
-  const reduceImgQuest = (itemId)=>{
-    let quest = waitImgQueue.find(quest=>quest.itemId===itemId)
-    if (quest) {
-      quest.counter--
-      if (quest.counter === 0) {
-        waitImgQueue.splice(waitImgQueue.findIndex(q=>q===quest), 1)
-        if (win.webContents) {
-          win.webContents.send('db:img-ready', itemId)
-        }
-      }
-    }
-  }
-  const getImgSuffix = (data)=>{
-    const imgBufHeaders = [
-      { bufBegin: [0x42, 0x4d], suffix: 'bmp' },
-      { bufBegin: [0x47, 0x49, 0x46, 0x38, 0x39, 0x61], suffix: 'gif' },
-      { bufBegin: [0x47, 0x49, 0x46, 0x38, 0x37, 0x61], suffix: 'gif' },
-      { bufBegin: [0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x20, 0x20], suffix: 'ico' },
-      { bufBegin: [0xff, 0xd8], bufEnd: [0xff, 0xd9], suffix: 'jpg' },
-      { bufBegin: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a], suffix: 'png' },
-      { bufBegin: [0x3c, 0x73, 0x76, 0x67], suffix: 'svg' },
-      { bufBegin: [0x49, 0x49], suffix: 'tif' },
-      { bufBegin: [0x4d, 0x4d], suffix: 'tif' },
-      { bufBegin: [0x52, 0x49, 0x46, 0x46], suffix: 'webp' },
-    ]
-    for (const imgBufHeader of imgBufHeaders) {
-      let isEqual
-      if (imgBufHeader.bufBegin) {
-        const buf = Buffer.from(imgBufHeader.bufBegin)
-        isEqual = buf.equals(
-          data.slice(0, imgBufHeader.bufBegin.length)
-        )
-      }
-      if (isEqual && imgBufHeader.bufEnd) {
-        const buf = Buffer.from(imgBufHeader.bufEnd)
-        isEqual = buf.equals(data.slice(-imgBufHeader.bufEnd.length))
-      }
-      if (isEqual) {
-        return imgBufHeader.suffix
-      }
-    }
-    return ''
-  }
-  const saveImg = (url, type, itemId, seasonId) => {
-    let dir
-    switch (type) {
-      case 'cover':
-        dir = '/covers/'
-        break
-      case 'header':
-        dir = '/headers/'
-        break
-    }
-    if (dir) {
-      addImgQuest(itemId)
-      https.get(url, (res)=>{
-        let data = ''
-        res.setEncoding('binary')
-        res.on('data', (chunk)=>{
-          data += chunk
-        })
-        res.on('end', ()=>{
-          let suffix = getImgSuffix(new Buffer.from(data, 'binary'))
-          if (suffix.length === 0) {
-            reduceImgQuest(itemId)
-            return ''
-          }else{
-            try {
-              fs.writeFileSync(path.join(settings.get('dataPath'), dir, `${itemId}_${seasonId}.${suffix}`), data, 'binary')
-              submitQuest(itemId, seasonId, type, `${itemId}_${seasonId}.${suffix}`)
-              reduceImgQuest(itemId)
-              return `${itemId}_${seasonId}.${suffix}`
-            } catch (error) {
-              console.error(error)
-              reduceImgQuest(itemId)
-              return ''
-            }
-          }
-        })
-      })
-    }
-  }
 
   // 模板
   ipcMain.handle('layout:get', (event, name, option)=>{
@@ -686,26 +393,81 @@ const init = ()=>{
       return true
     }
   }
-  // 文本匹配
-  const textMatch = (keyword, content)=>{
-    if (content.indexOf(keyword) > -1) {
-      return 1
+  // 获取 ID（注册）
+  const getId = (type)=>{
+    let id = db.get(`id.${type}`)
+    if (typeof id === 'undefined') {
+      return NaN
     }else{
-      return 0
+      db.set(`id.${type}`, id + 1)
+      return id
     }
   }
-  // 通过标签或归类 id 获取番剧
-  const getItemsByTagIdOrCategoryId = (id, type)=>{
-    let items = db.get('items')
-    let obj = db.get(type).find(obj=>obj.id === parseInt(id))
-    let reuslt = []
-    if (obj) {
-      obj.items.forEach(itemId=>{
-        reuslt.push(items.find(item=>item.id === itemId))
+  // 设置标签或分类（设置番剧）
+  const setLabel = (type, name, id)=>{
+    let labels = db.get(type)
+    let item = labels.find(i=> i.name === name)
+    if (item) {
+      if (!item.items.find(i=>i === id)) item.items.push(id)
+    }else{
+      item = {
+        id: getId(type),
+        name,
+        items: [id],
+      }
+      labels.push(item)
+    }
+    db.set(type, labels)
+    return item.id
+  }
+  // 移除标签或分类（设置番剧）
+  const removeLabel = (type, labelId, id)=>{
+    let labels = db.get(type)
+    let item = labels.find(i=> i.id === labelId)
+    if (item) {
+      let index = item.itmes.findIndex(i=> i === id)
+      if (index > -1) item.items.splice(index, 1)
+      db.set(type, labels)
+    }
+    return
+  }
+  // 获取相关番剧
+  const getRelated = (id)=>{
+    let item = db.store.items.find(item=>item.id === parseInt(id))
+    let hits = []
+    let result = []
+    if (item && item.tags.length > 0) {
+      item.tags.forEach(tagId=>{
+        db.store.tags.find(tag=>tag.id == tagId).items.forEach(itemId=>{
+          if (itemId !== id) {
+            let hit = hits.findIndex(hit=>hit.id === itemId)
+            if (hit > -1) {
+              hits[hit].weight++
+            }else{
+              hits.push({id:itemId, weight: 1})
+            }
+          }
+        })
+      })
+      hits.sort(()=>{return Math.random() - 0.5})
+      hits.sort((a,b)=>{return b.weight - a.weight})
+      hits.forEach(hit=>{
+        result.push(db.store.items.find(item=>item.id === hit.id))
       })
     }
-    return reuslt
+    if (result.length > 5) {
+      result.length = 5
+    }
+    result.reverse()
+    return result
   }
+  // 通过 ID 获取
+  const getItemById = (id)=>{
+    return db.store.items.find(item=>item.id === parseInt(id))
+  }
+  // 注册模板辅助函数
+  utility.layout.register('getRelated', getRelated)
+  utility.layout.register('getItemById', getItemById)
   // 获取数据库
   ipcMain.handle('db:get', () => {
     return db.store
@@ -716,15 +478,7 @@ const init = ()=>{
   })
   // 通过 id 获取番剧
   ipcMain.handle('db:getItemById', (_,id) => {
-    return db.store.items.find(item=>item.id === parseInt(id))
-  })
-  // 通过标签 id 获取番剧
-  ipcMain.handle('db:getItemsByTagId', (_,id) => {
-    return getItemsByTagIdOrCategoryId(id, 'tags')
-  })
-  // 通过归类 id 获取番剧
-  ipcMain.handle('db:getItemsByCategoryId', (_,id) => {
-    return getItemsByTagIdOrCategoryId(id, 'categorize')
+    return getItemById(id)
   })
   // 随机获取番剧
   ipcMain.handle('db:getItemIdByRandom',()=>{
@@ -748,27 +502,7 @@ const init = ()=>{
   })
   // 获取相关番剧
   ipcMain.handle('db:getRelated',(_,id)=>{
-    let item = db.store.items.find(item=>item.id === parseInt(id))
-    let hits = []
-    let result = []
-    if (item && item.tags.length > 0) {
-      item.tags.forEach(tagId=>{
-        db.tags.find(tag=>tag.id == tagId).items.forEach(itemId=>{
-          let hit = hits.findIndex(hit=>hit.id === itemId)
-          if (hit > -1) {
-            hits[hit].weight++
-          }else{
-            hits.push({id:itemId, weight: 1})
-          }
-        })
-      })
-      hits.sort(()=>{return Math.random() - 0.5})
-      hits.sort((a,b)=>{return b.weight - a.weight})
-      hits.forEach(hit=>{
-        result.push(db.store.items.find(item=>item.id === hit.id))
-      })
-    }
-    return result
+    return getRelated(id)
   })
   // 搜索番剧
   ipcMain.handle('db:search', (_,option) => {
@@ -796,8 +530,8 @@ const init = ()=>{
     if (option.keywords.length > 0) {
       items.forEach(item=>{
         option.keywords.forEach(keyword=>{
-          let titleMatchResult = textMatch(keyword, item.title)
-          let contentMatchResult = textMatch(keyword, item.content)
+          let titleMatchResult = utility.textMatch(keyword, item.title)
+          let contentMatchResult = utility.textMatch(keyword, item.content)
           let hit = hits.find(hit=>hit.id === item.id)
           if (hit) {
             hit.weight += titleMatchResult + contentMatchResult
@@ -923,253 +657,112 @@ const init = ()=>{
     })
     return result
   })
-  // 添加番剧
-  ipcMain.handle('db:addItem', (_, data) => {
-    let backup = db.store
-    try {
-      // 若番剧中未定义季，返回 null
-      if (!data.seasons || data.seasons.length === 0) {
-        return null
-      }
-      // 初始化番剧对象
-      let item = {
-        id: db.get('id.item'),
-        title: String(data.title),
-        content: String(data.content),
+  // 设置番剧
+  ipcMain.handle('db:setItem', (_, data) => {
+    let items = db.get('items')
+    let originItem = items.find(i=>i.id === data.id)
+    return new Promise((resolve, reject)=>{
+      let imgQueue = []
+      let item = originItem || {
+        id: getId('item'),
+        title: '',
+        content: '',
         favorite: false,
         stars: 0,
-        tags: [],
         categorize: [],
-        seasons: [],
+        tags: [],
+        seasons: [{
+          title: '',
+          header: null,
+          cover: null,
+          links: [],
+          set: null,
+          finished: null,
+        }],
       }
-      let seasonId = 0
-      // 分配 id
-      db.set('id.item', db.get('id.item') + 1)
-      // 加入等待队列
-      addQuest(item.id)
-      // 设置标签
-      if (data.tags && data.tags.length > 0) {
-        data.tag = Array.from(new Set(data.tag))
-        let tags = db.get('tags')
-        data.tags.forEach(tagName=>{
-          let oldTag = tags.find(tag=>tag.name === tagName)
-          if (oldTag) {
-            oldTag.items.push(item.id)
-          }else{
-            tags.push({id: db.get('id.tag'), name: tagName, items: [item.id]})
-            db.set('id.tag', db.get('id.tag') + 1)
+      item.title = data.title ? String(data.title) : item.title
+      item.content = data.content ? String(data.content) : item.content
+      item.favorite = typeof data.favorite === 'boolean' ? data.favorite : item.favorite
+      item.stars = typeof data.stars === 'number' && !isNaN(data.stars) ? Math.max(Math.min(parseInt(data.stars), 5), 0) : item.stars
+      if (typeof data.categorize === 'object' && data.categorize instanceof Array) {
+        item.categorize = item.categorize.filter((id)=>{
+          if (!data.categorize.includes(db.get('categorize').find(c=>c.id === id).name)) {
+            removeLabel('categorize', id, item.id)
+            return false
+          }
+          return true
+        })
+        data.categorize.forEach((name)=>{
+          name = String(name)
+          let id = setLabel('categorize', name, item.id)
+          if (!item.categorize.includes(id)) item.categorize.push(id)
+        })
+      }
+      if (typeof data.tags === 'object' && data.tags instanceof Array) {
+        item.tags = item.tags.filter((id)=>{
+          if (!data.tags.includes(db.get('tags').find(c=>c.id === id).name)) {
+            removeLabel('tags', id, item.id)
+            return false
+          }
+          return true
+        })
+        data.tags.forEach(name=>{
+          name = String(name)
+          let id = setLabel('tags', name, item.id)
+          if (!item.tags.includes(id)) item.tags.push(id)
+        })
+      }
+      if (typeof data.seasons === 'object' && data.seasons instanceof Array) {
+        data.seasons.forEach((obj, index)=>{
+          let season = item.seasons[index] || {
+            title:'',
+            set: null,
+            finished: null,
+            header: null,
+            cover: null,
+            links: [],
+          }
+          season.title = obj.title ? String(obj.title) : season.title
+          season.set = isNaN(parseInt(obj.set)) ? season.set : Math.max(parseInt(obj.set), 0)
+          season.finished = isNaN(parseInt(obj.finished)) ? season.finished : Math.max(parseInt(obj.finished), 0)
+          if (season.header !== null && season.header !== obj.header) {
+            imgQueue.push(utility.removeImg('/header/' + season.header))
+          }
+          if (season.header !== obj.header) {
+            imgQueue.push(utility.getImg(obj.header, index, 'header', item.id))
+          }
+          if (season.cover !== null && season.cover !== obj.cover) {
+            imgQueue.push(utility.removeImg('/cover/' + season.cover))
+          }
+          if (season.cover !== obj.cover) {
+            imgQueue.push(utility.getImg(obj.cover, index, 'cover', item.id))
+          }
+          if (typeof obj.links === 'object' && obj.links instanceof Array) {
+            season.links = []
+            obj.links.forEach(({url, name})=>{
+              season.links.push({url: String(url), name: String(name)})
+            })
+          }
+          if (index + 1 > item.seasons.length) {
+            item.seasons.push(season)
           }
         })
-        db.set('tags', tags)
+        item.seasons.splice(data.seasons.length, item.seasons.length)
       }
-      // 设置分类
-      if (data.categorize && data.categorize.length > 0) {
-        data.categorize = Array.from(new Set(data.categorize))
-        let categorize = db.get('categorize')
-        data.categorize.forEach(categoryName=>{
-          let oldCategory = categorize.find(category=>category.name === categoryName)
-          if (oldCategory) {
-            oldCategory.items.push(item.id)
-          }else{
-            categorize.push({id: db.get('id.category'), name: categoryName, items: [item.id]})
-            db.set('id.category', db.get('id.category') + 1)
-          }
+      Promise.all(imgQueue).then((imgs)=>{
+        imgs.forEach((img)=>{
+          item.seasons[img.index][img.type] = img.path
         })
-        db.set('categorize', categorize)
-      }
-      // 设置季
-      data.seasons.forEach(season=>{
-        let newSeason = {
-          title: String(season.title),
-          cover: '',
-          header: '',
-          links: [],
-        }
-        if (parseInt(season.set) === NaN) {
-          newSeason.set = 1
-        }else{
-          newSeason.set = Math.min(parseInt(season.set), 1)
-        }
-        if (parseInt(season.finished) === NaN) {
-          newSeason.finished = 0
-        }else{
-          newSeason.finished = Math.min(parseInt(season.finished), 0)
-        }
-        if (typeof season.cover === 'string' && season.cover.length > 0) {
-          saveImg(season.cover, 'cover', item.id, seasonId)
-        }
-        if (typeof season.header === 'string' && season.header.length > 0) {
-          saveImg(season.header, 'header', item.id, seasonId)
-        }
-        if (season.links && season.links.length === 0) {
-          season.links.forEach(link=>{
-            newSeason.links.push({name: String(link.name), url: String(link.url)})
-          })
-        }
-        seasonId++
-        item.seasons.push(newSeason)
+        resolve({item, imgs})
       })
-      // 保存并返回番剧 id
-      let items = db.get('items')
-      items.push(item)
+    }).then(({item, imgs})=>{
+      // TODO: plugin
+      return {item, imgs}
+    }).then(({item, imgs})=>{
+      if (!originItem) items.push(item)
       db.set('items', items)
-      reduceQueue(item.id)
-      return item.id
-    } catch (error) {
-      console.error(error)
-      db.store = backup
-      return null
-    }
-  })
-  // 设置番剧
-  ipcMain.handle('db:setItem', (_,id, data) => {
-    let items = db.get('items')
-    let tags = db.get('tags')
-    let categorize = db.get('categorize')
-    let newId = db.get('id')
-    let item = items.find(item=>item.id === id)
-    if (item && data.seasons.length > 0) {
-      // 加入等待队列
-      addQuest(item.id)
-      item.title = String(data.title)
-      item.content = String(data.content)
-      // 设置标签
-      let newItemTags = []
-      data.tags.forEach(tagName=>{
-        tagName = String(tagName)
-        let tag = tags.find(tag=>tag.name === tagName)
-        if (tag) {
-          if (item.tags.indexOf(tag.id) === -1) {
-            newItemTags.push(tag.id)
-            tag.items.push(item.id)
-          }
-        }else{
-          newItemTags.push(newId.tag)
-          tags.push({id:newId.tag, name: tagName, items: item.id})
-          newId.tag++
-        }
-      })
-      item.tags = newItemTags
-      db.set('tags', tags)
-      // 设置分类
-      let newItemCategorize = []
-      data.categorize.forEach(categorizeName=>{
-        categorizeName = String(categorizeName)
-        let category = categorize.find(category=>category.name === categorizeName)
-        if (category) {
-          if (item.categorize.indexOf(category.id) === -1) {
-            newItemCategorize.push(category.id)
-            category.items.push(item.id)
-          }
-        }else{
-          newItemCategorize.push(newId.category)
-          categorize.push({id:newId.category, name: categorizeName, items: item.id})
-          newId.category++
-        }
-      })
-      item.categorize = newItemCategorize
-      db.set('categorize', categorize)
-      db.set('id',newId)
-      // 设置季
-      let seasonId = 0
-      let newSeasons = []
-      data.seasons.forEach(season=>{
-        let newSeason = {
-          title: String(season.title),
-          cover: '',
-          header: '',
-          links: [],
-        }
-        if (parseInt(season.set) === NaN) {
-          newSeason.set = 1
-        }else{
-          newSeason.set = Math.min(parseInt(season.set), 1)
-        }
-        if (parseInt(season.finished) === NaN) {
-          newSeason.finished = 0
-        }else{
-          newSeason.finished = Math.min(parseInt(season.finished), 0)
-        }
-        if (!item.seasons[seasonId] || item.seasons[seasonId].cover !== season.cover) {
-          if (typeof season.cover === 'string' && season.cover.length > 0) {
-            saveImg(season.cover, 'cover', item.id, seasonId)
-            newSeason.cover = ''
-          } else if (item.seasons[seasonId] || item.seasons[seasonId].cover) {
-            fs.unlink(path.join(settings.get('dataPath'), '/covers/', item.seasons[seasonId].cover))
-          }
-        }
-        if (!item.seasons[seasonId] || item.seasons[seasonId].header !== season.header) {
-          if (typeof season.header === 'string' && season.header.length > 0) {
-            saveImg(season.header, 'header', item.id, seasonId)
-            newSeason.header = ''
-          } else if (item.seasons[seasonId] || item.seasons[seasonId].header) {
-            fs.unlink(path.join(settings.get('dataPath'), '/header/', item.seasons[seasonId].header))
-          }
-        }
-        if (season.links && season.links.length === 0) {
-          season.links.forEach(link=>{
-            newSeason.links.push({name: String(link.name), url: String(link.url)})
-          })
-        }
-        seasonId++
-        newSeasons.push(newSeason)
-      })
-      if (item.seasons.length > data.seasons.length) {
-        for (; i < item.seasons.length; seasonId++) {
-          const season = item.seasons[seasonId]
-          if (season.cover.length > 0) {
-            fs.unlink(path.join(settings.get('dataPath'), '/covers/', season.cover))
-          }
-          if (season.header.length > 0) {
-            fs.unlink(path.join(settings.get('dataPath'), '/header/', season.header))
-          }
-        }
-      }
-      item.seasons = newSeasons
-      // 保存结果并返回 true
-      db.set('items', items)
-      reduceQueue(item.id)
-      return true
-    }else{
-      // 不存在此番剧或没有设置季返回 false
-      return false
-    }
-  })
-  // 设置番剧喜爱或未喜爱
-  ipcMain.handle('db:setItemFavorite', (_,id, data) => {
-    let items = db.get('items')
-    let favorites = db.get('favorites')
-    let item = items.find(item=>item.id === id)
-    let itemIndex = favorites.findIndex(itemId=>itemId === item.id)
-    if (item) {
-      item.favorite = data
-      if (data && itemIndex == -1) {
-        favorites.push(item.id)
-      }else if (!data && itemIndex > -1) {
-        favorites = favorites.splice(itemIndex, 1)
-      }
-      db.set('favorites', favorites)
-      db.set('items', items)
-      return true
-    }else{
-      return false
-    }
-  })
-  // 设置番剧分级
-  ipcMain.handle('db:setItemStars', (_,id, data) => {
-    let items = db.get('items')
-    let item = items.find(item=>item.id === id)
-    let stars = parseInt(data)
-    if (item) {
-      if (!stars || stars < 0) {
-        stars = 0
-      }
-      item.stars = stars
-      db.set('items', items)
-      return true
-    }else{
-      return false
-    }
+      return {item, imgs}
+    })
   })
   // 设置标签名称
   ipcMain.handle('db:setTag', (_,id, name) => {
@@ -1218,10 +811,10 @@ const init = ()=>{
       }
       // 设置季，移除封面文件
       items.seasons.forEach(season=>{
-        if (season.cover.length > 0) {
+        if (season.cover !== null) {
           fs.unlink(path.join(settings.get('dataPath'), '/covers/', season.cover))
         }
-        if (season.header.length > 0) {
+        if (season.header !== null) {
           fs.unlink(path.join(settings.get('dataPath'), '/header/', season.header))
         }
       })
@@ -1329,14 +922,14 @@ const init = ()=>{
           hits.sort((a,b)=>{return b.weight - a.weight})
           // 取出
           hits.slice(0, Math.max(parseInt(hits.length / 2), 6))
-          rec.id = hits[Math.floor(Math.random() * hits.length)]
+          rec.id = hits[Math.floor(Math.random() * hits.length)].id
           // 设置日期
           nextTime.setSeconds(0)
           nextTime.setMinutes(0)
           nextTime.setHours(0)
           rec.generationTime = nextTime.getTime()
           // 保存并返回结果
-          db.get('recommendation', rec)
+          db.set('recommendation', rec)
           return rec.id
         }else{
           rec.id = -1
@@ -1351,7 +944,7 @@ const init = ()=>{
   startupScreen.webContents.send('info',locales.get().startup_screen.ready)
 
   // 主窗口
-  win = new BrowserWindow({
+  const win = new BrowserWindow({
     show: false,
     width: 3840,
     height: 2160,
@@ -1369,6 +962,7 @@ const init = ()=>{
       preload: path.join(__dirname, 'preload.js'),
     }
   })
+  global.win = win
   ipcMain.on('window:ready', ()=>{
     if (!initialized) {
       win.webContents.openDevTools()
