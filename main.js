@@ -8,7 +8,7 @@ const Settings = require('./src/lib/settings')
 const utility = require('./src/lib/utility')
 const store = require('electron-store')
 const { version } = require('./package.json')
-const build = 94
+const build = 95
 let initialized = false
 
 // 单例限制
@@ -670,8 +670,8 @@ const init = ()=>{
             links: [],
           }
           season.title = obj.title ? String(obj.title) : season.title
-          season.set = isNaN(parseInt(obj.set)) ? season.set : Math.max(parseInt(obj.set), 0)
-          season.finished = isNaN(parseInt(obj.finished)) ? season.finished : Math.max(parseInt(obj.finished), 0)
+          season.set = obj.set === null ? obj.set : (isNaN(parseInt(obj.set)) ? season.set : Math.max(parseInt(obj.set), 0))
+          season.finished = obj.finished === null ? obj.finished : (isNaN(parseInt(obj.finished)) ? season.finished : Math.max(parseInt(obj.finished), 0))
           if (season.header !== null && season.header !== obj.header) {
             imgQueue.push(utility.removeImg('/header/' + season.header))
           }

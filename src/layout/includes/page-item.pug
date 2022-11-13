@@ -36,8 +36,8 @@ if item
       .progress(page-item-switch)
         - var className = 'show'
         each season in item.seasons
-          - var finished = season.finished ? season.finished : 0
-          - var set = season.set ? finished : 1
+          - var finished = season.finished !== null ? season.finished : 0
+          - var set = season.set !== null ? season.set : finished
           - set = set ? set : 1
           div(class=className)
             .info

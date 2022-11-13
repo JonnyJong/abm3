@@ -13,7 +13,7 @@ include ./item-edit-mod.pug
       each categoryId in item.categorize
         .array-item=db.categorize.find(category=>category.id === categoryId).name
   h2=lang.item_edit.content
-  textarea#item-content(value=item.content)
+  textarea#item-content=item.content
   h2=lang.item_edit.season_info
   ui-sort.flex-row.item-edit-seasons(row cell="2" gap="8")
     each season in item.seasons

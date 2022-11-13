@@ -148,10 +148,7 @@ const history = (()=>{
           img.style.left = to.left + 'px'
           img.style.height = to.height + 'px'
           img.style.width = to.width + 'px'
-          let relatedShell = document.querySelector('.page-item .page-item-related .item-list')
-          ipcRenderer.invoke('layout:related', id).then((data)=>{
-            relatedShell.outerHTML = data
-          })
+          related(id)
         }, 110)
         setTimeout(() => {
           document.querySelector('.page-item').scrollTop = scrollTop ? scrollTop : 0
@@ -169,9 +166,16 @@ const history = (()=>{
       }else{
         setTimeout(() => {
           document.querySelector('.page-item').innerHTML = data
+          related(id)
         }, 100)
         pageAnima(scrollTop)
       }
+    })
+  }
+  const related = (id)=>{
+    let relatedShell = document.querySelector('.page-item .page-item-related .item-list')
+    ipcRenderer.invoke('layout:related', id).then((data)=>{
+      relatedShell.outerHTML = data
     })
   }
   const pageAnima = (scrollTop)=>{
