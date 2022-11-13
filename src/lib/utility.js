@@ -168,8 +168,8 @@ const DB_SCHEMA = {
     },
     default: {
       item: 0,
-      tag: 0,
-      category: 0,
+      tags: 0,
+      categorize: 0,
     },
   },
   items: {
@@ -205,14 +205,28 @@ const DB_SCHEMA = {
         default: -1
       },
       weights: {
-        type: 'array',
-        default: [],
+        type: 'object',
+        default: {
+          "tags": [],
+          "categorize": []
+        },
       },
+      exclude: {
+        type: 'array',
+        items: {
+          type: 'integer',
+        },
+        default: [],
+      }
     },
     default: {
       generationTime: 0,
       id: -1,
-      weights: [],
+      weights: {
+        "tags": [],
+        "categorize": []
+      },
+      exclude: [],
     },
   },
   favorites: {
@@ -256,7 +270,7 @@ const DB_SCHEMA = {
 }
 // 创建资源文件夹
 const initAssetsDir = ()=>{
-  const dirs = ['covers', 'headers', 'startup_images']
+  const dirs = ['covers', 'headers', 'startup_images', 'plugins']
   dirs.forEach((dir)=>{
     fs.readdir(path.join(settings.get('dataPath'), `/${dir}/`)).catch(()=>{
       return fs.mkdir(path.join(settings.get('dataPath'), `/${dir}/`))

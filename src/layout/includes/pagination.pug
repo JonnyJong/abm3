@@ -1,17 +1,18 @@
-if pages > 1
+if pageFn
   .pagination
-    if page === 1
-      button.icon.icon-chevron-left.current(onclick=pageFnName + "('prev')")
-    else
-      button.icon.icon-chevron-left(onclick=pageFnName + "('prev')")
-    - let current = 1
-    while current <= pages
-      if current === page
-        button.num.current(onclick=pageFnName + "(" + current + ")" data-page=current)=current
+    if pages > 1
+      if page === 0
+        button.icon.icon-chevron-left.current(onclick=pageFn + "(" + (page - 1) +")" data-page="0")
       else
-        button.num(onclick=pageFnName + "(" + current + ")" data-page=current)=current
-      - current++
-    if page === pages
-      button.icon.icon-chevron-right.current(onclick=pageFnName + "('next')")
-    else
-      button.icon.icon-chevron-right(onclick=pageFnName + "('next')")
+        button.icon.icon-chevron-left(onclick=pageFn + "(" + (page - 1) +")" data-page="0")
+      - let current = 0
+      while current <= pages
+        if current === page
+          button.num.current(onclick=pageFn + "(" + current + ")" data-page=current)=current + 1
+        else
+          button.num(onclick=pageFn + "(" + current + ")" data-page=current)=current + 1
+        - current++
+      if page === pages
+        button.icon.icon-chevron-right.current(onclick=pageFn + "(" + (page + 1) +")" data-page=pages)
+      else
+        button.icon.icon-chevron-right(onclick=pageFn + "(" + (page + 1) +")" data-page=pages)

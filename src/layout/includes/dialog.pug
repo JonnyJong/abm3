@@ -1,0 +1,11 @@
+//- .dialog-shell
+.dialog
+  .dialog-title=dialog.title
+  .dialog-content!=dialog.content
+  .dialog-control
+    if dialog.warn
+      button.dialog-confirm.dialog-warn=dialog.confirm
+    else
+      button.dialog-confirm=dialog.confirm
+    if !dialog.note
+      button.dialog-cancel=dialog.cancel

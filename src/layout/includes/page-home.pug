@@ -20,4 +20,5 @@
       .progress(style="--p:" + (db.finished.count / db.items.length * 100) + "%")
     //- include ./item-list.pug
     .item-list-container
-      !=getItems()
+      //- !=getItems()
+      !=listItems('libraryPage')

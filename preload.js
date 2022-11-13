@@ -8,9 +8,7 @@ let lang
 ipcRenderer.invoke('lang:get').then(data=>{
   lang = data
 })
-ipcRenderer.invoke('db:getWeeklyRecommend').then(item=>{
-  ipcRenderer.invoke('layout:get', 'main', {recommendItem: item}).then(data=>document.write(data))
-})
+ipcRenderer.invoke('layout:get', 'main').then(data=>document.write(data))
 
 // 通知
 const notice = (()=>{
@@ -58,34 +56,31 @@ const history = (()=>{
     if (history.length > 1) {
       lock = true
       history.pop()
-      // nowItemId = null
       if (history[history.length - 1].page === 'item') {
         openItem(history[history.length - 1].id, undefined, history[history.length - 1].scrollTop)
-        // nowItemId = history[history.length - 1].id || null
       }else{
         pageAnima(history[history.length - 1].scrollTop)
       }
       setNavbar()
+    }else{
+      home()
     }
   }
   const home = ()=>{
-    if (lock) return false
+    if (lock || document.querySelector('.page-current').classList.contains('page-home')) return false
     lock = true
     pageAnima(history[0].scrollTop)
-    history = [{page: 'home'}]
+    history = history.splice(0,1)
     setNavbar()
-    // nowItemId = null
   }
   const open = (page, id, el)=>{
     if (lock) return false
     lock = true
-    // nowItemId = null
     if (page === 'item') {
       history[history.length - 1].scrollTop = document.querySelector('.page-current').scrollTop
       history.push({page, id})
       setNavbar()
       openItem(id, el)
-      // nowItemId = id
     }else if (page === 'edit') {
       id = history[history.length - 1].id
       history[history.length - 1].scrollTop = document.querySelector('.page-current').scrollTop
@@ -106,7 +101,6 @@ const history = (()=>{
             })
           })
         }
-        // nowItemId = id
       }else{
         pageAnima()
       }
@@ -129,54 +123,55 @@ const history = (()=>{
     }
   }
   const openItem = (id, el, scrollTop)=>{
-    ipcRenderer.invoke('db:getItemById', id).then(item=>{
-      ipcRenderer.invoke('layout:get', 'includes/page-item', {item}).then(data=>{
-        if (el && typeof el === 'object' && el instanceof HTMLElement) {
-          let from = el.querySelector('img').getBoundingClientRect()
-          let img = el.querySelector('img').cloneNode()
-          img.className = 'page-item-cover-anima'
-          img.setAttribute('no-observer','')
-          img.style.top = from.top + 'px'
-          img.style.left = from.left + 'px'
-          img.style.height = from.height + 'px'
-          img.style.width = from.width + 'px'
+    ipcRenderer.invoke('layout:item', id).then(data=>{
+      if (el && typeof el === 'object' && el instanceof HTMLElement) {
+        let from = el.querySelector('img').getBoundingClientRect()
+        let img = el.querySelector('img').cloneNode()
+        img.className = 'page-item-cover-anima'
+        img.setAttribute('no-observer','')
+        img.style.top = from.top + 'px'
+        img.style.left = from.left + 'px'
+        img.style.height = from.height + 'px'
+        img.style.width = from.width + 'px'
+        img.style.opacity = 0
+        document.body.appendChild(img)
+        setTimeout(() => {
+          document.querySelector('.page-current').classList.add('page-hidding')
+          document.querySelector('.page-current').classList.remove('page-current')
+          img.style.opacity = 1
+        }, 10)
+        setTimeout(()=>{
+          document.querySelector('.page-item').innerHTML = data
+          let to = document.querySelector('.page-item .page-item-info .cover img').getBoundingClientRect()
+          document.querySelector('.page-hidding').classList.remove('page-hidding')
+          img.style.top = document.querySelector('.page-item-header').offsetHeight - 96 + 'px'
+          img.style.left = to.left + 'px'
+          img.style.height = to.height + 'px'
+          img.style.width = to.width + 'px'
+          let relatedShell = document.querySelector('.page-item .page-item-related .item-list')
+          ipcRenderer.invoke('layout:related', id).then((data)=>{
+            relatedShell.outerHTML = data
+          })
+        }, 110)
+        setTimeout(() => {
+          document.querySelector('.page-item').scrollTop = scrollTop ? scrollTop : 0
+          document.querySelector('.page-item').classList.add('page-current')
+          img.style.top = document.querySelector('.page-item-header').offsetHeight - 100 + 'px'
+          img.style.transition = '.1s top linear, .1s opacity linear'
+          lock = false
+        }, 310)
+        setTimeout(() => {
           img.style.opacity = 0
-          document.body.appendChild(img)
-          setTimeout(() => {
-            document.querySelector('.page-current').classList.add('page-hidding')
-            document.querySelector('.page-current').classList.remove('page-current')
-            img.style.opacity = 1
-          }, 10)
-          setTimeout(()=>{
-            document.querySelector('.page-item').innerHTML = data
-            let to = document.querySelector('.page-item .page-item-info .cover img').getBoundingClientRect()
-            document.querySelector('.page-hidding').classList.remove('page-hidding')
-            // img.style.top = to.top + document.querySelector('.page-item').scrollTop + 'px'
-            img.style.top = document.querySelector('.page-item-header').offsetHeight - 96 + 'px'
-            img.style.left = to.left + 'px'
-            img.style.height = to.height + 'px'
-            img.style.width = to.width + 'px'
-          }, 110)
-          setTimeout(() => {
-            document.querySelector('.page-item').scrollTop = scrollTop ? scrollTop : 0
-            document.querySelector('.page-item').classList.add('page-current')
-            img.style.top = document.querySelector('.page-item-header').offsetHeight - 100 + 'px'
-            img.style.transition = '.1s top linear, .1s opacity linear'
-            lock = false
-          }, 310)
-          setTimeout(() => {
-            img.style.opacity = 0
-          }, 410)
-          setTimeout(() => {
-            img.remove()
-          }, 470)
-        }else{
-          setTimeout(() => {
-            document.querySelector('.page-item').innerHTML = data
-          }, 100)
-          pageAnima(scrollTop)
-        }
-      })
+        }, 410)
+        setTimeout(() => {
+          img.remove()
+        }, 470)
+      }else{
+        setTimeout(() => {
+          document.querySelector('.page-item').innerHTML = data
+        }, 100)
+        pageAnima(scrollTop)
+      }
     })
   }
   const pageAnima = (scrollTop)=>{
@@ -205,6 +200,52 @@ const history = (()=>{
     open: open,
     back: back,
     home: home,
+    get: ()=>{return history},
+    remove: (id)=>{
+      history = history.filter(h=>h.id !== id)
+    }
+  }
+})()
+
+// 对话框
+const dialog = (()=>{
+  const closeDialog = (shell)=>{
+    shell.classList.add('dialog-close')
+    setTimeout(() => {
+      shell.remove()
+    }, 200)
+  }
+  const create = (option)=>{
+    let shell = document.createElement('div')
+    shell.className = 'dialog-shell'
+    return new Promise((resolve)=>{
+      option = Object.assign({title:lang.dialog.default_title, content:'', confirm:lang.dialog.confirm, cancel:lang.dialog.cancel, note: false, warn: false},option)
+      ipcRenderer.invoke('layout:get', 'includes/dialog', {dialog: option}).then((data)=>resolve(data))
+    }).then((data)=>{
+      shell.innerHTML = data
+      document.body.append(shell)
+      return new Promise((resolve)=>{
+        shell.querySelector('.dialog>.dialog-control>button.dialog-confirm').addEventListener('click',()=>{
+          resolve(true)
+          closeDialog(shell)
+        })
+        shell.querySelector('.dialog>.dialog-control>button.dialog-cancel').addEventListener('click',()=>{
+          resolve(false)
+          closeDialog(shell)
+        })
+      })
+    })
+  }
+  const createSync = (option, callback)=>{
+    create(option).then((data)=>{
+      if (typeof callback === 'function') {
+        callback(data)
+      }
+    })
+  }
+  return{
+    create,
+    createSync,
   }
 })()
 
@@ -263,7 +304,15 @@ const init = ()=>{
         console.log('right click')
         break
       case 8:
-        history.back()
+        if (document.querySelector('.dialog')) {
+          if (document.querySelector('.dialog .dialog-cancel')) {
+            document.querySelector('.dialog .dialog-cancel').click()
+          }else{
+            document.querySelector('.dialog .dialog-confirm').click()
+          }
+        }else{
+          history.back()
+        }
         break
     }
   })
@@ -272,7 +321,48 @@ const init = ()=>{
   notice.init()
   
   // 完成
-  ipcRenderer.send('window:ready')
+  {
+    let imgs = document.querySelectorAll('img')
+    let counter = 0
+    function getReady (){
+      this.removeEventListener('load', getReady)
+      counter++
+      if (counter === imgs.length) {
+        ipcRenderer.send('window:ready')
+      }
+    }
+    if (imgs.length > 0) {
+      imgs.forEach(img=>{
+        img.addEventListener('load', getReady)
+      })
+      setTimeout(()=>{
+        ipcRenderer.send('window:ready')
+      }, 1000)
+    }else{
+      ipcRenderer.send('window:ready')
+    }
+  }
+}
+
+// 库分页
+const libraryPage = (page)=>{
+  if (typeof page !== 'number') {
+    page = 0
+    if (document.querySelector('.page.page-home .home-library .pagination .current')) {
+      page = parseInt(document.querySelector('.page.page-home .home-library .pagination .current').dataset.page)
+    }
+  }
+  ipcRenderer.invoke('layout:listItems', 'libraryPage', null, page).then((data)=>{
+    let shell = document.querySelector('.page.page-home .home-library .item-list-container')
+    let tmp = document.createElement('div')
+    tmp.innerHTML = data
+    shell.children[0].innerHTML = tmp.children[0].innerHTML
+    shell.children[2].innerHTML = tmp.children[2].innerHTML
+    shell.children[1].classList.add('item-list-hide')
+    setTimeout(() => {
+      shell.children[1].outerHTML = tmp.children[1].outerHTML
+    }, 200)
+  })
 }
 
 // 暗色模式
@@ -300,38 +390,7 @@ contextBridge.exposeInMainWorld('getItem', (id, el)=>{
   history.open('item', id, el)
 })
 // 获取库分页
-contextBridge.exposeInMainWorld('getPage',(page)=>{
-  let els = document.querySelectorAll('.page-home .pagination')
-  if (page === 'prev') {
-    page = parseInt(els[0].querySelector('.num.current').getAttribute('data-page')) - 1
-  }else if (page === 'next') {
-    page = parseInt(els[0].querySelector('.num.current').getAttribute('data-page')) + 1
-  }else if (typeof page !== 'number') {
-    return null
-  }
-  ipcRenderer.invoke('layout:get', 'includes/list', {page: page - 1}).then((data)=>{
-    els.forEach(el=>{
-      el.querySelectorAll('.current').forEach(e => {
-        e.classList.remove('current')
-      })
-      el.querySelector(`[data-page="${page}"]`).classList.add('current')
-      if (page === 1) {
-        el.querySelector('.icon-chevron-left').classList.add('current')
-      }
-      if (el.querySelector(`[data-page="${page}"]`).nextSibling.classList.contains('icon-chevron-right')) {
-        el.querySelector('.icon-chevron-right').classList.add('current')
-      }
-    })
-    document.querySelector('.page-home .item-list').classList.add('item-list-hide')
-    setTimeout(() => {
-      document.querySelector('.page-home .item-list').outerHTML = data
-      document.querySelector('.page-home .item-list').classList.add('item-list-hide')
-    }, 100)
-    setTimeout(() => {
-      document.querySelector('.page-home .item-list').classList.remove('item-list-hide')
-    }, 110)
-  })
-})
+contextBridge.exposeInMainWorld('libraryPage', libraryPage)
 // 打开随机项目
 contextBridge.exposeInMainWorld('getRandomItem',()=>{
   ipcRenderer.invoke('db:getItemIdByRandom').then(id=>{
@@ -348,7 +407,7 @@ contextBridge.exposeInMainWorld('page',{
 contextBridge.exposeInMainWorld('editUIHelper',(e,type)=>{
   switch (type) {
     case 'addSeason':
-      ipcRenderer.invoke('layout:get', `includes/item-season`).then(data=>{
+      ipcRenderer.invoke('layout:get', `includes/item-edit-season`).then(data=>{
         if (data) {
           let shell = document.createElement('div')
           shell.innerHTML = data
@@ -357,7 +416,7 @@ contextBridge.exposeInMainWorld('editUIHelper',(e,type)=>{
       })
       break
     case 'addLink':
-      ipcRenderer.invoke('layout:get', `includes/item-link`).then(data=>{
+      ipcRenderer.invoke('layout:get', `includes/item-edit-link`).then(data=>{
         if (data) {
           let shell = document.createElement('div')
           shell.innerHTML = data
@@ -383,23 +442,78 @@ contextBridge.exposeInMainWorld('editUIHelper',(e,type)=>{
         if (!item) item = {id:-1,title:'',tags:[],categorize:[],content:'',seasons:[{title:'',cover:'',header:'',set:'',finished:'',links:[]}]}
         ipcRenderer.invoke('layout:get', `includes/item-edit`, {item}).then(data=>{
           if (data) {
-            let shell = document.createElement('div')
-            shell.innerHTML = data
-            e.innerHTML = shell.querySelector('.item-edit').innerHTML
+            e.outerHTML = data
           }
         })
       })
       break
     case 'confirm':
-      ipcRenderer.invoke('db:setItem', e).then((data)=>{
-        console.log(data)
+      dialog.create({
+        title: (e.id === -1 ? lang.dialog.add_bangumi : lang.dialog.edit_bangumi),
+        content: `${(e.id === -1 ? lang.dialog.add_bangumi_detail_before : lang.dialog.edit_bangumi_detail_before)}${e.title}${(e.id === -1 ? lang.dialog.add_bangumi_detail_after : lang.dialog.edit_bangumi_detail_after)}`,
+      }).then((confirm)=>{
+        if (confirm) {
+          ipcRenderer.invoke('db:setItem', e).then((data)=>{
+            if (history.get()[history.get().length - 1].page === 'add') {
+              document.querySelector('.page.page-add button.icon-arrow-reset').click()
+            }
+            libraryPage()
+          })
+        }
+      })
+      break
+    case 'getPath':
+      ipcRenderer.invoke('dialog:open',{
+        title: lang.item_edit.select_img,
+        filters: [
+          { name: lang.item_edit.extension_img, extensions: ['bmp', 'gif', 'ico', 'jpg', 'png', 'svg', 'tif', 'webp'] },
+          { name: lang.item_edit.extension_all, extensions: ['*'] },
+        ],
+        properties: ['openFile', 'dontAddToRecent'],
+      }).then((result)=>{
+        if (!result.canceled) {
+          e.value = result.filePaths[0]
+        }
       })
       break
   }
 })
-// TEST
-contextBridge.exposeInMainWorld('add',(data)=>{
-  // ipcRenderer.invoke('db:addItem', data).then(d=>console.log(d))
+// 删除番剧
+contextBridge.exposeInMainWorld('deleteItem',()=>{
+  let id = null
+  let page
+  switch (history.get()[history.get().length - 1].page) {
+    case 'item':
+      id = history.get()[history.get().length - 1].id
+      page = 'item'
+      break
+    case 'edit':
+      id = parseInt(document.querySelector('.page.page-edit ui-tab-bar .ui-tab-current').dataset.id)
+      page = 'edit'
+      break
+  }
+  if (id !== null) {
+    ipcRenderer.invoke('db:getItemById', id).then((item)=>{
+      dialog.create({
+        title: lang.dialog.delete_bangumi,
+        content: `${lang.dialog.delete_bangumi_detail_before}${item.title}${lang.dialog.delete_bangumi_detail_after}`,
+        warn: true,
+      }).then((confirm)=>{
+          if (confirm) {
+            ipcRenderer.invoke('db:removeItem', id).then(()=>{
+              libraryPage()
+              history.remove(id)
+              if (document.querySelector(`.page.page-edit ui-tab-bar [data-id="${id}"]`)) {
+                document.querySelector(`.page.page-edit ui-tab-bar [data-id="${id}"] .close`).click()
+              }
+              if (page === 'item') {
+                history.back()
+              }
+            })
+          }
+      })
+    })
+  }
 })
 
 ipcRenderer.on('test:css',()=>{

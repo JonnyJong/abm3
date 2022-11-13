@@ -44,7 +44,7 @@
     background var(--item-bg)
   &:active
     transform translateY(-4px) scale(.98)
-  img
+  .cover
     height calc((var(--item-width) - 28px) / 3 * 4)
     width calc(var(--item-width) - 28px)
     object-fit cover
@@ -65,3 +65,10 @@
     display flex
     gap 4px
     flex-wrap wrap
+.item-loading
+  .title
+    height 21px
+  .cover
+  .title
+    border-radius var(--border-radius)
+    animation item-loading 1s infinite alternate linear

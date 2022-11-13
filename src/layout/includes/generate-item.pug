@@ -1,7 +1,0 @@
-mixin generateItem(item)
-  .item(onclick="getItem(" + item.id + ", this)")
-    img.cover(src=getItemImg(item).cover[0] draggable="false")
-    .info
-      .title=item.title
-      .evaluation
-      .mark

@@ -130,6 +130,11 @@
         border-radius var(--border-radius)
         opacity .25
         height 4px
+  .category
+  .tag
+    background #8884
+    padding 4px 8px
+    border-radius 99px
 .page-item-content
   margin 16px 50px 0
   padding 18px 24px
@@ -145,9 +150,12 @@
     color var(--theme-font-color)
     pointer-events none
 .page-item-related
-  margin 16px 50px
+  margin 24px 50px 16px
+  display none
   .item-list
     justify-content start
+  &:has(.item)
+    display block
 
 .page-item-cover-anima
   position fixed

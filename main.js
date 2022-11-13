@@ -1,14 +1,14 @@
 'use strict'
 // 引入模块
-const { app, BrowserWindow, ipcMain, nativeTheme, systemPreferences, shell } = require('electron')
-const { Worker } = require('worker_threads')
-const fs = require('fs')
+const { app, BrowserWindow, ipcMain, nativeTheme, systemPreferences, shell, dialog } = require('electron')
+const fs = require('fs/promises')
 const path = require('path')
 const pug = require('pug')
+const Settings = require('./src/lib/settings')
 const utility = require('./src/lib/utility')
 const store = require('electron-store')
 const { version } = require('./package.json')
-const build = 93
+const build = 94
 let initialized = false
 
 // 单例限制
@@ -27,78 +27,7 @@ if (!singleInstanceLock) {
 }
 
 // 设置
-const settings = (()=>{
-  let data = new store({
-    name: 'settings',
-    fileExtension: 'json',
-    cwd: path.join(app.getPath('home'),'/.abm/'),
-    schema: {
-      language: {
-        type: 'string',
-        default: app.getLocale(),
-      },
-      dataPath: {
-        type: 'string',
-        default: path.join(app.getPath('home'),'/.abm/'),
-      },
-      itemPrePage: {
-        type: 'number',
-        default: 48,
-        minimum: 1,
-      },
-      autoRemoveEmptyTag: {
-        type: 'boolean',
-        default: false,
-      },
-      autoRemoveEmptyCategory: {
-        type: 'boolean',
-        default: false,
-      },
-      searchWeightBalance: {
-        type: 'boolean',
-        default: false,
-      },
-      searchExcludeMiss: {
-        type: 'boolean',
-        default: false,
-      },
-      recommendWithCatagorize: {
-        type: 'boolean',
-        default: false,
-      },
-      recommendTagsWeights: {
-        type: 'array',
-        default: [],
-      },
-      recommendCategorizeWeights: {
-        type: 'array',
-        default: [],
-      },
-      recommendExcludeItems: {
-        type: 'array',
-        default: [],
-      },
-      recommendFavoriteWeight: {
-        type: 'number',
-        default: 1,
-        minimum: 0,
-      },
-      userAvatar: {
-        type: 'string',
-        default: './src/assets/defaultAvatar.bmp',
-      },
-      username: {
-        type: 'string',
-        default: '',
-      },
-    },
-  })
-  return{
-    get:(key)=>{return data.get(key)},
-    set:(key, value)=>{return data.set(key, value)},
-    store:()=>{return data.store}
-  }
-})()
+const settings = new Settings()
 utility.setGlobal('settings', settings)
 
 // 语言
@@ -160,7 +89,7 @@ const CONFIG = {
         {
           name: 'user.menu.delete_item',
           icon: 'icon icon-delete',
-          onclick: '',
+          onclick: 'deleteItem()',
         },
       ]
     },
@@ -198,35 +127,6 @@ const layout = (name, option)=>{
       console.log(...args)
     },
     getLangByKey: (key)=>{return locales.get(key)},
-    getItems: (items, page, pageFnName)=>{
-      if (items && typeof items === 'object' && items.length === 0) {
-        return ''
-      }else{
-        if (!items) {
-          items = db.get('items')
-        }
-        if (!page) {
-          page = 0
-        }
-        if (!pageFnName) {
-          pageFnName = 'getPage'
-        }
-        return layout('includes/item-list', {items, page, pageFnName})
-      }
-    },
-    getPagination: (itemNum, page, pageFnName)=>{
-      return layout('includes/pagination', {pages: Math.ceil(itemNum / settings.get('itemPrePage')), page: page + 1, pageFnName})
-    },
-    getItemList: (items, page)=>{
-      if (!items) {
-        items = db.get('items')
-      }
-      items.reverse()
-      if (page !== false) {
-        items = items.slice(settings.get('itemPrePage') * page, settings.get('itemPrePage') * (page + 1))
-      }
-      return layout('includes/generate-item-list', {items})
-    },
   }, utility.layout.get(), option)
   try {
     return pug.renderFile((`./src/layout/${name}.pug`), option)
@@ -305,6 +205,21 @@ const init = ()=>{
     }, option)
     return layout(name, option)
   })
+  // 列出番剧
+  ipcMain.handle('layout:listItems', (_, pageFn, items, page)=>{
+    return listItems(pageFn, items, page)
+  })
+  // 番剧页
+  ipcMain.handle('layout:item',(_, id)=>{
+    return layout('includes/page-item', {
+      item: db.get('items').find(i=> i.id === id),
+      db: db.store,
+    })
+  })
+  // 相关番剧
+  ipcMain.handle('layout:related',(_,id)=>{
+    return listItems(null, getRelated(id))
+  })
 
   // 暗色模式
   ipcMain.handle('dark-mode:toggle', ()=>{
@@ -336,6 +251,14 @@ const init = ()=>{
   })
   ipcMain.handle('settings:set', (key, value) => {
     return settings.set(key,value)
+  })
+
+  // 获取文件
+  ipcMain.handle('dialog:open', (_, option)=>{
+    return dialog.showOpenDialog(win, option)
+  })
+  ipcMain.handle('dialog:save', (_, option)=>{
+    return dialog.showSaveDialog(win, option)
   })
 
   // 数据库
@@ -425,7 +348,7 @@ const init = ()=>{
     let labels = db.get(type)
     let item = labels.find(i=> i.id === labelId)
     if (item) {
-      let index = item.itmes.findIndex(i=> i === id)
+      let index = item.items.findIndex(i=> i === id)
       if (index > -1) item.items.splice(index, 1)
       db.set(type, labels)
     }
@@ -465,9 +388,25 @@ const init = ()=>{
   const getItemById = (id)=>{
     return db.store.items.find(item=>item.id === parseInt(id))
   }
+  // 列出番剧
+  const listItems = (pageFn, items, page)=>{
+    let itemPrePage = settings.get('itemPrePage')
+    if (!items) {
+      items = db.get('items')
+      items.reverse()
+    }
+    if (typeof page === 'undefined') {
+      page = 0
+    }
+    let pages = parseInt(items.length / itemPrePage)
+    page = Math.max(0, Math.min(page, pages))
+    items = items.splice(page * itemPrePage, itemPrePage)
+    return layout('includes/list-items', {items, pageFn, page, pages})
+  }
   // 注册模板辅助函数
   utility.layout.register('getRelated', getRelated)
   utility.layout.register('getItemById', getItemById)
+  utility.layout.register('listItems', listItems)
   // 获取数据库
   ipcMain.handle('db:get', () => {
     return db.store
@@ -478,6 +417,7 @@ const init = ()=>{
   })
   // 通过 id 获取番剧
   ipcMain.handle('db:getItemById', (_,id) => {
+    console.warn('The "db:getItemById" API will be deprecated, do not use this API if possible.')
     return getItemById(id)
   })
   // 随机获取番剧
@@ -491,14 +431,6 @@ const init = ()=>{
   // 获取所有归类
   ipcMain.handle('db:getAllCategorize', () => {
     return db.store.categorize
-  })
-  // 获取页面
-  ipcMain.handle('db:getPage', (_,page) => {
-    page = parseInt(page)
-    if (!page) {
-      page = 0
-    }
-    return db.store.items.slice(settings.get('itemPrePage') * page, settings.get('itemPrePage') * (page + 1))
   })
   // 获取相关番剧
   ipcMain.handle('db:getRelated',(_,id)=>{
@@ -662,6 +594,7 @@ const init = ()=>{
     let items = db.get('items')
     let originItem = items.find(i=>i.id === data.id)
     return new Promise((resolve, reject)=>{
+      // 初始化
       let imgQueue = []
       let item = originItem || {
         id: getId('item'),
@@ -680,10 +613,22 @@ const init = ()=>{
           finished: null,
         }],
       }
+      // 设置基本信息
       item.title = data.title ? String(data.title) : item.title
       item.content = data.content ? String(data.content) : item.content
-      item.favorite = typeof data.favorite === 'boolean' ? data.favorite : item.favorite
       item.stars = typeof data.stars === 'number' && !isNaN(data.stars) ? Math.max(Math.min(parseInt(data.stars), 5), 0) : item.stars
+      // 设置喜爱
+      if (typeof data.favorite === 'boolean' && item.favorite !== data.favorite) {
+        let favorites = db.get('favorites')
+        if (item.favorite) {
+          favorites.splice(favorites.findIndex(f=>f === item.id))
+        }else{
+          favorites.push(item.id)
+        }
+        db.set('favorites', favorites)
+      }
+      item.favorite = typeof data.favorite === 'boolean' ? data.favorite : item.favorite
+      // 设置分类
       if (typeof data.categorize === 'object' && data.categorize instanceof Array) {
         item.categorize = item.categorize.filter((id)=>{
           if (!data.categorize.includes(db.get('categorize').find(c=>c.id === id).name)) {
@@ -698,6 +643,7 @@ const init = ()=>{
           if (!item.categorize.includes(id)) item.categorize.push(id)
         })
       }
+      // 设置标签
       if (typeof data.tags === 'object' && data.tags instanceof Array) {
         item.tags = item.tags.filter((id)=>{
           if (!data.tags.includes(db.get('tags').find(c=>c.id === id).name)) {
@@ -712,6 +658,7 @@ const init = ()=>{
           if (!item.tags.includes(id)) item.tags.push(id)
         })
       }
+      // 设置季
       if (typeof data.seasons === 'object' && data.seasons instanceof Array) {
         data.seasons.forEach((obj, index)=>{
           let season = item.seasons[index] || {
@@ -784,33 +731,33 @@ const init = ()=>{
   ipcMain.handle('db:removeItem', (_,id) => {
     let items = db.get('items')
     let itemIndex = items.findIndex(item=>item.id === id)
-    let item = items[itemIndex]
     if (itemIndex === -1) {
       // 若未找到番剧返回 false
       return false
     }else{
-      let tags = db.get('tags')
-      let categorize = db.get('categorize')
+      let item = items[itemIndex]
       let favorites = db.get('favorites')
+      let recommendation = db.get('recommendation')
       // 设置标签
       item.tags.forEach(tagId=>{
-        let target = tags.find(tag=>tag.id === tagId)
-        target = target.splice(target.items.findIndex(itemId=>itemId === id), 1)
+        removeLabel('tags', tagId, id)
       })
       // 设置分类
       item.categorize.forEach(categoryId=>{
-        let target = categorize.find(category=>category.id === categoryId)
-        target = target.splice(target.items.findIndex(itemId=>itemId === id), 1)
+        removeLabel('categorize', categoryId, id)
       })
-      db.set('tags', tags)
-      db.set('categorize', categorize)
       // 设置喜爱
       if (item.favorite) {
-        favorites = favorites.splice(favorites.findIndex(item.id), 1)
+        favorites.splice(favorites.findIndex(item.id), 1)
         db.set('favorites', favorites)
       }
+      // 设置每周推荐
+      if (recommendation.id === id) {
+        recommendation.id = -1
+        db.set('recommendation', recommendation)
+      }
       // 设置季，移除封面文件
-      items.seasons.forEach(season=>{
+      item.seasons.forEach(season=>{
         if (season.cover !== null) {
           fs.unlink(path.join(settings.get('dataPath'), '/covers/', season.cover))
         }
@@ -819,7 +766,7 @@ const init = ()=>{
         }
       })
       // 保存结果并返回 true
-      items = items.splice(itemIndex, 1)
+      items.splice(itemIndex, 1)
       db.set('items', items)
       return true
     }
@@ -859,9 +806,9 @@ const init = ()=>{
     let categorize = db.get('categorize')
     let favorites = db.get('favorites')
     let isRecCate = settings.get('recommendWithCatagorize')
-    let recTags = settings.get('recommendTagsWeights')
-    let recCate = settings.get('recommendCategorizeWeights')
-    let exclude = settings.get('recommendExcludeItems')
+    let recTags = rec.weights.tags //settings.get('recommendTagsWeights')
+    let recCate = rec.weights.categorize //settings.get('recommendCategorizeWeights')
+    let exclude = rec.exclude // settings.get('recommendExcludeItems')
     let favWeight = settings.get('recommendFavoriteWeight')
     let hits = []
     const setWeight = (setItems, weight, isItems)=>{
@@ -938,7 +885,7 @@ const init = ()=>{
       }
     }
   }
-  generateWeeklyRecommendation()
+  // generateWeeklyRecommendation()
 
   // 报告启动信息：完成
   startupScreen.webContents.send('info',locales.get().startup_screen.ready)
@@ -960,6 +907,7 @@ const init = ()=>{
     webPreferences: {
       spellcheck: true,
       preload: path.join(__dirname, 'preload.js'),
+      webSecurity: false,
     }
   })
   global.win = win
@@ -976,6 +924,9 @@ const init = ()=>{
     win.focus()
   })
   // 载入
+  /* fs.writeFile(path.join(__dirname, 'main.html'), layout('main',{db: db.store}), 'utf-8').then(()=>{
+    win.loadFile('main.html')
+  }) */
   win.loadFile('index.html')
 
   // 窗口行为

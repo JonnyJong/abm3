@@ -114,3 +114,115 @@
     left: 200%;
   }
 }
+@-moz-keyframes dialog-shell {
+  0% {
+    background: rgba(0,0,0,0);
+  }
+}
+@-webkit-keyframes dialog-shell {
+  0% {
+    background: rgba(0,0,0,0);
+  }
+}
+@-o-keyframes dialog-shell {
+  0% {
+    background: rgba(0,0,0,0);
+  }
+}
+@keyframes dialog-shell {
+  0% {
+    background: rgba(0,0,0,0);
+  }
+}
+@-moz-keyframes dialog-open {
+  0% {
+    scale: 0;
+  }
+}
+@-webkit-keyframes dialog-open {
+  0% {
+    scale: 0;
+  }
+}
+@-o-keyframes dialog-open {
+  0% {
+    scale: 0;
+  }
+}
+@keyframes dialog-open {
+  0% {
+    scale: 0;
+  }
+}
+@-moz-keyframes dialog-close {
+  0% {
+    scale: 1;
+  }
+}
+@-webkit-keyframes dialog-close {
+  0% {
+    scale: 1;
+  }
+}
+@-o-keyframes dialog-close {
+  0% {
+    scale: 1;
+  }
+}
+@keyframes dialog-close {
+  0% {
+    scale: 1;
+  }
+}
+@-moz-keyframes home-list-show {
+  0% {
+    opacity: 0;
+  }
+}
+@-webkit-keyframes home-list-show {
+  0% {
+    opacity: 0;
+  }
+}
+@-o-keyframes home-list-show {
+  0% {
+    opacity: 0;
+  }
+}
+@keyframes home-list-show {
+  0% {
+    opacity: 0;
+  }
+}
+@-moz-keyframes item-loading {
+  0% {
+    background: rgba(136,136,136,0.133);
+  }
+  100% {
+    background: rgba(136,136,136,0.067);
+  }
+}
+@-webkit-keyframes item-loading {
+  0% {
+    background: rgba(136,136,136,0.133);
+  }
+  100% {
+    background: rgba(136,136,136,0.067);
+  }
+}
+@-o-keyframes item-loading {
+  0% {
+    background: rgba(136,136,136,0.133);
+  }
+  100% {
+    background: rgba(136,136,136,0.067);
+  }
+}
+@keyframes item-loading {
+  0% {
+    background: rgba(136,136,136,0.133);
+  }
+  100% {
+    background: rgba(136,136,136,0.067);
+  }
+}

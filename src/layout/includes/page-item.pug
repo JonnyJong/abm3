@@ -5,19 +5,12 @@ if item
     - var className = 'show'
     each season, i in item.seasons
       img(class=className src=img.header[i] draggable="false" no-observer)
-      //- if season.header
-      //- else
-      //-   img(class=className src=defaultImg.header draggable="false" no-observer)
       - className = ''
   .page-item-info
     .cover(page-item-switch)
       - var className = 'show'
       each season, i in item.seasons
-        img(class=className src=img.cover[i] draggable="false")
-        //- if season.cover
-        //-   img(class=className src=getRealSrc(season.cover, 'cover') draggable="false")
-        //- else
-        //-   img(class=className src=defaultImg.cover draggable="false")
+        img(class=className src=img.cover[i] draggable="false" no-observer)
         - className = ''
     .detail
       .title=item.title
@@ -63,10 +56,32 @@ if item
     .page-item-switch
       each season, i in item.seasons
         if i === 0
-          button.current(onclick="pageSeason(" + i + ")")=season.title
+          button.current(onclick="pageSeason(" + i + ")" no-observer)=season.title
         else
-          button(onclick="pageSeason(" + i + ")")=season.title
+          button(onclick="pageSeason(" + i + ")" no-observer)=season.title
   if item.content
     article.page-item-content=markdown(item.content)
   .page-item-related
-    !=getItemList(getRelated(item.id), false)
+    h3=lang.page_item.related
+    //- !=listItems(null, getRelated(item.id))
+    .item-list
+      .item.item-loading
+        .cover
+        .info
+          .title
+      .item.item-loading
+        .cover
+        .info
+          .title
+      .item.item-loading
+        .cover
+        .info
+          .title
+      .item.item-loading
+        .cover
+        .info
+          .title
+      .item.item-loading
+        .cover
+        .info
+          .title

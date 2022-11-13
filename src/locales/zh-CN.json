@@ -38,6 +38,9 @@
     "detail_between_finish_and_percent": "部番剧，占",
     "detail_after_percent": ""
   },
+  "page_item": {
+    "related": "相关推荐"
+  },
   "page_about": {
     "about": "关于",
     "detail": "详细信息",
@@ -62,7 +65,10 @@
     "finished": "已看集数",
     "link_url": "链接",
     "link_name": "名称",
-    "nothing_editing_tip": "当前没有正在编辑的番剧。打开任意一部番剧，然后再点击“编辑番剧”即可编辑。"
+    "nothing_editing_tip": "当前没有正在编辑的番剧。打开任意一部番剧，然后再点击“编辑番剧”即可编辑。",
+    "select_img": "选择图片",
+    "extension_all": "所有类型",
+    "extension_img": "图片"
   },
   "notice": {
     "info": "信息",
@@ -70,5 +76,19 @@
     "error": "错误",
     "colon": "：",
     "edit_tab_too_much": "开启过多的番剧编辑标签页会导致卡顿！"
+  },
+  "dialog": {
+    "default_title": "提示",
+    "confirm": "确定",
+    "cancel": "取消",
+    "delete_bangumi": "删除番剧",
+    "delete_bangumi_detail_before": "确认要删除《",
+    "delete_bangumi_detail_after": "》吗？",
+    "add_bangumi": "添加番剧",
+    "add_bangumi_detail_before": "确认要添加《",
+    "add_bangumi_detail_after": "》吗？",
+    "edit_bangumi": "编辑番剧",
+    "edit_bangumi_detail_before": "确认修改《",
+    "edit_bangumi_detail_after": "》吗？"
   }
 }
