@@ -460,6 +460,8 @@ contextBridge.exposeInMainWorld('editUIHelper',(e,type)=>{
           ipcRenderer.invoke('db:setItem', e).then((data)=>{
             if (history.get()[history.get().length - 1].page === 'add') {
               document.querySelector('.page.page-add button.icon-arrow-reset').click()
+            }else{
+              document.querySelector('.page.page-edit .ui-tab-current button.icon-arrow-reset').click()
             }
             libraryPage()
           })

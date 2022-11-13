@@ -139,7 +139,10 @@ const getImg = (url, index, type, id)=>{
 const removeImg = (url)=>{
   return new Promise((resolve)=>{
     resolve(fs.unlink(path.join(global.settings.get('dataPath'), url)))
-  }).then(()=>{return true},()=>{return false})
+  }).then(()=>{return true},(err)=>{
+    console.log(err)
+    return false
+  })
 }
 // 文本匹配
 const textMatch = (keyword, content)=>{
@@ -207,8 +210,9 @@ const DB_SCHEMA = {
       weights: {
         type: 'object',
         default: {
-          "tags": [],
-          "categorize": []
+          tags: [],
+          categorize: [],
+          favorites: 1,
         },
       },
       exclude: {
@@ -279,6 +283,10 @@ const initAssetsDir = ()=>{
     })
   })
 }
+// Markdown
+const markdown = (data, db)=>{
+  return data
+}
 // 模板函数
 const layout = {
   helpers : {
@@ -330,9 +338,7 @@ const layout = {
       }
       return path.join(settings.get('dataPath'), type, src)
     },
-    markdown: (data)=>{
-      return data
-    },
+    markdown
   },
   get: ()=>{
     return layout.helpers

@@ -26,10 +26,6 @@ class Settings {
       type: 'boolean',
       default: false,
     },
-    searchWeightBalance: {
-      type: 'boolean',
-      default: false,
-    },
     searchExcludeMiss: {
       type: 'boolean',
       default: false,
@@ -37,23 +33,6 @@ class Settings {
     recommendWithCatagorize: {
       type: 'boolean',
       default: false,
-    },
-    recommendTagsWeights: {
-      type: 'array',
-      default: [],
-    },
-    recommendCategorizeWeights: {
-      type: 'array',
-      default: [],
-    },
-    recommendExcludeItems: {
-      type: 'array',
-      default: [],
-    },
-    recommendFavoriteWeight: {
-      type: 'number',
-      default: 1,
-      minimum: 0,
     },
     userAvatar: {
       type: 'string',

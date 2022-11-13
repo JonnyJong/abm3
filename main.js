@@ -8,7 +8,7 @@ const Settings = require('./src/lib/settings')
 const utility = require('./src/lib/utility')
 const store = require('electron-store')
 const { version } = require('./package.json')
-const build = 95
+const build = 96
 let initialized = false
 
 // 单例限制
@@ -673,13 +673,13 @@ const init = ()=>{
           season.set = obj.set === null ? obj.set : (isNaN(parseInt(obj.set)) ? season.set : Math.max(parseInt(obj.set), 0))
           season.finished = obj.finished === null ? obj.finished : (isNaN(parseInt(obj.finished)) ? season.finished : Math.max(parseInt(obj.finished), 0))
           if (season.header !== null && season.header !== obj.header) {
-            imgQueue.push(utility.removeImg('/header/' + season.header))
+            imgQueue.push(utility.removeImg('/headers/' + season.header))
           }
           if (season.header !== obj.header) {
             imgQueue.push(utility.getImg(obj.header, index, 'header', item.id))
           }
           if (season.cover !== null && season.cover !== obj.cover) {
-            imgQueue.push(utility.removeImg('/cover/' + season.cover))
+            imgQueue.push(utility.removeImg('/covers/' + season.cover))
           }
           if (season.cover !== obj.cover) {
             imgQueue.push(utility.getImg(obj.cover, index, 'cover', item.id))
@@ -698,7 +698,7 @@ const init = ()=>{
       }
       Promise.all(imgQueue).then((imgs)=>{
         imgs.forEach((img)=>{
-          item.seasons[img.index][img.type] = img.path
+          if (typeof img === 'object') item.seasons[img.index][img.type] = img.path
         })
         resolve({item, imgs})
       })
@@ -759,10 +759,10 @@ const init = ()=>{
       // 设置季，移除封面文件
       item.seasons.forEach(season=>{
         if (season.cover !== null) {
-          fs.unlink(path.join(settings.get('dataPath'), '/covers/', season.cover))
+          utility.removeImg('/covers/' + season.cover)
         }
         if (season.header !== null) {
-          fs.unlink(path.join(settings.get('dataPath'), '/header/', season.header))
+          utility.removeImg('/headers/' + season.cover)
         }
       })
       // 保存结果并返回 true
@@ -809,7 +809,7 @@ const init = ()=>{
     let recTags = rec.weights.tags //settings.get('recommendTagsWeights')
     let recCate = rec.weights.categorize //settings.get('recommendCategorizeWeights')
     let exclude = rec.exclude // settings.get('recommendExcludeItems')
-    let favWeight = settings.get('recommendFavoriteWeight')
+    let favWeight = rec.weights.favorites
     let hits = []
     const setWeight = (setItems, weight, isItems)=>{
       setItems.forEach(data=>{
