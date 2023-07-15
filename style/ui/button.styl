@@ -1,10 +1,13 @@
 button
   all unset
+  display inline-flex
+  align-items center
   box-sizing border-box
   padding 10px 12px
   border 1px solid #0000
   border-radius 6px
-  transition .1s border, .1s background, .1s scale
+  transition .1s border, .2s background, .1s scale
+  font-family NotoSans
   &:not(.btn-clear)
     background var(--btn-bg)
     border-color var(--btn-border)
@@ -26,4 +29,9 @@ button
     border-top-color var(--btn-border-top-active)
     border-bottom-color var(--btn-border-bottom-active)
     color var(--btn-color-active)
-    scale .9
+    scale .92
+  &:has(:nth-child(2)) .icon:first-child
+    display inline
+    margin 0 10px 0 2px
+  &:not(:has(:nth-child(2))) .icon:first-child
+    margin 0 2px

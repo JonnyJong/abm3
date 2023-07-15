@@ -10,12 +10,20 @@ body
   background var(--bg)
   color var(--color)
   font-family NotoSans
-  font-weight 300
+  font-weight calc(400 * var(--weight-factor))
   transition .1s background, .1s color
+
+.ui-width
+  width 1920px
+  max-width s('min(100%, calc(100vw - 64px))')
+  margin auto
 
 ::selection
   background var(--theme)
   color var(--select)
+
+::-webkit-scrollbar
+  display none
 
 @import 'ui/*'
 @import 'includes/*'

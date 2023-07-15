@@ -5,3 +5,9 @@ app:
 
 search:
   type_to_search: 键入以搜索...
+
+home:
+  rcmd_check: 查看详情
+  rcmd_subtitle: 每周推荐
+  rack_add: 添加陈列架
+  

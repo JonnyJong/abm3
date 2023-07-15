@@ -16,26 +16,26 @@ export function render(file: string) {
 }
 
 async function updateStyle(file: string, webContents: WebContents, key: string) {
-  try {
-    await webContents.removeInsertedCSS(key);
-  } catch {}
-  try {
-    return await webContents.insertCSS(render(file));
-  } catch {}
-  return '';
+  setTimeout(() => {
+    webContents.removeInsertedCSS(key);
+  }, 10);
+  return await webContents.insertCSS(render(file));
 }
 
 export async function insert(file: string, webContents: WebContents, dir: string = path.join(process.cwd(), 'style')) {
-  let key = '';
-  try {
-    key = await webContents.insertCSS(render(file));
-  } catch {}
-  watch(dir, async ()=>{
-    key = await updateStyle(file, webContents, key);
-  });
-  webContents.on('dom-ready', async ()=>{
-    key = await updateStyle(file, webContents, key);
-  });
+  let key = await webContents.insertCSS(render(file));
+  let timer: NodeJS.Timeout | null = null
+  function debounce() {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(async ()=>{
+      key = await updateStyle(file, webContents, key);
+      timer = null;
+    }, 100);
+  }
+  watch(dir, debounce);
+  webContents.on('dom-ready', debounce);
 }
 
 export default{

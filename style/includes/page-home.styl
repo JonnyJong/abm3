@@ -1,0 +1,99 @@
+@keyframes rcmd-bg
+  from
+    opacity .9
+  to
+    opacity .8
+@keyframes rcmd-check
+  from
+    left -200%
+  to
+    left 100%
+// .page-home
+.rcmd
+  position relative
+  padding 128px
+  .ui-width
+    position relative
+    display flex
+    justify-content space-between
+    gap 64px
+.rcmd-bg
+  position absolute
+  top 0
+  left -64px
+  width calc(100% + 128px)
+  height 100%
+  object-fit cover
+  filter blur(64px)
+  animation rcmd-bg 5s infinite alternate
+.rcmd-info
+  display flex
+  flex-direction column
+  justify-content center
+  gap 16px
+.rcmd-title
+  font-size 48px
+  font-weight 300
+.rcmd-subtitle
+  font-weight calc(370 * var(--weight-factor))
+  opacity .8
+.rcmd-check
+  width max-content
+  border-radius 6px
+  padding 16px 24px
+  font-size 18px
+  font-weight 400
+  overflow hidden
+  position relative
+  background var(--rcmd-check-bg)
+  transition .2s background, .1s color, .3s scale
+  &:after
+    content ''
+    position absolute
+    height 100%
+    width 200%
+    top 0
+    left 100%
+    background linear-gradient(to right, #0000, var(--color), #0000)
+    animation rcmd-check 1s 1s
+    opacity .3
+  &:hover
+    background var(--rcmd-check-bg-hover)
+  &:active
+    background var(--rcmd-check-bg-active)
+    color var(--btn-color-active)
+    scale .97
+.rcmd-cover
+  height 600px
+  width 450px
+  object-fit cover
+  border-radius 6px
+.display-rack-control
+  position relative
+  display flex
+  justify-content flex-end
+.display-rack
+  position relative
+.rack
+  margin-top 16px
+.rack-head
+  display flex
+  align-items center
+  gap 8px
+  &:hover .rack-edit
+    opacity .5
+.rack-title
+  font-size 20px
+.rack-flex
+  flex 1
+.rack-edit
+  opacity 0
+  transition .2s opacity
+.rack-head .rack-edit:hover
+    opacity 1
+.rack-expand
+  opacity .5
+  transition .2s opacity
+  &:hover
+  &:active
+    opacity 1
