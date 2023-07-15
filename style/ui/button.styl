@@ -1,0 +1,29 @@
+button
+  all unset
+  box-sizing border-box
+  padding 10px 12px
+  border 1px solid #0000
+  border-radius 6px
+  transition .1s border, .1s background, .1s scale
+  &:not(.btn-clear)
+    background var(--btn-bg)
+    border-color var(--btn-border)
+    border-top-color var(--btn-border-top)
+    border-bottom-color var(--btn-border-bottom)
+    &[disabled]
+      background var(--btn-bg-disabled)
+      border-color var(--btn-border-disabled)
+  &[disabled]
+    color var(--btn-color-disabled)
+  &:hover:not([disabled])
+    background var(--btn-bg-hover)
+    border-color var(--btn-border)
+    border-top-color var(--btn-border-top)
+    border-bottom-color var(--btn-border-bottom)
+  &:active:not([disabled])
+    background var(--btn-bg-active)
+    border-color var(--btn-border)
+    border-top-color var(--btn-border-top-active)
+    border-bottom-color var(--btn-border-bottom-active)
+    color var(--btn-color-active)
+    scale .9

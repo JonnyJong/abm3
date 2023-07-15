@@ -1,26 +1,26 @@
 {
-  "name": "abm3",
-  "version": "3.1.0",
+  "name": "abm",
+  "version": "3.2.0",
   "description": "A Bangumi Manager",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron .",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "test": "test.js"
-  },
-  "author": "jonny",
+  "main": "./scripts/main.js",
+  "author": "jonnyjong",
   "license": "MIT",
-  "devDependencies": {
-    "cz-conventional-changelog": "^3.3.0",
-    "electron": "^21.2.1"
+  "scripts": {
+    "start": "electron ."
   },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
+  "devDependencies": {
+    "@types/electron": "^1.6.10",
+    "@types/mime": "^3.0.1",
+    "@types/node": "^20.4.2",
+    "@types/pug": "^2.0.6",
+    "@types/stylus": "^0.48.38",
+    "@types/yaml": "^1.9.7",
+    "electron": "^25.3.0"
   },
   "dependencies": {
-    "electron-store": "^8.1.0",
-    "pug": "^3.0.2"
+    "mime": "^3.0.0",
+    "pug": "^3.0.2",
+    "stylus": "^0.59.0",
+    "yaml": "^2.3.1"
   }
 }

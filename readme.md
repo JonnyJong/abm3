@@ -1,10 +1,15 @@
-# 番剧管理器
+# 番剧管理器 / ABM
 正在重建该项目，敬请期待……
+The project is being rebuilt, stay tuned ......
 
-# 文档
-## 取得模板
-```javascript
-ipcRenderer.invoke('layout:get', path, option)
+# 构建 / Build
+```bash
+npm install -g typescript
+npm install
+tsc
 ```
-- `path` 模板路径
-- `option` 选项
+
+# 运行 / Run
+```bash
+npm start
+```

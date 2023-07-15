@@ -1,0 +1,50 @@
+items: []
+# - title: <string>
+#   content: <string>
+#   favorite: false
+#   stars: 0
+#   tags: []
+#   categories: []
+#   seasons:
+#     - title: <Season Title>
+#       set: <number>
+#       watched: <number>
+#       cover: <string>
+#       header: <string>
+#       links:
+#         - name: <string>
+#           url: <string>
+#   ext: {}
+categories: {}
+# <Category Name>: []
+tags: {}
+# <Tag Name>: []
+# Weekly Recommendation (db)
+recommendation:
+  generationTime: 0
+  item: null
+  weights:
+    categories: []
+    # - id: <Category Name>
+    #   value: <string>
+    tags: []
+    # - id: <Tag Name>
+    #   value: <string>
+    favorites: 1
+  exclude: []
+favorites: []
+specialCategory:
+  # 看完
+  watched: null
+  # 付费
+  payable: null
+  # 连载中
+  serialized: null
+mark:
+  categories: []
+  # - id: <Category Name>
+  #   value: <string>
+  tags: []
+  # - id: <Category Name>
+  #   value: <string>
+ext: {}

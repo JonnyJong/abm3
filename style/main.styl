@@ -1,0 +1,21 @@
+@import 'var'
+@font-face
+  font-family NotoSans
+  src url('../assets/font/NotoSansCJKsc-VF.ttf')
+*
+  box-sizing border-box
+body
+  margin 0
+  user-select none
+  background var(--bg)
+  color var(--color)
+  font-family NotoSans
+  font-weight 300
+  transition .1s background, .1s color
+
+::selection
+  background var(--theme)
+  color var(--select)
+
+@import 'ui/*'
+@import 'includes/*'

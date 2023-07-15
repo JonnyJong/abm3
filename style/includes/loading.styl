@@ -1,0 +1,33 @@
+@keyframes loading-bg
+  from
+    background var(--loading1)
+  to
+    background var(--loading2)
+.loading
+  pointer-events none
+  --loading-bg loading-bg 1s infinite alternate
+  .window
+    pointer-events all
+  .search input
+    border 1px solid #0000
+    animation var(--loading-bg)
+    &::-webkit-input-placeholder
+      color #0000
+  .user
+    position relative
+    &:before
+      content ''
+      position absolute
+      display block
+      top 0
+      left 0
+      width 28px
+      height 28px
+      border-radius 100%
+      animation var(--loading-bg)
+    img
+      opacity 0
+  .app-name
+    color #0000
+    border-radius 6px
+    animation var(--loading-bg)

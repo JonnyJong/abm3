@@ -1,0 +1,13 @@
+doctype html
+html
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title ABM
+    //- link(rel="stylesheet", href="../style/main.styl")
+    link(rel="stylesheet", href="../assets/fonticon/fluent.css")
+    style.
+      @keyframes loading-in{0%,50%{opacity: 0;}}
+      .loading{animation: loading-in .3s;}
+  body.loading
+    include includes/titlebar

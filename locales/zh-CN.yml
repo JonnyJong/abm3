@@ -1,0 +1,7 @@
+name: 简体中文
+
+app:
+  name: 番剧管理器
+
+search:
+  type_to_search: 键入以搜索...

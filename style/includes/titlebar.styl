@@ -1,0 +1,112 @@
+.titlebar
+  position fixed
+  top 0
+  left 0
+  width 100vw
+  display flex
+  align-items center
+  background var(--bg-tsp)
+  backdrop-filter blur(20px)
+  app-region drag
+  z-index 10
+  &>*
+    app-region no-drag
+body.blur .titlebar
+  color var(--color-disabled)
+  ::placeholder
+    color var(--color-disabled)
+
+// .history
+.history-back
+.history-home
+  // margin 0 8px 0 -42px
+  margin-left -42px
+  opacity 0
+  pointer-events none
+  transition .1s margin, .1s opacity, .1s border, .1s background, .1s scale
+
+body.backable .history-back
+body.homeable .history-home
+  margin-left 4px
+  opacity 1
+  pointer-events all
+
+.app-info
+  padding 0 8px
+  app-region drag
+  display flex
+  align-items center
+  gap 8px
+  width 230px
+.app-icon
+  height 28px
+  width 28px
+
+.search
+  flex auto
+  app-region drag
+  transition .1s padding
+  input
+    display block
+    width 500px
+    max-width 100%
+    padding 8px 32px
+.search-input
+  app-region no-drag
+  margin auto
+  width max-content
+  position relative
+  &:not(.search-inputed)
+    .search-clear
+      opacity 0
+      pointer-events none
+.search-page
+.search-clear
+  position absolute
+  padding 4px
+  border-radius 4px
+  top 4px
+  left 4px
+  transition .1s background, .1s scale, .1s opacity
+  &:hover
+    background #8884
+  &:active
+    scale .9
+.search-clear
+  left unset
+  right 4px
+body.backable .search
+  padding-right 46px
+body.homeable .search
+  padding-right 46px * 2
+
+.user-avatar
+  width 28px
+  height 28px
+  border-radius 100%
+
+.window
+  display flex
+  height 50px
+  app-region drag
+  padding-left 64px
+  &>*
+    app-region no-drag
+    width 46px
+    height 32px
+    line-height 32px
+    text-align center
+    font-size 10px
+    transition .1s background
+    &:hover
+      background #8884
+    &:active
+      background #8882
+.window-close
+  &:hover
+    background #e11
+  &:active
+    background #e11a
+body:not(.maxmized) .window .icon-ChromeRestore
+body.maxmized .icon-ChromeMaximize
+  display none

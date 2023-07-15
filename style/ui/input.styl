@@ -1,0 +1,20 @@
+input
+  border-radius 6px
+  background var(--input-bg)
+  border 1px solid var(--input-border)
+  border-bottom-color var(--input-border-bottom)
+  outline none
+  color var(--color)
+  padding 8px 12px
+  transition .1s border, .1s background
+  &:hover
+    background var(--input-bg-hover)
+    &::-webkit-input-placeholder
+      color var(--input-placeholder-hover)
+  &:focus
+    background var(--input-bg-focus)
+    border-bottom-color var(--theme)
+    &::-webkit-input-placeholder
+      color var(--input-placeholder-focus)
+::-webkit-input-placeholder
+  color var(--input-placeholder)

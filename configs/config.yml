@@ -1,0 +1,9 @@
+locale: auto
+avatar: ''
+username: ''
+theme: 'system'
+themeColor: 'system'
+db: null
+extensions: {}
+# <Extension Path>:
+#   enable: true

@@ -1,0 +1,7 @@
+name: English
+
+app:
+  name: A Bangumi Manager
+
+search:
+  type_to_search: Type to search...
