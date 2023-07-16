@@ -6,8 +6,14 @@ app:
 search:
   type_to_search: 键入以搜索...
 
+user_menu:
+  try_luck: 试试手气
+  add_bangumi: 添加番剧
+  edit_bangumi: 编辑此番剧
+  del_bangumi: 删除此番剧
+  settings: 设置
+
 home:
   rcmd_check: 查看详情
   rcmd_subtitle: 每周推荐
   rack_add: 添加陈列架
-  
