@@ -29,7 +29,7 @@ export function initUserMenu() {
     menu.onhided = ()=>{
       menu.remove();
     };
-    let rect = document.querySelector('.user')?.getBoundingClientRect();
-    menu.show(rect?.bottom, window.innerWidth, rect?.right);
+    let rect: DOMRect = (document.querySelector('.user')?.getBoundingClientRect() as DOMRect);
+    menu.show(rect.bottom + 4, window.innerWidth, rect.right);
   });
 }
