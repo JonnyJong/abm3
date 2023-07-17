@@ -35,7 +35,7 @@ export async function insert(file: string, webContents: WebContents, dir: string
     }, 100);
   }
   watch(dir, debounce);
-  webContents.on('dom-ready', debounce);
+  webContents.on('did-start-loading', debounce);
 }
 
 export default{

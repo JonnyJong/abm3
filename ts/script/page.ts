@@ -143,3 +143,22 @@ export class History{
     this.handler(this);
   }
 }
+
+export let history: History;
+
+export function initPage() {
+  history = new History((history)=>{
+    document.body.classList.remove('backable', 'homeable');
+    if (history.stack.length > 0) {
+      document.body.classList.add('backable');
+    }
+    if (history.stack.length > 1) {
+      document.body.classList.add('homeable');
+    }
+  });
+  document.querySelector('.history-back')?.addEventListener('click',()=>history.back());
+  document.querySelector('.history-home')?.addEventListener('click',()=>history.home());
+  window.addEventListener('mousedown', ({button})=>{
+    if (button === 3) history.back();
+  });
+}
