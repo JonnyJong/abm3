@@ -1,5 +1,6 @@
-import { ProtocolRequest, ProtocolResponse, WebContents } from "electron";
-import { readFileSync, watch } from "fs";
+import { watch } from "chokidar";
+import { ProtocolRequest, ProtocolResponse, WebContents, app } from "electron";
+import { readFileSync } from "fs";
 import path from "path";
 import stylus from "stylus";
 
@@ -34,8 +35,13 @@ export async function insert(file: string, webContents: WebContents, dir: string
       timer = null;
     }, 100);
   }
-  watch(dir, debounce);
+  // watch(dir, debounce);
+  let watcher = watch(dir);
+  watcher.on('ready', ()=>{
+    watcher.on('all', debounce);
+  });
   webContents.on('did-start-loading', debounce);
+  app.on('will-quit', ()=>watcher.close());
 }
 
 export default{
