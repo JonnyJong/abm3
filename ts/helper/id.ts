@@ -2,11 +2,18 @@ const a = 'a'.charCodeAt(0);
 const z = 'z'.charCodeAt(0);
 const nine = '9'.charCodeAt(0);
 export function nextId(id: string): string {
+  if (typeof id !== 'string') {
+    throw new TypeError('Require a string type id.');
+  }
   let chars = id.split('');
   let i0 = chars[0].charCodeAt(0);
   if (i0 < z) {
     chars[0] = String.fromCharCode(i0 + 1);
-    return chars.join('');
+    id = chars.join('');
+    if (id === 'constructor') {
+      return nextId(chars.join(''));
+    }
+    return id;
   }
   chars[0] = 'a';
   for (let i = 1; i < chars.length + 1; i++) {
