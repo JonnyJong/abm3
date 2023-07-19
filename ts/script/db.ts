@@ -1,6 +1,7 @@
 import path from "path";
 import { download } from "./db/image";
 import { readFile, unlink, writeFile } from "fs/promises";
+import { nextId } from "ts/helper/id";
 
 type Link = {
   name: string,
@@ -12,63 +13,24 @@ type Season = {
   watched: number,
   cover: string,
   header: string,
-  links: Array<Link>,
+  links: Array<Link> | null,
 };
 type BangumiOriginData = {
   title?: string,
   content?: string,
   favorite?: boolean,
   stars?: 0 | 1 | 2 | 3 | 4 | 5,
-  tags?: Array<string>,
-  categories?: Array<string>,
+  tags?: Set<string>,
+  categories?: Set<string>,
   seasons?: Array<Season>,
   date?: number,
   updated?: number,
   ext?: {
-    [x: string]: any,
-  },
-};
-type DBOriginData = {
-  items: Array<BangumiOriginData>,
-  categories: {
-    [x: string]: Array<number>,
-  },
-  tags: {
-    [x: string]: Array<number>,
-  },
-  recommendation: {
-    generationTime: number,
-    item: number | null,
-    weights: {
-      categories: {
-        [x: string]: number,
-      },
-      tags: {
-        [x: string]: number,
-      },
-      favorites: number,
-    },
-    exclude: Array<number>,
-  },
-  favorites: Array<number>,
-  specialCategory: {
-    watched: null | string,
-    payable: null | string,
-    serialized: null | string,
-  },
-  mark: {
-    categories: {
-      [x: string]: string,
-    },
-    tags: {
-      [x: string]: string,
-    },
-  },
-  ext: {
-    [x: string]: any,
+    [x: string]: string,
   },
 };
 class Bangumi{
+  id: string = '';
   title: string = '';
   content: string = '';
   favorite: boolean = false;
@@ -82,19 +44,14 @@ class Bangumi{
     [x: string]: any,
   } = {};
   db: DB;
-  constructor(db: DB, origin?: BangumiOriginData){
+  constructor(db: DB, origin?: any){
     this.db = db;
     if (!origin) return;
-    this.title = (origin.title as string);
-    this.content = (origin.content as string);
-    this.favorite = (origin.favorite as boolean);
-    this.stars = (origin.stars as 0 | 1 | 2 | 3 | 4 | 5);
-    this.tags = new Set(origin.tags as Array<string>);
-    this.categories = new Set(origin.categories as Array<string>);
-    this.seasons = (origin.seasons as Array<Season>);
-    this.date = new Date(origin.date as number);
-    this.updated = new Date(origin.updated as number);
-    this.ext = (origin.ext as { [x: string]: any });
+    for (const key in origin) {
+      if (!Object.prototype.hasOwnProperty.call(origin, key)) continue;
+      // @ts-ignore
+      this[key] = origin[key];
+    }
   }
   async edit(origin: BangumiOriginData){
     if (typeof origin.title === 'string') {
@@ -106,9 +63,9 @@ class Bangumi{
     if (typeof origin.favorite === 'boolean') {
       this.favorite = origin.favorite;
       if (this.favorite) {
-        this.db.favorites.add(this);
+        this.db.favorites.add(this.id);
       }else{
-        this.db.favorites.delete(this);
+        this.db.favorites.delete(this.id);
       }
     }
     if (typeof origin.stars === 'number' && origin.stars <= 5 && origin.stars >= 0) {
@@ -116,24 +73,24 @@ class Bangumi{
     }
     if (Array.isArray(origin.tags)) {
       for (const name of this.tags) {
-        this.db.tags[name].delete(this);
+        this.db.tags[name].delete(this.id);
       }
       this.tags = new Set();
       for (const name of origin.tags) {
         if (typeof name !== 'string') continue;
         this.tags.add(name);
-        this.db.tags[name].add(this);
+        this.db.tags[name].add(this.id);
       }
     }
     if (Array.isArray(origin.categories)) {
       for (const name of this.categories) {
-        this.db.categories[name].delete(this);
+        this.db.categories[name].delete(this.id);
       }
       this.categories = new Set();
       for (const name of origin.categories) {
         if (typeof name !== 'string') continue;
         this.categories.add(name);
-        this.db.categories[name].add(this);
+        this.db.categories[name].add(this.id);
       }
     }
     if (Array.isArray(origin.seasons)) {
@@ -147,11 +104,15 @@ class Bangumi{
           typeof season.header !== 'string' ||
           !Array.isArray(season.links)
         ) continue;
-        for (const link of season.links) {
-          if (
-            typeof link.name !== 'string' ||
-            typeof link.url !== 'string'
-          ) continue CHECK_SEASON;
+        if (Array.isArray(season.links)) {
+          for (const link of season.links) {
+            if (
+              typeof link.name !== 'string' ||
+              typeof link.url !== 'string'
+            ) continue CHECK_SEASON;
+          }
+        } else if (season.links !== null) {
+          continue CHECK_SEASON;
         }
         seasons.push(season);
       }
@@ -204,32 +165,18 @@ class Bangumi{
     }
     return;
   }
-  toOrigin(): BangumiOriginData{
-    return {
-      title: this.title,
-      content: this.content,
-      favorite: this.favorite,
-      stars: this.stars,
-      tags: Array.from(this.tags),
-      categories: Array.from(this.categories),
-      seasons: Array.from(this.seasons),
-      date: this.date.getTime(),
-      updated: this.updated.getTime(),
-      ext: this.ext,
-    };
-  }
   remove(){
     if (this.favorite) {
-      this.db.favorites.delete(this);
+      this.db.favorites.delete(this.id);
     }
-    if (this === this.db.recommendation.item) {
+    if (this.id === this.db.recommendation.item) {
       this.db.recommendation.item = null;
     }
     for (const name of Array.from(this.tags)) {
-      this.db.tags[name].delete(this);
+      this.db.tags[name].delete(this.id);
     }
     for (const name of Array.from(this.categories)) {
-      this.db.categories[name].delete(this);
+      this.db.categories[name].delete(this.id);
     }
     for (const season of this.seasons) {
       if (season.cover !== '') {
@@ -239,21 +186,24 @@ class Bangumi{
         try {unlink(season.header)}catch{}
       }
     }
-    this.db.items.delete(this);
+    delete this.db.items[this.id];
     this.db.save();
   }
 }
 export class DB{
-  items: Set<Bangumi> = new Set();
+  id: string = 'a0';
+  items: {
+    [x:  string]: Bangumi,
+  } = {};
   categories: {
-    [x: string]: Set<Bangumi>,
+    [x: string]: Set<string>,
   } = {};
   tags: {
-    [x: string]: Set<Bangumi>,
+    [x: string]: Set<string>,
   } = {};
   recommendation: {
     generationTime: number,
-    item: Bangumi | null,
+    item: string | null,
     weights: {
       categories: {
         [x: string]: number,
@@ -263,7 +213,7 @@ export class DB{
       },
       favorites: number,
     },
-    exclude: Set<Bangumi>,
+    exclude: Set<string>,
   } = {
     generationTime: 0,
     item: null,
@@ -274,7 +224,7 @@ export class DB{
     },
     exclude: new Set(),
   };
-  favorites: Set<Bangumi> = new Set();
+  favorites: Set<string> = new Set();
   specialCategory: {
     watched: null | string,
     payable: null | string,
@@ -305,87 +255,37 @@ export class DB{
   async init(){
     try {
       let file = await readFile(path.join(this.dbPath, 'db.json'), 'utf-8');
-      let data: DBOriginData = JSON.parse(file);
-      let items: Array<Bangumi> = [];
-      for (let i = 0; i < data.items.length; i++) {
-        let bangumi = new Bangumi(this, data.items[i]);
-        items.push(bangumi);
+      let data = JSON.parse(file, (key, value)=>{
+        if (typeof value === 'number' && ['date', 'updated'].includes(key)) {
+          return new Date(value);
+        } else if (Array.isArray(value) && typeof value[0] === 'string') {
+          return new Set(value);
+        }
+        return value;
+      });
+      for (const key in data) {
+        if (!Object.prototype.hasOwnProperty.call(data, key) || key === 'items') continue;
+        // @ts-ignore
+        this[key] = data[key];
       }
-      this.items = new Set(items);
-      for (const key in data.categories) {
-        if (Object.prototype.hasOwnProperty.call(data.categories, key)) {
-          this.categories[key] = new Set();
-          for (const id of data.categories[key]) {
-            this.categories[key].add(items[id]);
-          }
+      for (const key in this.items) {
+        if (Object.prototype.hasOwnProperty.call(this.items, key)) {
+          this.items[key] = new Bangumi(this, this.items);
         }
       }
-      for (const key in data.tags) {
-        if (Object.prototype.hasOwnProperty.call(data.tags, key)) {
-          this.tags[key] = new Set();
-          for (const id of data.tags[key]) {
-            this.tags[key].add(items[id]);
-          }
-        }
-      }
-      this.recommendation.generationTime = data.recommendation.generationTime;
-      if (typeof data.recommendation.item === 'number') {
-        this.recommendation.item = items[data.recommendation.item];
-      }
-      this.recommendation.weights = data.recommendation.weights;
-      for (const id of data.recommendation.exclude) {
-        this.recommendation.exclude.add(items[id]);
-      }
-      for (const id of data.favorites) {
-        this.favorites.add(items[id]);
-      }
-      this.specialCategory = data.specialCategory;
-      this.mark = data.mark;
-      this.ext = data.ext;
     } catch {}
   }
   async save(){
-    let data: DBOriginData = {
-      items: [],
-      categories: {},
-      tags: {},
-      recommendation: {
-        generationTime: this.recommendation.generationTime,
-        item: null,
-        weights: this.recommendation.weights,
-        exclude: [],
-      },
-      favorites: [],
-      specialCategory: this.specialCategory,
-      mark: this.mark,
-      ext: this.ext,
-    };
-    let items = Array.from(this.items);
-    for (const item of items) {
-      data.items.push(item.toOrigin());
-    }
-    for (const key in this.categories) {
-      if (Object.prototype.hasOwnProperty.call(this.categories, key)) {
-        data.categories[key] = [];
-        for (const item of Array.from(this.categories[key])) {
-          data.categories[key].push(items.indexOf(item));
-        }
+    let data = JSON.stringify(this, (key, value)=>{
+      if (typeof value !== 'object') return value;
+      if (value instanceof Date) {
+        return value.getTime();
+      } else if (value instanceof Set) {
+        return Array.from(value);
+      } else {
+        return value;
       }
-    }
-    for (const key in this.tags) {
-      if (Object.prototype.hasOwnProperty.call(this.tags, key)) {
-        data.tags[key] = [];
-        for (const item of Array.from(this.tags[key])) {
-          data.tags[key].push(items.indexOf(item));
-        }
-      }
-    }
-    if (this.recommendation.item) {
-      data.recommendation.item = items.indexOf(this.recommendation.item);
-    }
-    for (const item of Array.from(this.favorites)) {
-      data.favorites.push(items.indexOf(item));
-    }
+    })
     try {
       return writeFile(path.join(this.dbPath, 'db.json'), JSON.stringify(data), 'utf-8');
     } catch (error) {
@@ -394,15 +294,16 @@ export class DB{
     return;
   }
   async createItem(origin: BangumiOriginData){
-    let item = new Bangumi(this);
-    this.items.add(item);
+    let item = new Bangumi(this, {id: this.id});
+    this.items[item.id] = item;
     await item.edit(origin);
+    this.id = nextId(this.id);
     return this.save();
   }
   async removeCategory(name: string){
     if (!this.categories[name]) return false;
     for (const item of Array.from(this.categories[name])) {
-      item.categories.delete(name);
+      this.items[item].categories.delete(name);
     }
     await this.save();
     return true;
@@ -410,7 +311,7 @@ export class DB{
   async removeTag(name: string){
     if (!this.tags[name]) return false;
     for (const item of Array.from(this.tags[name])) {
-      item.tags.delete(name);
+      this.items[item].tags.delete(name);
     }
     await this.save();
     return true;
@@ -418,8 +319,8 @@ export class DB{
   async mergeCategory(main: string, branch: string){
     if (!this.categories[main] || !this.categories[branch]) return false;
     for (const item of this.categories[branch]) {
-      item.categories.delete(branch);
-      item.categories.add(main);
+      this.items[item].categories.delete(branch);
+      this.items[item].categories.add(main);
       this.categories[main].add(item);
     }
     delete this.categories[branch];
@@ -429,8 +330,8 @@ export class DB{
   async mergeTag(main: string, branch: string){
     if (!this.tags[main] || !this.tags[branch]) return false;
     for (const item of this.tags[branch]) {
-      item.tags.delete(branch);
-      item.tags.add(main);
+      this.items[item].tags.delete(branch);
+      this.items[item].tags.add(main);
       this.tags[main].add(item);
     }
     delete this.tags[branch];
@@ -442,8 +343,8 @@ export class DB{
     this.categories[after] = this.categories[before];
     delete this.categories[before];
     for (const item of Array.from(this.categories[after])) {
-      item.categories.delete(before);
-      item.categories.add(after);
+      this.items[item].categories.delete(before);
+      this.items[item].categories.add(after);
     }
     await this.save();
     return true;
@@ -453,8 +354,8 @@ export class DB{
     this.tags[after] = this.tags[before];
     delete this.tags[before];
     for (const item of Array.from(this.tags[after])) {
-      item.tags.delete(before);
-      item.tags.add(after);
+      this.items[item].tags.delete(before);
+      this.items[item].tags.add(after);
     }
     await this.save();
     return true;

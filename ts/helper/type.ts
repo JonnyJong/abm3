@@ -1,4 +1,3 @@
-type Types = 'bigint' | 'boolean' | 'function' | 'number' | 'object' | 'string' | 'symbol' | 'undefined' | 'array' | 'set' | 'map' | 'NaN' | 'null' | 'element';
 type SchemaBigint = {
   type: 'bigint',
   max?: BigInt,
@@ -103,7 +102,7 @@ type SchemaElement = {
 type SchemaAny = {
   type: 'any',
 }
-type Schema = SchemaBigint | SchemaBoolean | SchemaFunction | SchemaNumber | SchemaObject | SchemaTypes | SchemaValues | SchemaString | SchemaSymbol | SchemaUndefined | SchemaArray | SchemaSet | SchemaMap | SchemaNaN | SchemaNull | SchemaElement | SchemaAny;
+export type Schema = SchemaBigint | SchemaBoolean | SchemaFunction | SchemaNumber | SchemaObject | SchemaTypes | SchemaValues | SchemaString | SchemaSymbol | SchemaUndefined | SchemaArray | SchemaSet | SchemaMap | SchemaNaN | SchemaNull | SchemaElement | SchemaAny;
 function isRequired(schema: Schema) {
   if (['any', 'undefined'].includes(schema.type)) return false;
   // @ts-ignore
