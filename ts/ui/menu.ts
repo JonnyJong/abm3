@@ -8,6 +8,7 @@ type MenuItem = {
   items?: Array<MenuItem>,
   action?: (event: PointerEvent)=>void,
   disabled?: false,
+  shortcut?: string,
 };
 export class Menu{
   shell: HTMLDivElement;
@@ -46,6 +47,9 @@ export class Menu{
           element.innerHTML = `<div class="icon icon-${item.icon}"></div>`;
         }
         element.innerHTML += `<div class="menu-item-name">${item.name ? item.name : ''}</div>`;
+        if (item.shortcut) {
+          element.innerHTML += `<div class="menu-item-short">${item.shortcut}</div>`;
+        }
       }
       if (typeof item.action === 'function') {
         // @ts-ignore
