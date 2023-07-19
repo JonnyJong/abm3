@@ -1,0 +1,17 @@
+if path
+  img(src=path draggable="false" type="link")
+else
+  img(src=data draggable="false" type="embed")
+.md-img-control
+  input(value=name)
+  .md-imgc-flex
+  if path
+    button.btn-clear.md-imgc-switch(tooltip="<ui-lang>markdown.img_embed</ui-lang>")
+      .icon.icon-Document
+  //- else
+  //-   button.btn-clear.md-imgc-switch(tooltip="<ui-lang>markdown.img_link</ui-lang>")
+  //-     .icon.icon-Link
+  button.btn-clear.md-imgc-choose(tooltip="<ui-lang>markdown.img_choose</ui-lang>")
+    .icon.icon-OpenFile
+  button.btn-clear.md-imgc-delete(tooltip="<ui-lang>markdown.img_del</ui-lang>")
+    .icon.icon-Delete

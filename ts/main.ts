@@ -7,6 +7,7 @@ import style from "./modules/style";
 import packageInfo from "../package.json";
 import WindowState from "./modules/window-state";
 import { WindowEvent } from "./modules/window-event";
+import { initDialog } from "./modules/dialog";
 
 app.on('ready',()=>{
   registeProtocol('pug', pug.portocolHandler);
@@ -41,4 +42,6 @@ app.on('ready',()=>{
   win.webContents.openDevTools();
 
   new WindowEvent(win);
+
+  initDialog(win);
 });

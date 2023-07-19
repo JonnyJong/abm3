@@ -27,20 +27,33 @@ markdown:
   copy: 复制
   paste: 粘贴
   heading: 标题
-  bold: 加粗
-  italic: 斜体
-  underline: 下划线
-  deleteline: 删除线
-  table: 表格
-  ol: 有序列表
-  ul: 无序列表
-  link: 链接
   image: 图像
   quote: 引用
   hr: 分隔线
   bangumi: 引用番剧
+  clear: 清空
   pin: 固定
   fit: 适合页面
+
+  h1: 一级标题
+  h2: 二级标题
+  h3: 三级标题
+  h4: 四级标题
+  h5: 五级标题
+  h6: 六级标题
+
+  img_embed: 转换为内嵌
+  img_link: 转换为链接
+  img_choose: 选择图片
+  img_del: 删除图片
+
+  quote_from: ——
+
+  clear_info: 确认清空编辑器？此操作不可逆！
+  clear_confirm: 确认清空
+
+  embed_img: 嵌入图像
+  quote_img: 引用图像
 
 settings:
   confirm: 确认

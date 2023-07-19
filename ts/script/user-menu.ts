@@ -1,5 +1,6 @@
 import { Menu } from "../ui/menu";
 import { locale } from "./locale";
+import { history } from "./page";
 
 export function initUserMenu() {
   document.querySelector('.user')?.addEventListener('click',()=>{
@@ -7,6 +8,9 @@ export function initUserMenu() {
       {
         name: locale.user_menu.try_luck,
         icon: 'EmojiTabSmilesAnimals',
+        action: ()=>{
+          menu.hide();
+        },
       },
       {
         separator: true,
@@ -14,6 +18,10 @@ export function initUserMenu() {
       {
         name: locale.user_menu.add_bangumi,
         icon: 'Add',
+        action: ()=>{
+          history.open('edit');
+          menu.hide();
+        },
       },
       {
         separator: true,
@@ -22,14 +30,11 @@ export function initUserMenu() {
         name: locale.user_menu.settings,
         icon: 'Settings',
         action: ()=>{
+          history.open('settings');
           menu.hide();
         },
       },
     ]);
-    menu.onhided = ()=>{
-      menu.remove();
-    };
-    let rect: DOMRect = (document.querySelector('.user')?.getBoundingClientRect() as DOMRect);
-    menu.show(rect.bottom + 4, window.innerWidth, rect.right);
+    menu.show((document.querySelector('.user')?.getBoundingClientRect() as DOMRect));
   });
 }

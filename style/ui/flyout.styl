@@ -1,0 +1,28 @@
+@keyframes flyout-show-bottom
+  from
+    translate 0 -8px
+@keyframes flyout-show-top
+  from
+    translate 0 8px
+.flyout
+  position fixed
+  background var(--bg)
+  z-index 10
+  border-radius 6px
+  padding 16px
+  box-shadow 0 4px 16px #0008
+  opacity 0
+  pointer-events none
+  transition .1s opacity
+.flyout-show-bottom
+  opacity 1
+  pointer-events all
+  animation flyout-show-bottom .1s
+.flyout-show-top
+  opacity 1
+  pointer-events all
+  animation flyout-show-top .1s
+.flyout-hide
+  opacity 0
+.flyout-actions
+  padding-top 16px

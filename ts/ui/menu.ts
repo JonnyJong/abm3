@@ -1,10 +1,12 @@
+import { OutlineRect, setPosition } from "../helper/position";
+
 type MenuItem = {
   separator?: boolean,
   HTML?: string,
   name?: string,
   icon?: string,
   items?: Array<MenuItem>,
-  action?: Function,
+  action?: (event: PointerEvent)=>void,
   disabled?: false,
 };
 export class Menu{
@@ -12,7 +14,10 @@ export class Menu{
   container: HTMLDivElement;
   hider: HTMLDivElement;
   _removed = false;
-  onhided: Function | undefined;
+  onhided: Function | undefined = ()=>{
+    this.shell.remove();
+    this.hider.remove();
+  };
   constructor(items: Array<MenuItem>) {
     this.shell = document.createElement('div');
     this.shell.classList.add('menu-shell');
@@ -20,7 +25,7 @@ export class Menu{
     this.container.classList.add('menu');
     this.shell.append(this.container);
     this.hider = document.createElement('div');
-    this.hider.classList.add('menu-hider');
+    this.hider.classList.add('ui-hider');
     for (const item of items) {
       let element = document.createElement('div');
       element.classList.add('menu-item')
@@ -42,51 +47,34 @@ export class Menu{
         }
         element.innerHTML += `<div class="menu-item-name">${item.name ? item.name : ''}</div>`;
       }
-      /* if (Array.isArray(item.items)) {
-        element.innerHTML += '<div class="icon icon-ChevronRight"></div>';
-        let subMenu = new Menu(item.items);
-        element.append(subMenu.shell);
-        element.addEventListener('pointerenter', ()=>{
-          subMenu.show();
-        });
-        element.addEventListener('pointerleave', ()=>{
-          subMenu.hide();
-        });
-      } */
       if (typeof item.action === 'function') {
         // @ts-ignore
-        element.addEventListener('click', item.action);
+        element.addEventListener('pointerdown', item.action);
       }
     }
-    this.hider.addEventListener('pointerdown', ()=>this.hide());
+    this.hider.addEventListener('pointerdown', (ev)=>{
+      ev.preventDefault();
+      this.hide();
+    });
     document.body.append(this.hider);
     document.body.append(this.shell);
   }
-  show(y?: number, r?: number, l?: number) {
-    if (this._removed) return;
-    let rect = this.container.getBoundingClientRect();
+  show(around: OutlineRect) {
+    let rect = this.container.getBoundingClientRect()
+    let side = setPosition(this.shell, rect, around);
     this.shell.style.setProperty('--h', rect.height + 'px');
     this.shell.style.setProperty('--w', rect.width + 'px');
-    if (typeof r === 'number' && r + rect.width <= window.innerWidth) {
-      this.shell.style.left = r + 'px';
-    }else if (typeof l === 'number') {
-      this.shell.style.left = Math.max(l - rect.width, 0) + 'px';
+    if (side.v === 'bottom') {
+      this.shell.classList.add('menu-show-top');
+    } else {
+      this.shell.classList.add('menu-show-bottom');
     }
-    if (typeof y === 'number') {
-      if (y + rect.height <= window.innerHeight) {
-        this.shell.style.top = y + 'px';
-        this.shell.classList.add('menu-show-top');
-      }else{
-        this.shell.style.bottom = Math.min(y + rect.height, window.innerHeight) + 'px';
-        this.shell.classList.add('menu-show-bottom');
-      }
-    }
-    this.hider.classList.add('menu-hider-show');
+    this.hider.classList.add('ui-hider-show');
   }
   hide() {
     if (this._removed) return;
     this.shell.classList.add('menu-hide');
-    this.hider.classList.remove('menu-hider-show');
+    this.hider.classList.remove('ui-hider-show');
     setTimeout(() => {
       this.shell.classList.remove('menu-show-top', 'menu-show-bottom', 'menu-hide');
       if (typeof this.onhided === 'function') {
@@ -96,7 +84,5 @@ export class Menu{
   }
   remove() {
     this.hide();
-    this.shell.remove();
-    this.hider.remove();
   }
 }

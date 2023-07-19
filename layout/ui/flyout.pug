@@ -1,0 +1,8 @@
+.flyout-content!=content
+.flyout-actions
+  each item in buttons
+    button
+      if item.icon
+        div(class="icon icon-" + item.icon)
+      if item.name
+        !=item.name

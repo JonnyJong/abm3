@@ -1,0 +1,118 @@
+/* 
+UNFINISHED
+*/
+ui-markdown
+  display block
+  position relative
+  border-radius 6px
+  height calc(100vh - 50px)
+  overflow hidden scroll
+  background var(--input-bg)
+  border 1px solid var(--input-border)
+  color var(--color)
+  // padding 8px 12px
+  transition .1s border, .1s background
+  font-family NotoSans
+  line-height 1
+  &:has(.mdu-edit:hover)
+    background var(--input-bg-hover)
+  &:has(.mdu-edit *:focus)
+    background var(--input-bg-focus)
+.mdu-control
+  position sticky
+  display flex
+  width 100%
+  top 0
+  left 0
+  padding 6px
+  background var(--bg2-tsp)
+  backdrop-filter blur(20px)
+  z-index 1
+.mdu-flex
+  flex 1
+.mdu-edit
+  position relative
+  min-height calc(100% - 50px)
+  outline none
+  line-height 1.8
+  display flex
+  flex-direction column
+.md-heading
+  font-weight calc(800 * var(--weight-factor))
+  &:before
+    color var(--color-disabled)
+
+
+.md-p
+  padding 16px 48px
+  outline 0
+  min-height 28.8px + 32px
+  &:last-child
+    flex 1
+.md-h
+  position relative
+  .icon
+    position absolute
+    pointer-events none
+    color var(--color-disabled)
+    top 50%
+    translate 0 -50%
+    left 16px
+  input
+    all unset
+    box-sizing border-box
+    display block
+    width 100%
+    font-weight calc(800 * var(--weight-factor))
+    padding 16px 16px 16px 48px
+[heading="1"] input
+  font-size 32px
+[heading="2"] input
+  font-size 28px
+[heading="3"] input
+  font-size 24px
+[heading="4"] input
+  font-size 20px
+[heading="5"] input
+  font-size 18px
+
+.md-image
+  img
+    display block
+    margin auto
+    max-width calc(100% - 48px)
+  input
+    flex 1
+    margin 4px
+.md-img-control
+  display flex
+  background var(--bg2)
+  width calc(100% - 32px)
+  margin auto
+  border-radius 6px
+  padding 6px
+
+.md-quote
+  position relative
+  .icon
+    position absolute
+    font-size 32px
+    top 16px
+    left 32px
+.md-quote-input
+  outline 0
+  padding 32px 64px 0 64px
+.md-quote-author
+  text-align right
+.md-quote-author-input
+  outline 0
+  padding 0 32px 0 8px
+  line-height 2
+
+.md-hr
+  margin 16px auto
+  height 1px
+  background var(--color-disabled)
+  width calc(100% - 64px)
+
+// .md-bangumi

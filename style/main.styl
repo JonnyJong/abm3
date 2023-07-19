@@ -18,6 +18,17 @@ body
   max-width s('min(100%, calc(100vw - 64px))')
   margin auto
 
+.ui-hider
+  position fixed
+  z-index 10
+  top 0
+  left 0
+  height 100vh
+  width 1000vw
+  pointer-events none
+.ui-hider-show
+  pointer-events all
+
 ::selection
   background var(--theme)
   color var(--select)
