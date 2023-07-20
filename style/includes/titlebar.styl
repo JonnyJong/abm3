@@ -47,35 +47,43 @@ body.homeable .history-home
   flex auto
   app-region drag
   transition .1s padding
-  input
-    display block
+  ui-text
     width 500px
     max-width 100%
-    padding 8px 34px
+    display block
 .search-input
   app-region no-drag
   margin auto
   width max-content
-  position relative
-  &:not(.search-inputed)
-    .search-clear
-      opacity 0
-      pointer-events none
-.search-page
-.search-clear
-  position absolute
-  padding 6px
-  border-radius 4px
-  top 4px
-  left 4px
-  transition .1s background, .1s scale, .1s opacity
-  &:hover
-    background #8884
-  &:active
-    scale .9
-.search-clear
-  left unset
-  right 4px
+//   input
+//     display block
+//     width 500px
+//     max-width 100%
+//     padding 8px 34px
+// .search-input
+//   app-region no-drag
+//   margin auto
+//   width max-content
+//   position relative
+//   &:not(.search-inputed)
+//     .search-clear
+//       opacity 0
+//       pointer-events none
+// .search-page
+// .search-clear
+//   position absolute
+//   padding 6px
+//   border-radius 4px
+//   top 4px
+//   left 4px
+//   transition .1s background, .1s scale, .1s opacity
+//   &:hover
+//     background #8884
+//   &:active
+//     scale .9
+// .search-clear
+//   left unset
+//   right 4px
 body.backable .search
   padding-right 46px
 body.homeable .search

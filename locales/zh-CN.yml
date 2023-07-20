@@ -6,6 +6,7 @@ app:
   home: 主页
 
 search:
+  advanced_search: 高级搜索
   type_to_search: 键入以搜索...
 
 user_menu:
@@ -54,6 +55,9 @@ markdown:
 
   embed_img: 嵌入图像
   quote_img: 引用图像
+
+text:
+  clear: 清空
 
 settings:
   confirm: 确认

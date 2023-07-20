@@ -1,0 +1,31 @@
+ui-text
+  position relative
+  input
+    width 100%
+.ui-text-btns
+  position absolute
+  top 5px
+  display flex
+  gap 4px
+.ui-text-btns-left
+  left 5px
+.ui-text-btns-right
+  right 5px
+.ui-text-btn
+  display flex
+  justify-content center
+  align-items center
+  width 28px
+  height 28px
+  border-radius 4px
+  transition .1s background, .1s scale, .1s opacity
+  &:hover
+    background #8884
+  &:active
+    scale .9
+.ui-text-clear
+  scale 0
+  pointer-events none
+.ui-text-filled .ui-text-clear
+  scale 1
+  pointer-events all
