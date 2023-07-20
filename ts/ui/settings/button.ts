@@ -20,7 +20,7 @@ export class ButtonSettings{
   constructor(options: Options) {
     this._options = Object.assign(options);
     this.item = new SettingItem(this._options);
-    this.items = options.items;
+    this.items = this._options.items;
   }
   get buttons() {
     return Array.from(this.item.head.children);
@@ -32,6 +32,7 @@ export class ButtonSettings{
       btn.innerHTML = item.content;
       btn.disabled = !!item.disabled;
       btn.addEventListener('click',(ev)=>item.handler(this._options.key, item.key, ev));
+      this.item.head.append(btn);
     }
   }
 };
