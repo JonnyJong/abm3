@@ -22,7 +22,7 @@ export class SettingItem {
     if (Array.isArray(option.classList)) {
       this.element.classList.add(...option.classList);
     }
-    this.element.innerHTML = layout('ui/setting-item', option);
+    this.element.innerHTML = layout('ui/setting-item', { option });
     this._confrimBtn = this.element.querySelector('.setting-item-confirm');
     this._resetBtn = this.element.querySelector('.setting-item-reset');
     this.head = (this.element.querySelector('.setting-item-head') as HTMLDivElement);

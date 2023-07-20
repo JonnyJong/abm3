@@ -1,16 +1,16 @@
 .setting-item-head-shell
   .setting-item-icon
-    if icon
-      i(class="icon icon-" + icon)
+    if option.icon
+      i(class="icon icon-" + option.icon)
   .setting-item-info
-    .setting-item-name!=name
-    if description
-      .setting-item-desc!=description
+    .setting-item-name!=option.name
+    if option.description
+      .setting-item-desc!=option.description
   .setting-item-head
-  if confirm
+  if option.confirm
     button.setting-item-confirm(tooltip="<ui-lang>settings.confirm</ui-lang>")
       .icon.icon-CheckMark
-  if reset
+  if option.reset
     button.setting-item-reset(tooltip="<ui-lang>settings.reset</ui-lang>")
       .icon.icon-Undo
   .setting-item-expand
