@@ -2,6 +2,8 @@ ui-text
   position relative
   input
     width 100%
+  &.ui-text-focus:has(.ui-text-list:not(:empty)) input
+    border-radius 6px 6px 0 0
 .ui-text-btns
   position absolute
   top 5px
@@ -29,3 +31,26 @@ ui-text
 .ui-text-filled .ui-text-clear
   scale 1
   pointer-events all
+.ui-text-list
+  position absolute
+  top 100%
+  left 0
+  width 100%
+  backdrop-filter blur(20px)
+  background var(--bg-tsp)
+  border-radius 0 0 6px 6px
+  display none
+  &:not(:empty)
+    padding 4px
+.ui-text-auto
+  padding 8px 10px
+.ui-text-item
+  border-radius 4px
+  overflow hidden
+  &:hover
+    background #8884
+.ui-text-focus .ui-text-list
+  display block
+.ui-text-list:not(.ui-text-list-point) .ui-text-item-current
+  background var(--theme)
+  color var(--select)

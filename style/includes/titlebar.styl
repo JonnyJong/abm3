@@ -6,12 +6,21 @@
   height 50px
   display flex
   align-items center
-  background var(--bg-tsp)
-  backdrop-filter blur(20px)
   app-region drag
   z-index 10
   &>*
+    position relative
     app-region no-drag
+  &:before
+    content ''
+    display block
+    position absolute
+    top 0
+    left 0
+    height 100%
+    width 100%
+    background var(--bg-tsp)
+    backdrop-filter blur(20px)
 body.blur .titlebar
   color var(--color-disabled)
   ::placeholder
