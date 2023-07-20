@@ -3,11 +3,9 @@ import path from "path";
 import pug from "pug";
 import { locale } from "./locale";
 import pageHome from "./page/home";
-import pageAdd from "./page/add";
 
 const PageTemplate: { [x: string]: PageOption } = {
   home: pageHome,
-  add: pageAdd,
 };
 
 export type PageOption = {
@@ -88,7 +86,7 @@ export class History{
     };
     this._onlys.home = this.now.page;
   }
-  async open(layout: string, data: any): Promise<void | Page> {
+  async open(layout: string, data?: any): Promise<void | Page> {
     if (!PageTemplate[layout]) return;
     this.now.scroll = this.now.page.element.scrollTop;
     this.stack.push(this.now);
