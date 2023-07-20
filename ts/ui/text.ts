@@ -32,6 +32,8 @@ export class UIText extends HTMLElement{
     this._rightBtn.classList.add('ui-text-btns', 'ui-text-btns-right');
     this._list = document.createElement('div');
     this._list.classList.add('ui-text-list');
+  }
+  connectedCallback() {
     this.append(this._leftBtn, this._input, this._rightBtn, this._list);
     try {
       if ((this as any).placeholderText) {
@@ -182,14 +184,14 @@ export class UIText extends HTMLElement{
   get disabled(): boolean {
     return this.hasAttribute('disabled');
   }
-  set disabled(value: boolean) {
-    this.toggleAttribute('disabled', value);
+  set disabled(value: any) {
+    this.toggleAttribute('disabled', !!value);
   }
   get invalid(): boolean {
     return this.hasAttribute('invalid');
   }
-  set invalid(value: boolean) {
-    this.toggleAttribute('invalid', value);
+  set invalid(value: any) {
+    this.toggleAttribute('invalid', !!value);
   }
   clear() {
     this._input.value = '';
