@@ -1,0 +1,19 @@
+.setting-item-head-shell
+  .setting-item-icon
+    if icon
+      i(class="icon icon-" + icon)
+  .setting-item-info
+    .setting-item-name!=name
+    if description
+      .setting-item-desc!=description
+  .setting-item-head
+  if confirm
+    button.setting-item-confirm(tooltip="<ui-lang>settings.confirm</ui-lang>")
+      .icon.icon-CheckMark
+  if reset
+    button.setting-item-reset(tooltip="<ui-lang>settings.reset</ui-lang>")
+      .icon.icon-Undo
+  .setting-item-expand
+    .icon.icon-ChevronDown
+.setting-item-body-shell
+  .setting-item-body

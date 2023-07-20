@@ -1,8 +1,6 @@
 import path from "path";
 import { OutlineRect, setPosition } from "../helper/position";
-import { renderFile } from "pug";
-
-const layoutPath = path.join(process.cwd(), 'layout/ui/flyout.pug');
+import { layout } from "ts/helper/layout";
 
 type FlyoutOptions = {
   content: string,
@@ -21,7 +19,7 @@ export class Flyout{
     this.hider.classList.add('ui-hider');
     this.container = document.createElement('div');
     this.container.classList.add('flyout');
-    this.container.innerHTML = renderFile(layoutPath, options);
+    this.container.innerHTML = layout('layout/ui/flyout', options);
     let buttons = this.container.querySelectorAll('button');
     for (let i = 0; i < options.buttons.length; i++) {
       buttons[i].addEventListener('pointerdown', options.buttons[i].action);

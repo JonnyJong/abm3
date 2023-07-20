@@ -11,7 +11,6 @@ import { initDialog } from "./modules/dialog";
 
 app.on('ready',()=>{
   registeProtocol('pug', pug.portocolHandler);
-  // registeProtocol('styl', style.portocolHandler);
 
   const win = new BrowserWindow({
     show: false,
