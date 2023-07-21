@@ -27,6 +27,9 @@ export class SwitchSetting{
   get value(): boolean{
     return this.switcher.value;
   }
+  set value(value: boolean){
+    this.switcher.value = value;
+  }
   get key(): string {
     return this._options.key;
   }
