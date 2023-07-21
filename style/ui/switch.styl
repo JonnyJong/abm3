@@ -6,11 +6,11 @@ ui-switch
   height 20px
   width 40px
   border-radius 10px
-  &:hover
+  &:not(.ui-switch-disabled):hover
     background var(--switch-bg-hover)
     .ui-switch-toggler
       scale 1.1
-  &:active
+  &:not(.ui-switch-disabled):active
     background var(--switch-bg-active)
     .ui-switch-toggler
       scale 1.1
@@ -35,6 +35,6 @@ ui-switch
   .ui-switch-toggler
     left 23px
     background var(--bg)
-  &:active
+  &:not(.ui-switch-disabled):active
     .ui-switch-toggler
       translate -3px 0

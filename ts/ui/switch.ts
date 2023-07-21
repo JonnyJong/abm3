@@ -46,6 +46,7 @@ export class UISwitch extends HTMLElement{
     this._inited = true;
     this.append(this._shell);
     this._shell.addEventListener('pointerdown', (ev)=>{
+      if (this._disabled) return;
       this._draging = true;
       this._x = ev.x;
       this._togglerX = this._toggler.offsetLeft;
