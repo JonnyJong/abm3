@@ -60,8 +60,13 @@ export class UISwitch extends HTMLElement{
     return this._value;
   }
   set value(value: boolean) {
+    let oldValue = this._value;
     this._value = !!value;
     this._shell.classList.toggle('ui-switch-open', this._value);
+    if (!!value !== oldValue) {
+      this.dispatchEvent(new Event('change'));
+    }
+    this.dispatchEvent(new InputEvent('input'));
   }
   get disabled(): boolean {
     return this._disabled;
