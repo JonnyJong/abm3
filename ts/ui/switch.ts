@@ -7,7 +7,6 @@ export class UISwitch extends HTMLElement{
   private _toggler: HTMLDivElement;
   private _draging: boolean = false;
   private _disabled: boolean = false;
-  private _stamp: number = 0;
   private _moved: boolean = false;
   private _x: number = 0;
   private _togglerX: number = 0;
