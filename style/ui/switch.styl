@@ -1,0 +1,40 @@
+ui-switch
+  display inline-block
+.ui-switch-shell
+  position relative
+  border 1px solid var(--switch-border)
+  height 20px
+  width 40px
+  border-radius 10px
+  &:hover
+    background var(--switch-bg-hover)
+    .ui-switch-toggler
+      scale 1.1
+  &:active
+    background var(--switch-bg-active)
+    .ui-switch-toggler
+      scale 1.1
+      width 15px
+.ui-switch-toggler
+  position absolute
+  border-radius 12px
+  width 12px
+  height 12px
+  background var(--switch-toggler)
+  top 3px
+  left 3px
+  transition .1s scale, .1s translate, .1s width, .1s left
+.ui-switch-switching
+  transition .1s scale, .1s translate, .1s width
+.ui-switch-open
+  background var(--theme)
+  border-color var(--theme)
+  &:hover
+  &:active
+    background var(--theme)
+  .ui-switch-toggler
+    left 23px
+    background var(--bg)
+  &:active
+    .ui-switch-toggler
+      translate -3px 0

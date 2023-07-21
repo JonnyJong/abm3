@@ -13,6 +13,7 @@ type ListItemOption = {
   action: Function,
 };
 export class UIText extends HTMLElement{
+  private _inited: boolean = false;
   private _leftBtn: HTMLDivElement;
   private _input: HTMLInputElement;
   private _rightBtn: HTMLDivElement;
@@ -34,6 +35,8 @@ export class UIText extends HTMLElement{
     this._list.classList.add('ui-text-list');
   }
   connectedCallback() {
+    if (this._inited) return;
+    this._inited = true;
     this.append(this._leftBtn, this._input, this._rightBtn, this._list);
     try {
       if ((this as any).placeholderText) {
