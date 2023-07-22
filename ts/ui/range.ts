@@ -34,6 +34,7 @@ export class UIRange extends HTMLElement{
     this._slider.append(this._sliderIndicator);
     this._indicator = document.createElement('div');
     this._indicator.classList.add('ui-range-indicator');
+    this._indicator.textContent = '0';
     this._slider.append(this._indicator);
   }
   private _setValue(value: number) {
@@ -75,6 +76,13 @@ export class UIRange extends HTMLElement{
         this._pointermoveHandler(ev);
       }
       this._indicator.classList.add('ui-range-indicator-show');
+    });
+    this._slider.addEventListener('pointerenter', ()=>{
+      this._indicator.classList.add('ui-range-indicator-show');
+    });
+    this._slider.addEventListener('pointerleave',()=>{
+      if (this._draging) return;
+      this._indicator.classList.remove('ui-range-indicator-show');
     });
   }
   disconnectedCallback() {}
