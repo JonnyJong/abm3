@@ -40,9 +40,9 @@ export class UISwitch extends HTMLElement{
     window.addEventListener('pointerup', this._pointerupHandler);
     window.addEventListener('pointermove', this._pointermoveHandler);
     if (this._inited) return;
+    this._inited = true;
     this.value = this.getAttribute('value') === 'true';
     this.disabled = this.hasAttribute('disabled');
-    this._inited = true;
     this.append(this._shell);
     this._shell.addEventListener('pointerdown', (ev)=>{
       if (this._disabled) return;
