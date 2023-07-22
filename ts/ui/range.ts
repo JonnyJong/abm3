@@ -85,7 +85,10 @@ export class UIRange extends HTMLElement{
       this._indicator.classList.remove('ui-range-indicator-show');
     });
   }
-  disconnectedCallback() {}
+  disconnectedCallback() {
+    window.removeEventListener('pointermove', this._pointermoveHandler);
+    window.removeEventListener('pointerup', this._pointerupHandler);
+  }
   get value(): number {
     return this._value;
   }
@@ -121,5 +124,6 @@ export class UIRange extends HTMLElement{
   }
   set disabled(value: boolean) {
     this._disabled = !!value;
+    this._shell.classList.toggle('ui-range-disabled', this._disabled);
   }
 }
