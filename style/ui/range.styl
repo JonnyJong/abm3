@@ -1,0 +1,63 @@
+ui-range
+  display block
+  width 200px
+.ui-range-shell
+  position relative
+  height 4px
+  width 100%
+  --progress 0%
+.ui-range-track
+  position relative
+  height 100%
+  width 100%
+  border-radius 4px
+  background var(--range-bg)
+  overflow hidden
+.ui-range-thumb
+  position relative
+  left 0
+  height 100%
+  background var(--theme)
+  width var(--progress)
+.ui-range-slider
+  position absolute
+  border 1px solid #8881
+  height 22px
+  width 22px
+  border-radius 22px
+  top -9px
+  left var(--progress)
+  translate -11px 0
+  background var(--range-slider-bg)
+  &:hover
+    .ui-range-slider-indicator
+      scale 1.4
+  &:active
+    .ui-range-slider-indicator
+      scale 0.8
+.ui-range-slider-indicator
+  position absolute
+  height 10px
+  width 10px
+  border-radius 100%
+  background var(--theme)
+  top 5px
+  left 5px
+  transition .1s scale
+.ui-range-indicator
+  position absolute
+  border-radius 6px
+  background var(--bg-tsp)
+  backdrop-filter blur(20px)
+  border 1px solid #8884
+  line-height 1
+  padding 10px
+  white-space nowrap
+  pointer-events none
+  top -18px - 38px
+  left 50%
+  translate -50% 0
+  opacity 0
+  transition .1s opacity
+.ui-range-indicator-show
+  opacity 1
