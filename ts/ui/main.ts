@@ -1,4 +1,5 @@
 import { UIColor, UIColorPicker } from "./color";
+import { UIImagePicker } from "./image";
 import { UILang } from "./lang";
 import { UIRange } from "./range";
 import { UISwitch } from "./switch";
@@ -13,6 +14,7 @@ export function initUI() {
   customElements.define('ui-range', UIRange);
   customElements.define('ui-color', UIColor);
   customElements.define('ui-color-picker', UIColorPicker);
+  customElements.define('ui-image-picker', UIImagePicker);
   // customElements.define('ui-markdown', UIMarkdown);
   initTooltip();
 }

@@ -74,6 +74,12 @@ dialog:
   confirm: 确认
   cancel: 取消
 
+image:
+  error: 无法加载图片
+  loading: 正在加载图片
+  empty: 暂未选择图片
+  input_url: 输入图像链接
+
 settings:
   confirm: 确认
   reset: 重置

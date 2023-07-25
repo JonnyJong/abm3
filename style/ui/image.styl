@@ -1,0 +1,55 @@
+ui-image-picker
+  position relative
+  display block
+  height 400px
+  width 300px
+  border-radius 6px
+  overflow hidden
+  border 1px solid var(--color-disabled)
+  &>*
+    border-radius 6px
+    &:not(img)
+      opacity 0
+      backdrop-filter blur(20px)
+      transition .1s opacity, .1s border, .2s background, .1s scale
+  &:hover
+    &>*:not(img)
+      opacity 1
+.ui-image-img
+  width 100%
+  height 100%
+  object-fit cover
+  opacity 1
+  transition .1s opacity
+.ui-image-img-hide
+  opacity 0
+.ui-image-info
+  position absolute
+  display flex
+  align-items center
+  top 8px
+  left 8px
+  padding 8px 14px
+  opacity 1
+  .icon
+    margin 0 8px 0 0
+  &:has(.icon-Warning)
+    background #f004
+  &:empty
+    display none
+.ui-image-clean
+  position absolute
+  top 8px
+  right 8px
+.ui-image-default
+  position absolute
+  bottom 8px
+  left 8px
+.ui-image-web
+  position absolute
+  bottom 8px
+  right 61px
+.ui-image-local
+  position absolute
+  bottom 8px
+  right 8px
