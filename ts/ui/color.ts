@@ -12,6 +12,9 @@ export class UIColor extends HTMLElement{
   connectedCallback() {
     if (this._inited) return;
     this._inited = true;
+    if (this.hasAttribute('value')) {
+      this.value = (this.getAttribute('value') as string);
+    }
     this.style.background = this._value;
     this.addEventListener('click', ()=>{
       let picker = (document.createElement('ui-color-picker') as UIColorPicker);
