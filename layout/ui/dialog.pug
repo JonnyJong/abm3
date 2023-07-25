@@ -1,0 +1,7 @@
+.ui-dialog-filter
+.ui-dialog-shell
+  .ui-dialog-title!=title
+  .ui-dialog-content
+  .ui-dialog-buttons
+    each item in buttons
+      button(class="ui-dialog-button" type=item.level)!=item.text

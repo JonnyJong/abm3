@@ -1,0 +1,51 @@
+.ui-dialog
+  position fixed
+  height 100vh
+  width 100vw
+  display flex
+  align-items center
+  justify-content center
+  z-index 10
+  pointer-events none
+  opacity 0
+  transition .1s opacity
+.ui-dialog-filter
+  position absolute
+  height 100%
+  width 100%
+  top 0
+  left 0
+  background #0005
+.ui-dialog-shell
+  position relative
+  border 1px solid var(--dialog-border)
+  background var(--dialog-bg)
+  overflow hidden
+  border-radius 6px
+  box-shadow 0 0 16px #0008
+  scale 1.05
+  transition .1s scale
+.ui-dialog-title
+  padding 24px 24px 12px 24px
+  font-size 20px
+  font-weight calc(500 * var(--weight-factor))
+.ui-dialog-content
+  padding 12px 24px 24px 24px
+.ui-dialog-buttons
+  border-top 1px solid var(--dialog-buttons-border)
+  background var(--dialog-buttons-bg)
+  padding 24px
+  display flex
+  gap 8px
+  &>*
+    flex auto
+    text-align center
+  ui-lang
+    display inline-block
+    width 100%
+    text-align center
+.ui-dialog-show
+  pointer-events all
+  opacity 1
+  .ui-dialog-shell
+    scale 1

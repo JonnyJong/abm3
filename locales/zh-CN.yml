@@ -59,6 +59,21 @@ markdown:
 text:
   clear: 清空
 
+color:
+  hex: HEX
+  r: 红
+  g: 绿
+  b: 蓝
+  h: 色调
+  s: 饱和度
+  v: 明度
+
+  choose: 选择颜色
+
+dialog:
+  confirm: 确认
+  cancel: 取消
+
 settings:
   confirm: 确认
   reset: 重置

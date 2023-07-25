@@ -1,0 +1,73 @@
+ui-color
+  display block
+  border-radius 6px
+  height 28px
+  width 56px
+  background #fff
+  transition .1s background
+ui-color-picker
+  input
+    width 148px
+  ::-webkit-inner-spin-button
+    appearance none
+.ui-color-shell
+  display flex
+  flex-direction column
+  gap 12px
+  width 336px
+  height 582px
+  padding 12px
+.ui-color-main
+  display flex
+  gap 12px
+.ui-color-spectrum
+  position relative
+  width 256px
+  height 256px
+  border-radius 6px
+  background linear-gradient(#0000, #fff), linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)
+  overflow hidden
+.ui-color-spectrum-sight
+  position absolute
+  border 2px solid #000
+  border-radius 100%
+  height 15px
+  width 15px
+  top var(--saturation, 100%)
+  left var(--hue, 0%)
+  translate -7px -7px
+.ui-color-preview
+  width 44px
+  height 256px
+  background #fff
+  border-radius 6px
+.ui-color-brightness
+  position relative
+  height 12px
+  border-radius 6px
+  background-color #fff
+  background-image linear-gradient(to right, #000, #0000)
+  margin 14px 0 4px 0
+.ui-color-brightness-sight
+  position absolute
+  border 3px solid var(--color-sight-border)
+  background var(--color-sight)
+  height 16px
+  width 16px
+  border-radius 100%
+  left calc(296px * var(--value, 0))
+  top -2px
+.ui-color-hex-shell
+  display flex
+  align-items center
+  justify-content flex-end
+  gap 8px
+.ui-color-container
+  display flex
+  justify-content space-between
+.ui-color-rgb-shell
+.ui-color-hsv-shell
+  display flex
+  flex-direction column
+  ui-lang:not(:first-child)
+    margin-top 8px

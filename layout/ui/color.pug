@@ -1,0 +1,25 @@
+.ui-color-shell
+  .ui-color-main
+    .ui-color-spectrum
+      .ui-color-spectrum-sight
+    .ui-color-preview
+  .ui-color-brightness
+    .ui-color-brightness-sight
+  .ui-color-hex-shell
+    ui-lang color.hex
+    input.ui-color-hex(value="#FFFFFF")
+  .ui-color-container
+    .ui-color-rgb-shell
+      ui-lang color.r
+      input.ui-color-red(type="number" min="0" value="255" max="255" t="red")
+      ui-lang color.g
+      input.ui-color-green(type="number" min="0" value="255" max="255" t="green")
+      ui-lang color.b
+      input.ui-color-blue(type="number" min="0" value="255" max="255" t="blue")
+    .ui-color-hsv-shell
+      ui-lang color.h
+      input.ui-color-hue(type="number" min="0" value="0" max="359" t="hue")
+      ui-lang color.s
+      input.ui-color-saturation(type="number" min="0" value="0" max="100" t="saturation")
+      ui-lang color.v
+      input.ui-color-value(type="number" min="0" value="0" max="100" t="value")
