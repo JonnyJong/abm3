@@ -1,4 +1,5 @@
 import { UIColor, UIColorPicker } from "./color";
+import { initDrag } from "./drag";
 import { UIImagePicker } from "./image";
 import { UILang } from "./lang";
 import { UIRange } from "./range";
@@ -17,4 +18,6 @@ export function initUI() {
   customElements.define('ui-image-picker', UIImagePicker);
   // customElements.define('ui-markdown', UIMarkdown);
   initTooltip();
+
+  initDrag();
 }

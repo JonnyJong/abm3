@@ -120,4 +120,8 @@ export class UIImagePicker extends HTMLElement{
   get error(): boolean {
     return this._error;
   }
+  dropHandler(data: DataTransfer){
+    if (data.files[0].type.split('/')[0] !== 'image') return;
+    this.value = data.files[0].path;
+  }
 }
