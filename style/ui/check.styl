@@ -1,0 +1,45 @@
+input[type="checkbox"]
+  all unset
+  position relative
+  display inline-block
+  width 20px
+  height 20px
+  border-radius 6px
+  background #0000
+  border 1px solid var(--check-border)
+  &:focus
+    background #0000
+    border-bottom-color var(--check-border)
+  &:hover
+    background var(--check-bg-hover)
+  &:active
+    background var(--check-bg-active)
+    border-color var(--check-border-active)
+  &:before
+  &:after
+    content ''
+    position absolute
+    display block
+    width 2px
+    background var(--bg)
+    opacity 0
+  &:before
+    height 6px
+    rotate -45deg
+    top 9px
+    left 6px
+  &:after
+    height 9px
+    rotate 45deg
+    bottom 5px
+    left 11px
+    clip-path polygon(100% 100%, 0 100%, 0 100%, 100% 100%)
+  &:checked
+    border-color var(--theme)
+    background var(--theme)
+    &:before
+    &:after
+      opacity 1
+    &:after
+      clip-path polygon(100% 0, 0 0, 0 100%, 100% 100%)
+      transition .2s clip-path
