@@ -1,0 +1,22 @@
+ui-tags
+  .ui-text-btns-left .ui-text-btn
+    pointer-events none
+    color var(--color-disabled)
+  .ui-text-filled .ui-text-btns-left .ui-text-btn
+    pointer-events all
+    color var(--color)
+.ui-tags-container
+  display flex
+  flex-wrap wrap
+  padding 8px
+  gap 8px
+  &>*
+    background var(--btn-bg)
+    padding 4px 12px
+    border-radius 32px
+    white-space pre
+    &:hover
+      background var(--btn-bg-hover)
+    &:active
+      background var(--btn-bg-active)
+      color var(--btn-color-active)
