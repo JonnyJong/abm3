@@ -1,0 +1,101 @@
+@keyframes ui-select-container
+  from
+    height 32px
+    top var(--y)
+@keyframes ui-select-list
+  from
+    top calc(var(--o) * -1)
+ui-select
+  display block
+.ui-select-placeholder
+  color var(--select-placeholder)
+.ui-select
+  width 200px
+  height 32px
+  border-radius 6px
+  background var(--select-bg)
+  border 1px solid var(--select-border)
+  display flex
+  align-items center
+  padding 0 10px
+  gap 8px
+  &:hover
+    background var(--select-bg-hover)
+  &:active
+    background var(--select-bg-active)
+    .ui-select-name
+      color var(--select-color-active)
+    .ui-select-icon
+      translate 0 2px
+.ui-select-name
+  flex auto
+  overflow hidden
+  text-overflow ellipsis
+  padding-left 7px
+.ui-select-icon
+  font-size 12px
+  transition .1s translate
+.ui-select-container
+  position fixed
+  width 200px
+  height s('min(var(--h), calc(100vh - 50px))');
+  border-radius 6px
+  overflow hidden
+  box-shadow 0 0 8px #0008
+  left var(--x)
+  top calc(var(--y) - var(--o))
+  z-index 10
+  pointer-events none
+  opacity 0
+  transition .1s opacity
+.ui-select-list
+  position absolute
+  width 200px
+  max-height calc(100vh - 50px)
+  overflow hidden auto
+  backdrop-filter blur(20px)
+  background var(--bg2-tsp)
+  padding 6px
+  display flex
+  flex-direction column
+  gap 4px
+  top 0px
+  left 0
+.ui-select-hider
+  position fixed
+  top 0
+  left 0
+  width 100vw
+  height 100vh
+  z-index 10
+  pointer-events none
+.ui-select-item
+  position relative
+  flex 0 0 32px
+  line-height 32px
+  padding 0 12px
+  border-radius 4px
+  &:hover
+    background var(--menu-hover)
+  &:active
+    background var(--menu-active)
+.ui-select-current:before
+  content ''
+  display block
+  position absolute
+  height 16px
+  width 3px
+  border-radius 2px
+  background var(--theme)
+  left 1px
+  top 8px
+.ui-select-show
+  .ui-select-hider
+    pointer-events all
+  .ui-select-container
+    pointer-events all
+    opacity 1
+    transition 0s opacity
+    animation ui-select-container .3s
+  .ui-select-list
+    animation ui-select-list .3s
