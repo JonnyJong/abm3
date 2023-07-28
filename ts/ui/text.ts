@@ -24,6 +24,53 @@ export class UIText extends HTMLElement{
     if (!event) return;
     this.dispatchEvent(new InputEvent('input'));
   }
+  private _listHandler(key: string) {
+    let current = this.querySelector('.ui-text-item-current');
+    if (current) {
+      switch (key) {
+        case 'Enter':
+          if (typeof (current as any).action !== 'function') return;
+          return (current as any).action();
+        case 'ArrowUp':
+          current.classList.remove('ui-text-item-current');
+          current = (current.previousSibling as Element);
+          this._list.classList.remove('ui-text-list-point');
+          break;
+        case 'ArrowDown':
+          current.classList.remove('ui-text-item-current');
+          current = (current.nextSibling as Element);
+          this._list.classList.remove('ui-text-list-point');
+          break;
+      }
+    } else {
+      switch (key) {
+        case 'ArrowUp':
+          if (this._list.lastChild) {
+            current = (this._list.lastChild as Element);
+          }
+          this._list.classList.remove('ui-text-list-point');
+          break;
+        case 'ArrowDown':
+          if (this._list.firstChild) {
+            current = (this._list.firstChild as Element);
+          }
+          this._list.classList.remove('ui-text-list-point');
+          break;
+      }
+    }
+    if (typeof (this._input as any).origin === 'string') {
+      this._input.value = (this._input as any).origin;
+    }
+    if (!current) {
+      this._inputed();
+      return;
+    }
+    current.classList.add('ui-text-item-current');
+    if (current.classList.contains('ui-text-auto')) {
+      this._input.value = (current.textContent as string);
+    }
+    this._inputed();
+  }
   constructor(){
     super();
     this._leftBtn = document.createElement('div');
@@ -53,57 +100,13 @@ export class UIText extends HTMLElement{
     this._input.addEventListener('blur',()=>{
       this.classList.toggle('ui-text-focus', false);
     });
-    this._input.addEventListener('keydown', ({key})=>{
-      if (!['Enter','ArrowUp','ArrowDown'].includes(key)) return;
-      let current = this.querySelector('.ui-text-item-current');
-      if (current) {
-        switch (key) {
-          case 'Enter':
-            if (typeof (current as any).action !== 'function') return;
-            return (current as any).action();
-          case 'ArrowUp':
-            current.classList.remove('ui-text-item-current');
-            current = (current.previousSibling as Element);
-            this._list.classList.remove('ui-text-list-point');
-            break;
-          case 'ArrowDown':
-            current.classList.remove('ui-text-item-current');
-            current = (current.nextSibling as Element);
-            this._list.classList.remove('ui-text-list-point');
-            break;
-        }
-      } else {
-        switch (key) {
-          case 'ArrowUp':
-            if (this._list.lastChild) {
-              current = (this._list.lastChild as Element);
-            }
-            this._list.classList.remove('ui-text-list-point');
-            break;
-          case 'ArrowDown':
-            if (this._list.firstChild) {
-              current = (this._list.firstChild as Element);
-            }
-            this._list.classList.remove('ui-text-list-point');
-            break;
-        }
-      }
-      if (!current) {
-        this._input.value = (this._input as any).origin;
-        delete (this._input as any).origin;
-        this._inputed();
+    this._input.addEventListener('keydown', (ev)=>{
+      if (!['Enter','ArrowUp','ArrowDown'].includes(ev.key)) {
+        (this._input as any).origin = this._input.value;
         return;
       };
-      if (typeof (this._input as any).origin !== 'string') {
-        (this._input as any).origin = this._input.value;
-      }
-      current.classList.add('ui-text-item-current');
-      if (current.classList.contains('ui-text-auto')) {
-        this._input.value = (current.textContent as string);
-      } else {
-        this._input.value = (this._input as any).origin;
-      }
-      this._inputed();
+      ev.preventDefault();
+      this._listHandler(ev.key);
     });
     this._list.addEventListener('pointermove',()=>{
       this._list.classList.add('ui-text-list-point');
