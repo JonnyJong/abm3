@@ -1,0 +1,27 @@
+ui-number
+  display inline-block
+  position relative
+  height 37px
+  ::-webkit-inner-spin-button
+    appearance none
+.ui-number-input
+  width 100%
+  padding-right 80px
+.ui-number-add
+.ui-number-reduce
+  position absolute
+  width 34px
+  height 28px
+  display flex
+  align-items center
+  justify-content center
+  top 4px
+  right 4px
+  border-radius 6px
+  &:hover
+    background var(--btn-bg-hover)
+  &:active
+    background var(--btn-bg-active)
+    color var(--btn-color-active)
+.ui-number-add
+  right 42px
