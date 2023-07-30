@@ -12,7 +12,7 @@ export class UITags extends HTMLElement{
     this._input = (document.createElement('ui-text') as UIText);
     this._input.classList.add('ui-tags-input');
   }
-  autoComplete?: (value: string)=>string[];
+  autoComplete?: (value: string)=>string[] | void;
   connectedCallback() {
     if (this._inited) return;
     this._inited = true;
@@ -42,6 +42,10 @@ export class UITags extends HTMLElement{
       }
       if (typeof this.autoComplete !== 'function') return;
       let originList = this.autoComplete(this._input.value);
+      if (!Array.isArray(originList)) {
+        this._input.list = [];
+        return;
+      }
       let list: {autoComplete: string}[] = [];
       originList.forEach((v)=>{
         if (this._values.has(v)) return;
