@@ -29,7 +29,7 @@ type BangumiOriginData = {
     [x: string]: string,
   },
 };
-class Bangumi{
+export class Bangumi{
   id: string = '';
   title: string = '';
   content: string = '';
