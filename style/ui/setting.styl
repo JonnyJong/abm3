@@ -1,24 +1,24 @@
-@keyframes setting-item-expand
+@keyframes ui-setting-item-expand
   from
     height 0px
   to
     height var(--height)
-@keyframes setting-item-collapse
+@keyframes ui-setting-item-collapse
   from
     height var(--height, 0px)
   to
     height 0px
-.setting-item
+ui-setting-item
   &:has(.setting-item-body:empty)
-    .setting-item-expand
+    .ui-setting-item-expand
       display none
   &:has(.setting-item-body>*:first-child)
-    .setting-item-head-shell
+    .ui-setting-item-head-shell
       &:hover
         background var(--setting-bg-hover)
       &:active
         background var(--setting-bg-active)
-.setting-item-head-shell
+.ui-setting-item-head-shell
   height 66px
   border-radius 6px
   display flex
@@ -27,32 +27,32 @@
   gap 16px
   background var(--bg3)
   transition .1s background
-.setting-item-icon
+.ui-setting-item-icon
   width 32px
   font-size 20px
   text-align center
-.setting-item-info
+.ui-setting-item-info
   flex 1
-.setting-item-desc
+.ui-setting-item-desc
   color var(--color2)
   font-size 12px
-.setting-item-head
+.ui-setting-item-head
   display flex
   gap 16px
-.setting-item-body-shell
+.ui-setting-item-body-shell
   position relative
   height 0px
   overflow hidden
-  animation setting-item-collapse .2s
-.setting-item-expand .icon
+  animation ui-setting-item-collapse .2s
+.ui-setting-item-expand .icon
   transition .2s rotate
-.setting-item-expanded
+.ui-setting-item-expanded
   .setting-item-body-shell
     height var(--height)
-    animation setting-item-expand .2s
-  .setting-item-expand .icon
+    animation ui-setting-item-expand .2s
+  .ui-setting-item-expand .icon
     rotate 180deg
-.setting-item-body
+.ui-setting-item-body
   position absolute
   bottom 0
   width 100%
