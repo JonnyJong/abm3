@@ -82,6 +82,7 @@ export class UINumber extends HTMLElement{
   set max(value: number) {
     if (typeof value !== 'number' || isNaN(value)) return;
     this._max = value;
+    this.value = this._value;
   }
   get min(): number {
     return this._min;
@@ -89,6 +90,7 @@ export class UINumber extends HTMLElement{
   set min(value: number) {
     if (typeof value !== 'number' || isNaN(value)) return;
     this._min = value;
+    this.value = this._value;
   }
   get step(): number {
     return this._step;
