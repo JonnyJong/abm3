@@ -13,12 +13,14 @@ type SettingMessage = {
   type: 'message',
   level?: 'info' | 'warn' | 'error' | 'success',
   text: string,
+  key: string,
 };
 
 type SettingButton = {
   type: 'button',
   text: string,
   action: ()=>void,
+  key: string,
 };
 type SettingInput = {
   type: 'input',
@@ -38,53 +40,65 @@ type SettingInput = {
     tooltip?: string,
     tooltipLocaleKey?: string,
   }[],
+  key: string,
 };
 type SettingTextArea = {
   type: 'textarea',
   placeholder?: string,
+  key: string,
 };
 type SettingSwitch = {
   type: 'switch',
+  key: string,
 };
 type SettingColor = {
   type: 'color',
+  key: string,
 };
 type SettingImage = {
   type: 'image',
+  key: string,
 };
 type SettingRange = {
   type: 'range',
   max?: number,
   min?: number,
   step?: number,
+  key: string,
 };
 type SettingNumber = {
   type: 'number',
   max?: number,
   min?: number,
   step?: number,
+  key: string,
 };
 type SettingSelect = {
   type: 'select',
   values: Map<any, string>,
+  key: string,
 };
 type SettingTags = {
   type: 'tags',
   autoComplete?: (value: string)=>string[] | void,
+  key: string,
 };
 
 type SettingList = {
   type: 'list',
   inline?: boolean,
   template: SettingGroup,
+  key: string,
 };
 
 type SettingText = {
   type: 'text',
   text: string,
+  key: string,
 };
 type SettingGroupFlexbox = {
   type: 'flex',
+  key: string,
 };
 
 type SettingItems = SettingButton | SettingInput | SettingTextArea | SettingSwitch | SettingColor | SettingImage | SettingRange | SettingNumber | SettingSelect | SettingTags;
@@ -93,14 +107,16 @@ type SettingLayouts = SettingText | SettingGroupFlexbox;
 export type SettingGroup = {
   type: 'group',
   direction?: 'row' | 'column',
-  items: {[key: string]: SettingLayouts | SettingItems | SettingList},
+  items: (SettingLayouts | SettingItems | SettingList)[],
+  key: string,
 };
 type SettingItemChild = {
   type: 'item',
   icon?: string,
   name: string,
   description?: string,
-  items: {[key: string]: SettingItems},
+  items: SettingItems[],
+  key: string,
 };
 
 type SettingItem = {
@@ -108,20 +124,20 @@ type SettingItem = {
   icon?: string,
   name: string,
   description?: string,
-  head: {[key: string]: SettingItems},
-  body: {[key: string]: SettingItemChild | SettingGroup | SettingList},
+  head: SettingItems[],
+  body: (SettingItemChild | SettingGroup | SettingList)[],
+  key: string,
 };
 
-type SettingPart = {
-  title?: string,
-  items: {[key: string]: SettingMessage | SettingItem},
+type SettingTitle = {
+  type: 'title',
+  text: string,
+  key: string,
 };
 
-type SettingOption = {
-  [key: string]: SettingPart,
-};
+export type SettingOption = SettingTitle | SettingMessage | SettingItem;
 
-type SettingUI = SettingItem | SettingItemChild | SettingGroup | SettingLayouts | SettingItems | SettingMessage | SettingList;
+type SettingUI = SettingOption | SettingItemChild | SettingGroup | SettingLayouts | SettingItems | SettingList;
 
 type CompiledItem = {
   type: 'item',
@@ -138,38 +154,17 @@ export type CompiledObject = {
 };
 
 export class SettingTemplate{
-  _template: SettingOption;
-  _compiled: {[key: string]: CompiledObject} = {};
+  _template: SettingOption[];
+  _compiled: {[key: string]: CompiledObject | CompiledLayout} = {};
   _element: HTMLElement;
-  constructor(options: SettingOption, value: any) {
+  constructor(options: SettingOption[], value: any) {
     this._template = options;
     this._element = document.createElement('div');
     this._element.className = 'settings';
-    for (const key in options) {
-      if (!Object.prototype.hasOwnProperty.call(options, key)) continue;
-      // element
-      let div = document.createElement('div');
-      div.className = 'setting-part';
-      // compiled
-      this._compiled[key] = {
-        type: 'object',
-        element: div,
-        items: {},
-      };
-      // title
-      let title = document.createElement('div');
-      title.className = 'setting-part-title';
-      if (typeof options[key].title === 'string') {
-        title.innerHTML = (options[key].title as string);
-      }
-      div.append(title);
-      // items
-      for (const i in options[key].items) {
-        if (!Object.prototype.hasOwnProperty.call(options[key].items, i)) continue;
-        let compiled = SettingTemplate.compile(options[key].items[i], value?.[key]?.[i]);
-        this._compiled[key].items[i] = compiled;
-        div.append(compiled.element);
-      }
+    for (const item of options) {
+      let compiled = (SettingTemplate.compile(item, value?.[item.key]) as CompiledObject | CompiledLayout);
+      this._compiled[item.key] = compiled;
+      this._element.append(compiled.element);
     }
   };
   set(part: string, keys: string, type: string, value: any): boolean {
@@ -251,25 +246,22 @@ export class SettingTemplate{
     let element;
     if ('items' in objs) {
       element = (document.createElement('ui-setting-item-child') as UISettingItemChild);
-      for (const key in objs.items) {
-        if (!Object.prototype.hasOwnProperty.call(objs.items, key)) continue;
-        let compiled = SettingTemplate.compile(objs.items[key], value?.[key]);
-        items[key] = compiled;
-        element.head.append(compiled.element);
+      for (const item of objs.items) {
+        let compile = SettingTemplate.compile(item, value?.[item.key]);
+        items[item.key] = compile;
+        element.head.append(compile.element);
       }
     } else {
       element = (document.createElement('ui-setting-item') as UISettingItem);
-      for (const key in objs.head) {
-        if (!Object.prototype.hasOwnProperty.call(objs.head, key)) continue;
-        let compiled = SettingTemplate.compile(objs.head[key], value?.[key]);
-        items[key] = compiled;
-        element.head.append(compiled.element);
+      for (const item of objs.head) {
+        let compile = SettingTemplate.compile(item, value?.[item.key]);
+        items[item.key] = compile;
+        element.head.append(compile.element);
       }
-      for (const key in objs.body) {
-        if (!Object.prototype.hasOwnProperty.call(objs.body, key)) continue;
-        let compiled = SettingTemplate.compile(objs.body[key], value?.[key]);
-        items[key] = compiled;
-        element.body.append(compiled.element);
+      for (const item of objs.body) {
+        let compile = SettingTemplate.compile(item, value?.[item.key]);
+        items[item.key] = compile;
+        element.body.append(compile.element);
       }
     }
     element.icon = objs.icon;
@@ -292,11 +284,10 @@ export class SettingTemplate{
       element,
       items: {},
     };
-    for (const key in objs.items) {
-      if (!Object.prototype.hasOwnProperty.call(objs.items, key)) continue;
-      let item = SettingTemplate.compile(objs.items[key], value?.[key]);
-      compiled.items[key] = item;
-      element.append(item.element);
+    for (const item of objs.items) {
+      let compiledItem = SettingTemplate.compile(item, value?.[item.key]);
+      compiled.items[item.key] = compiledItem;
+      element.append(compiledItem.element);
     }
     return compiled;
   }
@@ -370,6 +361,15 @@ export class SettingTemplate{
     }
     return{
       type: 'item',
+      element,
+    };
+  }
+  static titleCompile(objs: SettingTitle, value: any): CompiledLayout {
+    let element = document.createElement('div');
+    element.classList.add('setting-title');
+    element.innerHTML = objs.text;
+    return{
+      type: 'layout',
       element,
     };
   }
