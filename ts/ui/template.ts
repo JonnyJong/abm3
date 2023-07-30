@@ -41,23 +41,28 @@ type SettingInput = {
     tooltipLocaleKey?: string,
   }[],
   key: string,
+  data: string,
 };
 type SettingTextArea = {
   type: 'textarea',
   placeholder?: string,
   key: string,
+  data: string,
 };
 type SettingSwitch = {
   type: 'switch',
   key: string,
+  data: string,
 };
 type SettingColor = {
   type: 'color',
   key: string,
+  data: string,
 };
 type SettingImage = {
   type: 'image',
   key: string,
+  data: string,
 };
 type SettingRange = {
   type: 'range',
@@ -65,6 +70,7 @@ type SettingRange = {
   min?: number,
   step?: number,
   key: string,
+  data: string,
 };
 type SettingNumber = {
   type: 'number',
@@ -72,16 +78,19 @@ type SettingNumber = {
   min?: number,
   step?: number,
   key: string,
+  data: string,
 };
 type SettingSelect = {
   type: 'select',
   values: Map<any, string>,
   key: string,
+  data: string,
 };
 type SettingTags = {
   type: 'tags',
   autoComplete?: (value: string)=>string[] | void,
   key: string,
+  data: string,
 };
 
 type SettingList = {
@@ -89,6 +98,7 @@ type SettingList = {
   inline?: boolean,
   template: SettingGroup,
   key: string,
+  data: string,
 };
 
 type SettingText = {
@@ -107,7 +117,7 @@ type SettingLayouts = SettingText | SettingGroupFlexbox;
 export type SettingGroup = {
   type: 'group',
   direction?: 'row' | 'column',
-  items: (SettingLayouts | SettingItems | SettingList)[],
+  items: (SettingLayouts | SettingGroup | SettingList | SettingItems)[],
   key: string,
 };
 type SettingItemChild = {
@@ -125,7 +135,7 @@ type SettingItem = {
   name: string,
   description?: string,
   head: SettingItems[],
-  body: (SettingItemChild | SettingGroup | SettingList)[],
+  body: (SettingItemChild | SettingGroup | SettingList | SettingItems)[],
   key: string,
 };
 
@@ -153,16 +163,25 @@ export type CompiledObject = {
   element: HTMLDivElement | UISettingItem | UISettingItemChild,
 };
 
+function getValueByKey(value: any, key: string): any {
+  let keys = key.split('.');
+  let target = value;
+  for (const key of keys) {
+    target = target?.[key];
+  }
+  return target;
+}
+
 export class SettingTemplate{
   _template: SettingOption[];
   _compiled: {[key: string]: CompiledObject | CompiledLayout} = {};
   _element: HTMLElement;
-  constructor(options: SettingOption[], value: any) {
+  constructor(options: SettingOption[], value?: any) {
     this._template = options;
     this._element = document.createElement('div');
     this._element.className = 'settings';
     for (const item of options) {
-      let compiled = (SettingTemplate.compile(item, value?.[item.key]) as CompiledObject | CompiledLayout);
+      let compiled = (SettingTemplate.compile(item, value) as CompiledObject | CompiledLayout);
       this._compiled[item.key] = compiled;
       this._element.append(compiled.element);
     }
@@ -226,7 +245,10 @@ export class SettingTemplate{
   };
   static numberCompile(objs: SettingNumber, value: any): CompiledItem {
     let element = (document.createElement('ui-number') as UINumber);
-    element.value = value;
+    let v = getValueByKey(value, objs.data);
+    if (v !== undefined) {
+      element.value = v;
+    }
     if (typeof objs.max === 'number') {
       element.max = objs.max;
     }
@@ -247,19 +269,19 @@ export class SettingTemplate{
     if ('items' in objs) {
       element = (document.createElement('ui-setting-item-child') as UISettingItemChild);
       for (const item of objs.items) {
-        let compile = SettingTemplate.compile(item, value?.[item.key]);
+        let compile = SettingTemplate.compile(item, value);
         items[item.key] = compile;
         element.head.append(compile.element);
       }
     } else {
       element = (document.createElement('ui-setting-item') as UISettingItem);
       for (const item of objs.head) {
-        let compile = SettingTemplate.compile(item, value?.[item.key]);
+        let compile = SettingTemplate.compile(item, value);
         items[item.key] = compile;
         element.head.append(compile.element);
       }
       for (const item of objs.body) {
-        let compile = SettingTemplate.compile(item, value?.[item.key]);
+        let compile = SettingTemplate.compile(item, value);
         items[item.key] = compile;
         element.body.append(compile.element);
       }
@@ -285,7 +307,7 @@ export class SettingTemplate{
       items: {},
     };
     for (const item of objs.items) {
-      let compiledItem = SettingTemplate.compile(item, value?.[item.key]);
+      let compiledItem = SettingTemplate.compile(item, value);
       compiled.items[item.key] = compiledItem;
       element.append(compiledItem.element);
     }
@@ -329,8 +351,9 @@ export class SettingTemplate{
     if (Array.isArray(objs.buttonsRight)) {
       element.buttonsRight = objs.buttonsRight;
     }
-    if (value !== undefined) {
-      element.value = value;
+    let v = getValueByKey(value, objs.data);
+    if (v !== undefined) {
+      element.value = v;
     }
     if (typeof objs.autoComplete === 'function') {
       element.addEventListener('input',()=>{
@@ -356,8 +379,9 @@ export class SettingTemplate{
     if (typeof objs.placeholder === 'string') {
       element.placeholder = objs.placeholder;
     }
-    if (value !== undefined) {
-      element.value = value;
+    let v = getValueByKey(value, objs.data);
+    if (v !== undefined) {
+      element.value = v;
     }
     return{
       type: 'item',
@@ -375,8 +399,9 @@ export class SettingTemplate{
   }
   static switchCompile(objs: SettingSwitch, value: any): CompiledItem {
     let element = (document.createElement('ui-switch') as UISwitch);
-    if (value !== undefined) {
-      element.value = value;
+    let v = getValueByKey(value, objs.data);
+    if (v !== undefined) {
+      element.value = v;
     }
     return{
       type: 'item',
@@ -385,8 +410,9 @@ export class SettingTemplate{
   }
   static colorCompile(objs: SettingColor, value: any): CompiledItem {
     let element = (document.createElement('ui-color') as UIColor);
-    if (value !== undefined) {
-      element.value = value;
+    let v = getValueByKey(value, objs.data);
+    if (v !== undefined) {
+      element.value = v;
     }
     return{
       type: 'item',
@@ -395,8 +421,9 @@ export class SettingTemplate{
   }
   static imageCompile(objs: SettingImage, value: any): CompiledItem {
     let element = (document.createElement('ui-image-picker') as UIImagePicker);
-    if (value !== undefined) {
-      element.value = value;
+    let v = getValueByKey(value, objs.data);
+    if (v !== undefined) {
+      element.value = v;
     }
     return{
       type: 'item',
@@ -414,8 +441,9 @@ export class SettingTemplate{
     if (typeof objs.step === 'number') {
       element.step = objs.step;
     }
-    if (value !== undefined) {
-      element.value = value;
+    let v = getValueByKey(value, objs.data);
+    if (v !== undefined) {
+      element.value = v;
     }
     return{
       type: 'item',
@@ -425,7 +453,7 @@ export class SettingTemplate{
   static selectCompile(objs: SettingSelect, value: any): CompiledItem {
     let element = (document.createElement('ui-select') as UISelect);
     element.values = objs.values;
-    element.value = value;
+    element.value = getValueByKey(value, objs.data);
     return{
       type: 'item',
       element,
@@ -434,8 +462,9 @@ export class SettingTemplate{
   static tagsCompile(objs: SettingTags, value: any): CompiledItem {
     let element = (document.createElement('ui-tags') as UITags);
     element.autoComplete = objs.autoComplete;
-    if (Array.isArray(value)) {
-      element.value = value;
+    let v = getValueByKey(value, objs.data);
+    if (Array.isArray(v)) {
+      element.value = v;
     }
     return{
       type: 'item',
@@ -460,8 +489,9 @@ export class SettingTemplate{
     if (typeof objs.inline === 'boolean') {
       element.inline = objs.inline;
     }
-    if (Array.isArray(value)) {
-      element.value = value;
+    let v = getValueByKey(value, objs.data);
+    if (Array.isArray(v)) {
+      element.value = v;
     }
     return{
       type: 'item',
