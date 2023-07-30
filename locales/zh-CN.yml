@@ -80,6 +80,9 @@ image:
   empty: 暂未选择图片
   input_url: 输入图像链接
 
+tags:
+  add: 添加
+
 settings:
   confirm: 确认
   reset: 重置

@@ -1,0 +1,14 @@
+- let head = false
+- let body = true
+extends base
+block head
+  .setting-tags-pool
+    each name in Array.from(default)
+    .setting-tag
+      .setting-tag-name=name
+      .setting-tag-remove
+        .icon.icon-Remove
+  .setting-tags-control
+    input.setting-tag-input
+    button.setting-tag-add
+      .icon.icon-Add
