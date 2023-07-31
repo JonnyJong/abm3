@@ -57,7 +57,8 @@ export class UITags extends HTMLElement{
     });
   }
   add(value: string) {
-    if (this._values.has(value)) return;
+    value = value.trim();
+    if (value === '' || this._values.has(value)) return;
     let div = document.createElement('div');
     div.innerHTML = value;
     div.addEventListener('click',()=>this.delete(value));
