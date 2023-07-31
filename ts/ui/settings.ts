@@ -2,26 +2,42 @@ import { layout } from "../helper/layout";
 
 export class UISettingItem extends HTMLElement{
   private _inited: boolean = false;
-  private _icon!: HTMLDivElement;
-  private _name!: HTMLDivElement;
-  private _desc!: HTMLDivElement;
-  private _head!: HTMLDivElement;
+  private _icon: HTMLDivElement;
+  private _name: HTMLDivElement;
+  private _desc: HTMLDivElement;
+  private _head: HTMLDivElement;
   private _headShell!: HTMLDivElement;
-  private _body!: HTMLDivElement;
+  private _body: HTMLDivElement;
+  constructor() {
+    super();
+    this._icon = document.createElement('div');
+    this._icon.className = 'ui-setting-item-icon';
+    this._name = document.createElement('div');
+    this._name.className = 'ui-setting-item-name';
+    this._desc = document.createElement('div');
+    this._desc.className = 'ui-setting-item-desc';
+    this._head = document.createElement('div');
+    this._head.className = 'ui-setting-item-head';
+    this._body = document.createElement('div');
+    this._body.className = 'ui-setting-item-body';
+  }
   connectedCallback() {
     if (this._inited) return;
     this._inited = true;
     this.innerHTML = layout('ui/setting-item', {body: true});
-    this._icon = (this.querySelector('.ui-setting-item-icon') as HTMLDivElement);
-    this._name = (this.querySelector('.ui-setting-item-name') as HTMLDivElement);
-    this._desc = (this.querySelector('.ui-setting-item-desc') as HTMLDivElement);
-    this._head = (this.querySelector('.ui-setting-item-head') as HTMLDivElement);
+    this.prepend(this._icon);
+    this.querySelector('.ui-setting-item-info')?.append(this._name, this._desc);
+    this.querySelector('.ui-setting-item-info')?.after(this._head);
+    this.querySelector('.ui-setting-item-body-shell')?.append(this._body);
     this._headShell = (this.querySelector('.ui-setting-item-head-shell') as HTMLDivElement);
-    this._body = (this.querySelector('.ui-setting-item-body') as HTMLDivElement);
     this._headShell.addEventListener('click',(ev)=>{
       let path = ev.composedPath();
       if (path.includes(this._head)) return;
       this.classList.toggle('ui-setting-item-expanded');
+      this.classList.add('ui-setting-item-expanding');
+      setTimeout(() => {
+        this.classList.remove('ui-setting-item-expanding');
+      }, 200);
       this.style.setProperty('--height', this._body.getBoundingClientRect().height + 'px');
     });
   }
@@ -53,18 +69,28 @@ export class UISettingItem extends HTMLElement{
 }
 export class UISettingItemChild extends HTMLElement{
   private _inited: boolean = false;
-  private _icon!: HTMLDivElement;
-  private _name!: HTMLDivElement;
-  private _desc!: HTMLDivElement;
-  private _head!: HTMLDivElement;
+  private _icon: HTMLDivElement;
+  private _name: HTMLDivElement;
+  private _desc: HTMLDivElement;
+  private _head: HTMLDivElement;
+  constructor() {
+    super();
+    this._icon = document.createElement('div');
+    this._icon.className = 'ui-setting-item-icon';
+    this._name = document.createElement('div');
+    this._name.className = 'ui-setting-item-name';
+    this._desc = document.createElement('div');
+    this._desc.className = 'ui-setting-item-desc';
+    this._head = document.createElement('div');
+    this._head.className = 'ui-setting-item-head';
+  }
   connectedCallback() {
     if (this._inited) return;
     this._inited = true;
     this.innerHTML = layout('ui/setting-item', {body: false});
-    this._icon = (this.querySelector('.ui-setting-item-icon') as HTMLDivElement);
-    this._name = (this.querySelector('.ui-setting-item-name') as HTMLDivElement);
-    this._desc = (this.querySelector('.ui-setting-item-desc') as HTMLDivElement);
-    this._head = (this.querySelector('.ui-setting-item-head') as HTMLDivElement);
+    this.prepend(this._icon);
+    this.querySelector('.ui-setting-item-info')?.append(this._name, this._desc);
+    this.querySelector('.ui-setting-item-info')?.after(this._head);
   }
   set icon(value: string | undefined){
     if (typeof value === 'string' && value !== '') {

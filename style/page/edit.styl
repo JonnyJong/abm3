@@ -1,0 +1,79 @@
+@keyframes edit-body-in
+  from
+    opacity 0
+    scale .95
+  to
+    opacity 1
+    scale 1
+.page-edit
+  overflow hidden
+.edit-tabs
+  position fixed
+  top 50px
+  left 0
+  width 100vw
+  background var(--bg-tsp)
+  backdrop-filter blur(20px)
+  display flex
+  overflow scroll hidden
+  padding 4px
+  &>*
+    border-spacing 0px
+    border-left 1px solid #8884
+    display flex
+    align-items center
+    transition .1s font-weight, .1s scale
+    &:hover
+      border-radius 6px
+      background var(--tab-hover)
+.edit-tab
+  width 250px
+  padding 4px 4px 4px 10px
+  &:hover
+    &:not(:has(.edit-tab-close:hover)):active
+      scale .98
+.edit-tab-name
+  width 100%
+  white-space nowrap
+  text-overflow ellipsis
+  overflow hidden
+.edit-tab-close
+  padding 4px 8px
+  border-radius 6px
+  transition .1s scale
+  &:hover
+    background var(--tab-close-hover)
+    &:active
+      scale .85
+.edit-tab-add
+  padding 8px 10px
+  &:hover:active
+    scale .9
+.edit-tab-current
+  border-radius 6px
+  background var(--tab-current)
+  font-weight calc(800 * var(--weight-factor))
+.edit-tabs>*
+  &:first-child
+  &:hover
+  &.edit-tab-current
+      border-left-color #0000
+  &:hover
+  &.edit-tab-current
+    &+*
+      @extend .edit-tabs>*:first-child
+.edit-body
+  overflow hidden auto
+  width 100vw
+  height 100vh
+  position fixed
+  top 0
+  left 0
+  padding-top 96px
+  transition .1s opacity
+  opacity 0
+  pointer-events none
+.edit-body-current
+  opacity 1
+  pointer-events all
+  animation edit-body-in .2s ease-out

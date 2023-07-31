@@ -24,6 +24,16 @@ home:
   rack_expand: 展开 / 收起
   rack_edit: 编辑
 
+edit:
+  new: 新建番剧
+  title: 标题
+  tags: 标签
+  categories: 分类
+  markdown: Markdown
+  seasons: 剧集
+  set: 集数
+  watched: 看完
+
 markdown:
   copy: 复制
   paste: 粘贴

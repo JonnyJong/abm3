@@ -5,14 +5,16 @@
     height var(--height)
 @keyframes ui-setting-item-collapse
   from
-    height var(--height, 0px)
+    height var(--height)
   to
     height 0px
 ui-setting-item
-  &:has(.setting-item-body:empty)
+  display block
+  margin 4px 0
+  &:has(.ui-setting-item-body:empty)
     .ui-setting-item-expand
       display none
-  &:has(.setting-item-body>*:first-child)
+  &:has(.ui-setting-item-body>*:first-child)
     .ui-setting-item-head-shell
       &:hover
         background var(--setting-bg-hover)
@@ -44,17 +46,34 @@ ui-setting-item
   height 0px
   overflow hidden
   animation ui-setting-item-collapse .2s
-.ui-setting-item-expand .icon
-  transition .2s rotate
-.ui-setting-item-expanded
-  .setting-item-body-shell
-    height var(--height)
-    animation ui-setting-item-expand .2s
-  .ui-setting-item-expand .icon
-    rotate 180deg
 .ui-setting-item-body
   position absolute
   bottom 0
   width 100%
   background var(--bg3)
-  border-top 1px solid var(--setting-border)
+  border 1px solid #0000
+  border-top-color var(--setting-border)
+  &>*
+    margin 8px 64px
+    width calc(100% - 128px)
+.ui-setting-item-expand .icon
+  transition .2s rotate
+.ui-setting-item-expanded
+  .ui-setting-item-expand .icon
+    rotate 180deg
+  .ui-setting-item-body-shell
+    height max-content
+    animation ui-setting-item-expand .2s
+  .ui-setting-item-body
+    position static
+.ui-setting-item-expanding
+  .ui-setting-item-body-shell
+    height var(--height)
+  .ui-setting-item-body
+    position absolute
+
+
+.setting-group
+  display flex
+.setting-group-column
+  flex-direction column

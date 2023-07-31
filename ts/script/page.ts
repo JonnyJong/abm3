@@ -3,9 +3,13 @@ import path from "path";
 import pug from "pug";
 import { locale } from "./locale";
 import pageHome from "./page/home";
+import pageEdit from "./page/edit";
+import pageSettings from "./page/settings";
 
 const PageTemplate: { [x: string]: PageOption } = {
   home: pageHome,
+  edit: pageEdit,
+  settings: pageSettings,
 };
 
 export type PageOption = {
@@ -159,4 +163,6 @@ export function initPage() {
   window.addEventListener('mousedown', ({button})=>{
     if (button === 3) history.back();
   });
+  // @ts-ignore
+  window.H = history;
 }
