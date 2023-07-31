@@ -41,6 +41,8 @@ export function initTooltip() {
     if (!target) return;
     let html = target.getAttribute('tooltip');
     timer = setTimeout(() => {
+      if (timer) clearTimeout(timer);
+      timer = null;
       tooltip = document.createElement('div');
       tooltip.classList.add('tooltip');
       if (html) {
@@ -52,5 +54,7 @@ export function initTooltip() {
   });
   window.addEventListener('pointerdown', ()=>{
     removeTooltip(tooltip);
+    if (timer) clearTimeout(timer);
+    timer = null;
   });
 }
