@@ -36,6 +36,7 @@ edit:
   links: 链接
   links_name: 名称
   links_url: 地址
+  save: 保存
 
 markdown:
   copy: 复制
