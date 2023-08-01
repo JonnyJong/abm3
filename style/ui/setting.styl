@@ -33,8 +33,10 @@ ui-setting-item
   width 32px
   font-size 20px
   text-align center
+  &:empty
+    display none
 .ui-setting-item-info
-  flex 1
+  flex auto
 .ui-setting-item-desc
   color var(--color2)
   font-size 12px
@@ -75,5 +77,6 @@ ui-setting-item
 
 .setting-group
   display flex
+  gap 8px
 .setting-group-column
   flex-direction column

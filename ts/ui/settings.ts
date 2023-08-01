@@ -25,11 +25,11 @@ export class UISettingItem extends HTMLElement{
     if (this._inited) return;
     this._inited = true;
     this.innerHTML = layout('ui/setting-item', {body: true});
-    this.prepend(this._icon);
+    this._headShell = (this.querySelector('.ui-setting-item-head-shell') as HTMLDivElement);
+    this._headShell.prepend(this._icon);
     this.querySelector('.ui-setting-item-info')?.append(this._name, this._desc);
     this.querySelector('.ui-setting-item-info')?.after(this._head);
     this.querySelector('.ui-setting-item-body-shell')?.append(this._body);
-    this._headShell = (this.querySelector('.ui-setting-item-head-shell') as HTMLDivElement);
     this._headShell.addEventListener('click',(ev)=>{
       let path = ev.composedPath();
       if (path.includes(this._head)) return;
@@ -88,7 +88,7 @@ export class UISettingItemChild extends HTMLElement{
     if (this._inited) return;
     this._inited = true;
     this.innerHTML = layout('ui/setting-item', {body: false});
-    this.prepend(this._icon);
+    (this.querySelector('.ui-setting-item-head-shell') as HTMLDivElement).prepend(this._icon);
     this.querySelector('.ui-setting-item-info')?.append(this._name, this._desc);
     this.querySelector('.ui-setting-item-info')?.after(this._head);
   }
