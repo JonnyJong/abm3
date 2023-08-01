@@ -11,9 +11,9 @@ search:
 
 user_menu:
   try_luck: 试试手气
-  add_bangumi: 添加番剧
-  edit_bangumi: 编辑此番剧
-  del_bangumi: 删除此番剧
+  edit_bangumi: 编辑番剧
+  edit_this_bangumi: 编辑此番剧
+  del_this_bangumi: 删除此番剧
   settings: 设置
 
 home:

@@ -16,8 +16,8 @@ export function initUserMenu() {
         separator: true,
       },
       {
-        name: locale.user_menu.add_bangumi,
-        icon: 'Add',
+        name: locale.user_menu.edit_bangumi,
+        icon: 'Edit',
         shortcut: 'Ctrl+N', // TODO
         action: ()=>{
           history.open('edit');
