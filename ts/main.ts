@@ -20,6 +20,8 @@ app.on('ready',()=>{
     title: packageInfo.name,
     icon: path.join(process.cwd(), './assets/icons/icon.ico'),
     backgroundColor: nativeTheme.shouldUseDarkColors ? '#202020' : '#f3f3f3',
+    minWidth: 800,
+    minHeight: 600,
     webPreferences: {
       spellcheck: false,
       preload: path.join(__dirname, 'preload.js'),

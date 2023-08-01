@@ -27,7 +27,8 @@ body.blur
   .window
     color var(--color-disabled)
 
-// .history
+.history
+  flex 0 0 auto
 .history-back
 .history-home
   // margin 0 8px 0 -42px
@@ -52,19 +53,21 @@ body.homeable .history-home
 .app-icon
   height 28px
   width 28px
+.app-name
+  white-space nowrap
 
 .search
+  display flex
   flex auto
   app-region drag
   transition .1s padding
   ui-text
-    width 500px
-    max-width 100%
+    width 100%
     display block
 .search-input
   app-region no-drag
   margin auto
-  width max-content
+  flex 0 1 500px
 body.backable .search
   padding-right 46px
 body.homeable .search
@@ -77,6 +80,7 @@ body.homeable .search
   overflow hidden
   transition .1s scale
   margin-right 202px
+  flex 0 0 auto
   &:active
     scale .9
 .user-avatar
