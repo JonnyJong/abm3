@@ -33,7 +33,9 @@ export class UIList extends HTMLElement{
   get value() {
     let value: any[] = [];
     for (const item of this._compiled) {
-      value.push(SettingTemplate._getValue(item));
+      let obj = {};
+      SettingTemplate._getValue(item, obj)
+      value.push(obj);
     }
     return value;
   }

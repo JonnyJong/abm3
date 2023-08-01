@@ -152,6 +152,7 @@ type SettingUI = SettingOption | SettingItemChild | SettingGroup | SettingLayout
 type CompiledItem = {
   type: 'item',
   element: UISwitch | UIColor | UIImagePicker | UINumber | UIRange | UISelect | UIText | HTMLTextAreaElement | UIList | UITags,
+  data: string,
 };
 type CompiledLayout = {
   type: 'layout',
@@ -170,6 +171,18 @@ function getValueByKey(value: any, key: string): any {
     target = target?.[key];
   }
   return target;
+}
+
+function setValueByKey(obj: any, key: string, value: any) {
+  let keys = key.split('.');
+  let final = (keys.pop() as string);
+  let target = obj;
+  for (const key of keys) {
+    if (target[key] !== undefined) continue;
+    target[key] = {};
+    target = target[key];
+  }
+  target[final] = value;
 }
 
 export class SettingTemplate{
@@ -206,25 +219,25 @@ export class SettingTemplate{
     if (target.type !== 'item') return undefined;
     return target.element.value;
   }
-  static _getValue(obj: CompiledItem | CompiledLayout | CompiledObject) {
+  static _getValue(obj: CompiledItem | CompiledLayout | CompiledObject, value: any) {
     switch (obj.type) {
       case "object":
-        let value: {[key: string]: any} = {};
         for (const key in obj.items) {
           if (!Object.prototype.hasOwnProperty.call(obj.items, key)) continue;
           if (obj.items[key].type === 'layout') continue;
-          value[key] = SettingTemplate._getValue(obj.items[key]);
+          SettingTemplate._getValue(obj.items[key], value);
         }
-        return value;
+        break;
       case "item":
-        return obj.element.value;
+        setValueByKey(value, obj.data, obj.element.value);
+        break;
     }
   }
   get value() {
     let value: {[key: string]: any} = {};
     for (const key in this._compiled) {
       if (!Object.prototype.hasOwnProperty.call(this._compiled, key)) continue;
-      value[key] = SettingTemplate._getValue(this._compiled[key]);
+      SettingTemplate._getValue(this._compiled[key], value);
     }
     return value;
   };
@@ -261,6 +274,7 @@ export class SettingTemplate{
     return{
       type: 'item',
       element,
+      data: objs.data,
     };
   }
   static itemCompile(objs: SettingItem | SettingItemChild, value: any): CompiledObject {
@@ -372,6 +386,7 @@ export class SettingTemplate{
     return{
       type: 'item',
       element,
+      data: objs.data,
     };
   }
   static textareaCompile(objs: SettingTextArea, value: any): CompiledItem {
@@ -386,6 +401,7 @@ export class SettingTemplate{
     return{
       type: 'item',
       element,
+      data: objs.data,
     };
   }
   static titleCompile(objs: SettingTitle, value: any): CompiledLayout {
@@ -406,6 +422,7 @@ export class SettingTemplate{
     return{
       type: 'item',
       element,
+      data: objs.data,
     };
   }
   static colorCompile(objs: SettingColor, value: any): CompiledItem {
@@ -417,6 +434,7 @@ export class SettingTemplate{
     return{
       type: 'item',
       element,
+      data: objs.data,
     };
   }
   static imageCompile(objs: SettingImage, value: any): CompiledItem {
@@ -428,6 +446,7 @@ export class SettingTemplate{
     return{
       type: 'item',
       element,
+      data: objs.data,
     };
   }
   static rangeCompile(objs: SettingRange, value: any): CompiledItem {
@@ -448,6 +467,7 @@ export class SettingTemplate{
     return{
       type: 'item',
       element,
+      data: objs.data,
     };
   }
   static selectCompile(objs: SettingSelect, value: any): CompiledItem {
@@ -457,6 +477,7 @@ export class SettingTemplate{
     return{
       type: 'item',
       element,
+      data: objs.data,
     };
   }
   static tagsCompile(objs: SettingTags, value: any): CompiledItem {
@@ -469,6 +490,7 @@ export class SettingTemplate{
     return{
       type: 'item',
       element,
+      data: objs.data,
     };
   }
   static messageCompile(objs: SettingMessage, value: any): CompiledLayout {
@@ -496,6 +518,7 @@ export class SettingTemplate{
     return{
       type: 'item',
       element,
+      data: objs.data,
     };
   }
 };
