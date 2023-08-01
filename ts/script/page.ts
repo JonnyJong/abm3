@@ -1,168 +1,119 @@
-import { statSync } from "fs";
-import path from "path";
-import pug from "pug";
 import { locale } from "./locale";
 import pageHome from "./page/home";
 import pageEdit from "./page/edit";
 import pageSettings from "./page/settings";
+import { layout } from "../helper/layout";
 
-const PageTemplate: { [x: string]: PageOption } = {
+type PageHandler = (element: HTMLElement, option: any)=>any;
+export type PageOptions = {
+  name: string,
+  single?: false,
+  onCreate: PageHandler,
+  onBack: PageHandler,
+  onClose: Function,
+  pugOption?: any,
+};
+export type SinglePageOptions = {
+  name: string,
+  single: true,
+  onCreate: PageHandler,
+  onOpen: PageHandler,
+  onBack: PageHandler,
+  pugOption?: any,
+};
+let pageTemplate: {
+  [name: string]: PageOptions | SinglePageOptions,
+} = {
   home: pageHome,
   edit: pageEdit,
   settings: pageSettings,
 };
-
-export type PageOption = {
-  handler?: (page: Page, data?: any)=>void | Promise<void>,
-  pugOption?: any,
-  only?: boolean,
-};
 export class Page{
-  element: HTMLDivElement;
-  onShow: ((page: Page)=>void) | undefined;
-  handler: ((page: Page, data?: any) => void | Promise<void>) | undefined;
-  layout: string;
-  constructor(layout: string, options: PageOption, data?: any){
-    if ('current' === layout) {
-      throw new Error(`Can not use 'home' layout.`);
-    }
-    this.layout = layout;
-    let layoutPath = path.join(process.cwd(), 'layout/page', layout + '.pug');
-    let stat = statSync(layoutPath);
-    if (!stat.isFile()) throw new Error(`Can not find '${layout}' layout.`);
-    this.element = document.createElement('div');
-    this.element.classList.add(`page-${layout}`);
-    this.element.innerHTML = pug.renderFile(layoutPath, Object.assign({ lang: locale }, options.pugOption));
-    document.querySelector('.page')?.append(this.element);
-    if (typeof options.handler === 'function') {
-      this.handler = options.handler;
-      options.handler(this, data);
-    }
+  _options: PageOptions | SinglePageOptions;
+  _element: HTMLDivElement;
+  constructor(options: PageOptions | SinglePageOptions) {
+    this._options = options;
+    this._element = document.createElement('div');
+    this._element.classList.add('page-' + options.name);
+    this._element.innerHTML = layout('page/' + options.name, Object.assign({ lang: locale }, options.pugOption));
   }
-  show(scroll?: number){
-    let current = document.querySelector('.page-current');
-    if (current) {
-      current.classList.remove('page-current');
-      return new Promise<void>((resolve)=>{
-        setTimeout(() => {
-          if (typeof scroll === 'number') {
-            this.element.scrollTop = scroll;
-          }
-          this.element.classList.add('page-current');
-          if (typeof this.onShow === 'function') this.onShow(this);
-          resolve();
-        }, 100);
-      });
-    }
-    return new Promise<void>((resolve)=>{
-      if (typeof scroll === 'number') {
-        this.element.scrollTop = scroll;
-      }
-      this.element.classList.add('page-current');
-      if (typeof this.onShow === 'function') this.onShow(this);
-      resolve();
-    });
+  show(container: HTMLDivElement){
+    container.querySelectorAll('.page-current').forEach((e)=>e.classList.remove('page-current'));
+    setTimeout(() => {
+      this._element.classList.add('page-current');
+    }, 100);
   }
   remove(){
-    return new Promise<void>((resolve)=>{
-      this.element.classList.remove('page-current');
-      setTimeout(() => {
-        this.element.remove();
-        resolve();
-      }, 100);
-    });
+    this._element.classList.remove('page-current');
+    setTimeout(()=>this._element.remove(), 100);
   }
-}
-
+};
 export class History{
-  stack: Array<{page: Page, data: any, scroll: number}> = [];
-  now: { page: Page; data: any; scroll: number; };
-  _onlys: {
-    [x: string]: Page
-  } = {};
-  handler: (history: History) => void;
-  constructor(handler: (history: History)=>void){
-    this.handler = handler;
-    this.now = {
-      page: new Page('home', PageTemplate.home),
-      data: undefined,
-      scroll: 0,
-    };
-    this._onlys.home = this.now.page;
-  }
-  async open(layout: string, data?: any): Promise<void | Page> {
-    if (!PageTemplate[layout]) return;
-    this.now.scroll = this.now.page.element.scrollTop;
-    this.stack.push(this.now);
-    if (PageTemplate[layout].only && this._onlys[layout]) {
-      this.now = {
-        page: this._onlys[layout],
-        data,
-        scroll: 0,
-      };
-    }else{
-      this.now = {
-        page: new Page(layout, PageTemplate[layout], data),
-        data: data,
-        scroll: 0,
-      };
-      if (PageTemplate[layout].only) {
-        this._onlys[layout] = this.now.page;
+  cache: {[name: string]: Page} = {};
+  stack: {page: Page, option: any}[] = [];
+  private _container!: HTMLDivElement;
+  init(){
+    this._container = (document.querySelector('.page') as HTMLDivElement);
+    this.open('home');
+  };
+  handler!: (self: History, event: string)=>void;
+  open(name: string, option?: any){
+    if (!(name in pageTemplate)) throw new Error(`Page '${name}' does not registered.`);
+    let page = this.cache[name];
+    if (!page) {
+      page = new Page(pageTemplate[name]);
+    }
+    this.stack.push({page, option});
+    if (!page._options.single) {
+      this._container.append(page._element);
+    }
+    if (!(name in this.cache)) {
+      page._options.onCreate(page._element, option);
+    }
+    if (page._options.single) {
+      page._options.onOpen(page._element, option);
+      this.cache[name] = page;
+    }
+    this._container.append(page._element);
+    this.handler(this, 'open');
+    page.show(this._container);
+  };
+  home(){
+    for (let i = this.stack.length - 1; i > 0; i--) {
+      if (!this.stack[i].page._options.single) {
+        (this.stack[i].page._options as PageOptions).onClose();
+        this.stack[i].page.remove();
       }
+      this.stack.pop();
     }
-    if (typeof PageTemplate[layout].handler === 'function') {
-      // @ts-ignore
-      await PageTemplate[layout].handler(this.now.page, data);
+    this.handler(this, 'home');
+    this.stack[0].page.show(this._container);
+  };
+  back(){
+    if (this.stack.length === 1) return;
+    let last = this.stack.pop();
+    if (!last?.page._options.single) {
+      (last?.page._options as PageOptions).onClose();
+      last?.page.remove();
     }
-    this.now.page.show(0);
-    this.handler(this);
-    return this.now.page;
-  }
-  async back(){
-    let prev = this.stack.pop();
-    if (!prev) return;
-    if (this._onlys[prev.page.layout] && typeof prev.page.handler === 'function') {
-      await prev.page.handler(prev.page, prev.page);
-    }
-    await prev.page.show(prev.scroll);
-    if (!this._onlys[this.now.page.layout]) {
-      this.now.page.remove();
-    }
-    this.now = prev;
-    this.handler(this);
-  }
-  async home(){
-    if (this.stack.length === 0) return;
-    this.stack.push(this.now);
-    this.now = this.stack[0];
-    this.now.scroll = 0;
-    this.now.page.show(0);
-    this.stack.forEach(({page})=>{
-      if (this._onlys[page.layout]) return;
-      page.remove();
-    });
-    this.stack = [];
-    this.handler(this);
-  }
-}
+    let now = this.stack[this.stack.length - 1];
+    now.page._options.onBack(now.page._element, now.option);
+    now.page.show(this._container);
+    this.handler(this, 'back');
+  };
+};
 
-export let history: History;
+export let history = new History();
 
 export function initPage() {
-  history = new History((history)=>{
-    document.body.classList.remove('backable', 'homeable');
-    if (history.stack.length > 0) {
-      document.body.classList.add('backable');
-    }
-    if (history.stack.length > 1) {
-      document.body.classList.add('homeable');
-    }
-  });
+  history.handler = function(self, event) {
+    document.body.classList.toggle('backable', self.stack.length > 1);
+    document.body.classList.toggle('homeable', self.stack.length > 2);
+  }
   document.querySelector('.history-back')?.addEventListener('click',()=>history.back());
   document.querySelector('.history-home')?.addEventListener('click',()=>history.home());
   window.addEventListener('mousedown', ({button})=>{
     if (button === 3) history.back();
   });
-  // @ts-ignore
-  window.H = history;
+  history.init();
 }

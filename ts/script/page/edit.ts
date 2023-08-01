@@ -1,5 +1,5 @@
 import { SettingOption, SettingTemplate } from "../../ui/template";
-import { Page, PageOption } from "../page";
+import { SinglePageOptions } from "../page";
 import { Bangumi } from "../db";
 
 function tagTip(key: string): string[] | void {}
@@ -186,17 +186,19 @@ function createTab(bangumi?: Bangumi) {
   });
 }
 
-function pageHandler(page: Page) {
-  console.log('open');
-  tabsElement = (page.element.querySelector('.edit-tabs') as HTMLDivElement);
-  bodysElement = (page.element.querySelector('.edit-bodys') as HTMLDivElement);
-  addBtnElement = (tabsElement.querySelector('.edit-tab-add') as HTMLDivElement);
-  createTab();
-}
-
-const page: PageOption = {
-  only: true,
-  handler: pageHandler,
+const page: SinglePageOptions = {
+  name: 'edit',
+  single: true,
+  onCreate(element, option) {
+    tabsElement = (element.querySelector('.edit-tabs') as HTMLDivElement);
+    bodysElement = (element.querySelector('.edit-bodys') as HTMLDivElement);
+    addBtnElement = (tabsElement.querySelector('.edit-tab-add') as HTMLDivElement);
+  },
+  onBack(element, option) {
+  },
+  onOpen(element, option) {
+    createTab();
+  },
 };
 
 export default page;

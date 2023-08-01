@@ -1,12 +1,15 @@
-import { Page, PageOption } from "../page";
+import { SinglePageOptions } from "../page";
 
-function pageHandler(page: Page) {
-  page.show();
-}
 
-const page: PageOption = {
-  only: true,
-  handler: pageHandler,
+const page: SinglePageOptions = {
+  name: 'home',
+  single: true,
+  onCreate(element, option) {
+  },
+  onBack(element, option) {
+  },
+  onOpen(element, option) {
+  },
 };
 
 export default page;
