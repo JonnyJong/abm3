@@ -14,6 +14,7 @@ type SettingMessage = {
   level?: 'info' | 'warn' | 'error' | 'success',
   text: string,
   key: string,
+  classList?: string[],
 };
 
 type SettingButton = {
@@ -21,6 +22,7 @@ type SettingButton = {
   text: string,
   action: ()=>void,
   key: string,
+  classList?: string[],
 };
 type SettingInput = {
   type: 'input',
@@ -42,27 +44,32 @@ type SettingInput = {
   }[],
   key: string,
   data: string,
+  classList?: string[],
 };
 type SettingTextArea = {
   type: 'textarea',
   placeholder?: string,
   key: string,
   data: string,
+  classList?: string[],
 };
 type SettingSwitch = {
   type: 'switch',
   key: string,
   data: string,
+  classList?: string[],
 };
 type SettingColor = {
   type: 'color',
   key: string,
   data: string,
+  classList?: string[],
 };
 type SettingImage = {
   type: 'image',
   key: string,
   data: string,
+  classList?: string[],
 };
 type SettingRange = {
   type: 'range',
@@ -71,6 +78,7 @@ type SettingRange = {
   step?: number,
   key: string,
   data: string,
+  classList?: string[],
 };
 type SettingNumber = {
   type: 'number',
@@ -79,18 +87,21 @@ type SettingNumber = {
   step?: number,
   key: string,
   data: string,
+  classList?: string[],
 };
 type SettingSelect = {
   type: 'select',
   values: Map<any, string>,
   key: string,
   data: string,
+  classList?: string[],
 };
 type SettingTags = {
   type: 'tags',
   autoComplete?: (value: string)=>string[] | void,
   key: string,
   data: string,
+  classList?: string[],
 };
 
 type SettingList = {
@@ -99,16 +110,19 @@ type SettingList = {
   template: SettingGroup,
   key: string,
   data: string,
+  classList?: string[],
 };
 
 type SettingText = {
   type: 'text',
   text: string,
   key: string,
+  classList?: string[],
 };
 type SettingGroupFlexbox = {
   type: 'flex',
   key: string,
+  classList?: string[],
 };
 
 type SettingItems = SettingButton | SettingInput | SettingTextArea | SettingSwitch | SettingColor | SettingImage | SettingRange | SettingNumber | SettingSelect | SettingTags;
@@ -119,6 +133,7 @@ export type SettingGroup = {
   direction?: 'row' | 'column',
   items: (SettingLayouts | SettingGroup | SettingList | SettingItems)[],
   key: string,
+  classList?: string[],
 };
 type SettingItemChild = {
   type: 'item',
@@ -127,6 +142,7 @@ type SettingItemChild = {
   description?: string,
   items: SettingItems[],
   key: string,
+  classList?: string[],
 };
 
 type SettingItem = {
@@ -137,12 +153,14 @@ type SettingItem = {
   head: SettingItems[],
   body: (SettingItemChild | SettingGroup | SettingList | SettingItems)[],
   key: string,
+  classList?: string[],
 };
 
 type SettingTitle = {
   type: 'title',
   text: string,
   key: string,
+  classList?: string[],
 };
 
 export type SettingOption = SettingTitle | SettingMessage | SettingItem;
@@ -250,6 +268,9 @@ export class SettingTemplate{
     } else {
       let div = document.createElement('div');
       div.className = 'setting-group-flex';
+      if (Array.isArray(objs.classList)) {
+        div.classList.add(...objs.classList);
+      }
       return{
         type: 'layout',
         element: div,
@@ -270,6 +291,9 @@ export class SettingTemplate{
     }
     if (typeof objs.step === 'number') {
       element.step = objs.step;
+    }
+    if (Array.isArray(objs.classList)) {
+      element.classList.add(...objs.classList);
     }
     return{
       type: 'item',
@@ -305,6 +329,9 @@ export class SettingTemplate{
     if (typeof objs.description === 'string') {
       element.description = objs.description;
     }
+    if (Array.isArray(objs.classList)) {
+      element.classList.add(...objs.classList);
+    }
     return{
       type: 'object',
       element,
@@ -325,12 +352,18 @@ export class SettingTemplate{
       compiled.items[item.key] = compiledItem;
       element.append(compiledItem.element);
     }
+    if (Array.isArray(objs.classList)) {
+      element.classList.add(...objs.classList);
+    }
     return compiled;
   }
   static textCompile(objs: SettingText, value: any): CompiledLayout {
     let element = document.createElement('div');
     element.classList.add('setting-text');
     element.innerHTML = objs.text;
+    if (Array.isArray(objs.classList)) {
+      element.classList.add(...objs.classList);
+    }
     return{
       type: 'layout',
       element,
@@ -339,6 +372,9 @@ export class SettingTemplate{
   static flexCompile(objs: SettingGroupFlexbox, value: any): CompiledLayout {
     let element = document.createElement('div');
     element.classList.add('setting-group-flex');
+    if (Array.isArray(objs.classList)) {
+      element.classList.add(...objs.classList);
+    }
     return{
       type: 'layout',
       element,
@@ -349,6 +385,9 @@ export class SettingTemplate{
     element.classList.add('setting-button');
     element.innerHTML = objs.text;
     element.addEventListener('click', ()=>objs.action());
+    if (Array.isArray(objs.classList)) {
+      element.classList.add(...objs.classList);
+    }
     return{
       type: 'layout',
       element,
@@ -383,6 +422,9 @@ export class SettingTemplate{
         element.list = list;
       });
     }
+    if (Array.isArray(objs.classList)) {
+      element.classList.add(...objs.classList);
+    }
     return{
       type: 'item',
       element,
@@ -398,6 +440,9 @@ export class SettingTemplate{
     if (v !== undefined) {
       element.value = v;
     }
+    if (Array.isArray(objs.classList)) {
+      element.classList.add(...objs.classList);
+    }
     return{
       type: 'item',
       element,
@@ -408,6 +453,9 @@ export class SettingTemplate{
     let element = document.createElement('div');
     element.classList.add('setting-title');
     element.innerHTML = objs.text;
+    if (Array.isArray(objs.classList)) {
+      element.classList.add(...objs.classList);
+    }
     return{
       type: 'layout',
       element,
@@ -418,6 +466,9 @@ export class SettingTemplate{
     let v = getValueByKey(value, objs.data);
     if (v !== undefined) {
       element.value = v;
+    }
+    if (Array.isArray(objs.classList)) {
+      element.classList.add(...objs.classList);
     }
     return{
       type: 'item',
@@ -431,6 +482,9 @@ export class SettingTemplate{
     if (v !== undefined) {
       element.value = v;
     }
+    if (Array.isArray(objs.classList)) {
+      element.classList.add(...objs.classList);
+    }
     return{
       type: 'item',
       element,
@@ -442,6 +496,9 @@ export class SettingTemplate{
     let v = getValueByKey(value, objs.data);
     if (v !== undefined) {
       element.value = v;
+    }
+    if (Array.isArray(objs.classList)) {
+      element.classList.add(...objs.classList);
     }
     return{
       type: 'item',
@@ -464,6 +521,9 @@ export class SettingTemplate{
     if (v !== undefined) {
       element.value = v;
     }
+    if (Array.isArray(objs.classList)) {
+      element.classList.add(...objs.classList);
+    }
     return{
       type: 'item',
       element,
@@ -474,6 +534,9 @@ export class SettingTemplate{
     let element = (document.createElement('ui-select') as UISelect);
     element.values = objs.values;
     element.value = getValueByKey(value, objs.data);
+    if (Array.isArray(objs.classList)) {
+      element.classList.add(...objs.classList);
+    }
     return{
       type: 'item',
       element,
@@ -486,6 +549,9 @@ export class SettingTemplate{
     let v = getValueByKey(value, objs.data);
     if (Array.isArray(v)) {
       element.value = v;
+    }
+    if (Array.isArray(objs.classList)) {
+      element.classList.add(...objs.classList);
     }
     return{
       type: 'item',
@@ -500,6 +566,9 @@ export class SettingTemplate{
       element.classList.add('setting-msg-' + objs.level);
     }
     element.innerHTML = objs.text;
+    if (Array.isArray(objs.classList)) {
+      element.classList.add(...objs.classList);
+    }
     return{
       type: 'layout',
       element,
@@ -514,6 +583,9 @@ export class SettingTemplate{
     let v = getValueByKey(value, objs.data);
     if (Array.isArray(v)) {
       element.value = v;
+    }
+    if (Array.isArray(objs.classList)) {
+      element.classList.add(...objs.classList);
     }
     return{
       type: 'item',
