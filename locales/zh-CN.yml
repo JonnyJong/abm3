@@ -33,6 +33,9 @@ edit:
   seasons: 剧集
   set: 集数
   watched: 看完
+  links: 链接
+  links_name: 名称
+  links_url: 地址
 
 markdown:
   copy: 复制

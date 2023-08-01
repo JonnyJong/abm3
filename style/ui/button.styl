@@ -34,7 +34,7 @@ button
     border-top-color var(--btn-border-top-active)
     border-bottom-color var(--btn-border-bottom-active)
     color var(--btn-color-active)
-    scale .92
+    // scale .92
   &:has(:nth-child(2)) .icon:first-child
     display inline
     margin 0 10px 0 2px
@@ -45,3 +45,7 @@ button
     top -100%
     left 0
     right 0
+  &.btn-accent
+    --btn-bg var(--theme)
+    --btn-bg-hover var(--theme-hover)
+    --btn-bg-active var(--theme-active)
