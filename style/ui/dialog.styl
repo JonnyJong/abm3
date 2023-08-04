@@ -40,13 +40,16 @@
   padding 24px
   display flex
   gap 8px
-  &>*
-    flex auto
-    text-align center
   ui-lang
     display inline-block
     width 100%
     text-align center
+.ui-dialog-button
+  flex auto
+  text-align center
+  justify-content center
+  &[type="confirm"]
+    @extends button.btn-accent
 .ui-dialog-show
   pointer-events all
   opacity 1
