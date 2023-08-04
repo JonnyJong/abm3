@@ -1,6 +1,9 @@
 import { SettingOption, SettingTemplate } from "../../ui/template";
 import { SinglePageOptions } from "../page";
 import { Bangumi } from "../db";
+import { Dialog } from "../../ui/dialog";
+import { locale } from "../locale";
+import { Flyout } from "../../ui/flyout";
 
 function tagTip(key: string): string[] | void {}
 function categoryTip(key: string): string[] | void {}
@@ -228,9 +231,46 @@ function createTab(bangumi?: Bangumi) {
   let btnConfirm = document.createElement('button');
   btnConfirm.classList.add('btn-accent');
   btnConfirm.innerHTML = '<i class="icon icon-Save"></i><ui-lang>edit.save</ui-lang>';
-  let btnReset = document.createElement('button');
-  btnReset.innerHTML = 'TODO: reset button';
-  control.append(btnConfirm, btnReset);
+  btnConfirm.addEventListener('click',()=>{
+    let dialog = new Dialog({
+      title: locale.edit.confirm_before + setting.get('title', 'value') + locale.edit.confirm_after,
+      content: document.createElement('div'),
+      buttons: [
+        {
+          text: locale.dialog.confirm,
+          action: ()=>{
+            dialog.close();
+          },
+          level: 'confirm',
+        },
+        {
+          text: locale.dialog.cancel,
+          action: ()=>{
+            dialog.close();
+          },
+        },
+      ],
+    });
+    dialog.content.innerHTML = locale.edit.confirm_content;
+    dialog.show();
+  });
+  let btnUndo = document.createElement('button');
+  btnUndo.innerHTML = '<i class="icon icon-Undo"></i><ui-lang>edit.undo</ui-lang>';
+  btnUndo.addEventListener('click',()=>{
+    let flyout = new Flyout({
+      content: locale.edit.undo_confirm,
+      buttons: [
+        {
+          name: locale.edit.undo,
+          action: ()=>{
+            flyout.close();
+          },
+        },
+      ],
+    });
+    flyout.show(btnUndo.getBoundingClientRect());
+  });
+  control.append(btnConfirm, btnUndo);
   let tab = document.createElement('div');
   tab.classList.add('edit-tab', 'edit-tab-current');
   tab.innerHTML = `<div class="edit-tab-name">${bangumi ? bangumi.title : '<ui-lang>edit.new</ui-lang>'}</div><div class="edit-tab-close"><div class="icon icon-Clear"></div></div>`;
