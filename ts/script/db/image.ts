@@ -1,4 +1,4 @@
-import { readFile, stat, writeFile } from "fs/promises";
+import { access, constants, mkdir, readFile, stat, writeFile } from "fs/promises";
 import path from "path";
 
 export function getImgSuffix(data: Buffer): string {
@@ -50,7 +50,12 @@ export async function download(url: string, outDir: string): Promise<string> {
     let data = await getData(url);
     let shffix = getImgSuffix(data);
     if (shffix === '') throw new Error(`'${url}' is not an image.`);
-    let name = Date.now() + shffix;
+    let name = Date.now() + '.' + shffix;
+    try {
+      await access(outDir);
+    } catch {
+      await mkdir(outDir);
+    }
     await writeFile(path.join(outDir, name), data);
     return name;
   } catch {
