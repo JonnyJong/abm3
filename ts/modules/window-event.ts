@@ -1,4 +1,4 @@
-import { BrowserWindow, app, ipcMain, shell } from "electron";
+import { BrowserWindow, app, ipcMain, nativeImage, shell } from "electron";
 import path from "path";
 
 export class WindowEvent{
@@ -42,6 +42,18 @@ export class WindowEvent{
     });
     ipcMain.handle('getAppData', ()=>{
       return path.join(app.getPath('home'), '.jonny', app.getName());
+    });
+    ipcMain.on('drag',async (ev, file)=>{
+      let icon;
+      try {
+        icon = await nativeImage.createThumbnailFromPath(file, {width: 128, height: 128});
+      } catch (error) {
+        icon = nativeImage.createEmpty();
+      }
+      ev.sender.startDrag({
+        file,
+        icon,
+      });
     });
   }
 }

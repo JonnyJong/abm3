@@ -1,3 +1,4 @@
+import { ipcRenderer } from "electron";
 import { getImage } from "../helper/get-file";
 import { Dialog } from "./dialog";
 import { UIText } from "./text";
@@ -103,6 +104,11 @@ export class UIImagePicker extends HTMLElement{
     if (this.hasAttribute('default')) {
       this.default = (this.getAttribute('default') as string);
     }
+    this.addEventListener('dragstart',(ev)=>{
+      if (this._error) return;
+      ev.preventDefault();
+      ipcRenderer.send('drag', this._value);
+    });
   }
   get value(): string {
     return this._value;
