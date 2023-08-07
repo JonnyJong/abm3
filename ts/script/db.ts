@@ -1,7 +1,7 @@
 import path from "path";
 import { download } from "./db/image";
 import { readFile, unlink, writeFile } from "fs/promises";
-import { nextId } from "ts/helper/id";
+import { nextId } from "../helper/id";
 
 type Link = {
   name: string,
@@ -360,4 +360,11 @@ export class DB{
     await this.save();
     return true;
   }
+}
+
+export let db: DB;
+
+export async function initDB(dbPath: string) {
+  db = new DB(dbPath);
+  await db.init();
 }

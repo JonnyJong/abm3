@@ -95,4 +95,7 @@ async function initConfig() {
     configDir = await ipcRenderer.invoke('getAppData');
   }
 }
-export { Config, ConfigSync, initConfig };
+function getDefaultConfigDir() {
+  return configDir;
+}
+export { Config, ConfigSync, initConfig, getDefaultConfigDir };
