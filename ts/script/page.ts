@@ -5,14 +5,14 @@ import pageSettings from "./page/settings";
 import pageItem from "./page/item";
 import { layout } from "../helper/layout";
 
-type PageHandler = (element: HTMLElement, option: any)=>any;
+type PageHandler = (element: HTMLElement, option: any, page: Page)=>any;
 export type PageOptions = {
   name: string,
   single?: false,
   onCreate: PageHandler,
   onBack: PageHandler,
-  onClose: Function,
-  pugOption?: any,
+  onClose: (page: Page)=>any,
+  layoutHandler?: (option: any, page: Page)=>any,
 };
 export type SinglePageOptions = {
   name: string,
@@ -20,7 +20,7 @@ export type SinglePageOptions = {
   onCreate: PageHandler,
   onOpen: PageHandler,
   onBack: PageHandler,
-  pugOption?: any,
+  layoutHandler?: (option: any, page: Page)=>any,
 };
 let pageTemplate: {
   [name: string]: PageOptions | SinglePageOptions,
@@ -33,11 +33,11 @@ let pageTemplate: {
 export class Page{
   _options: PageOptions | SinglePageOptions;
   _element: HTMLDivElement;
-  constructor(options: PageOptions | SinglePageOptions, pugOption?: any) {
+  constructor(options: PageOptions | SinglePageOptions, option?: any) {
     this._options = options;
     this._element = document.createElement('div');
     this._element.classList.add('page-' + options.name);
-    this._element.innerHTML = layout('page/' + options.name, Object.assign({ lang: locale }, Object.assign(options.pugOption, { option: pugOption })));
+    this._element.innerHTML = layout('page/' + options.name, Object.assign({ lang: locale }, (typeof this._options.layoutHandler === 'function' ? this._options.layoutHandler(option, this) : {})));
   }
   show(container: HTMLDivElement){
     container.querySelectorAll('.page-current').forEach((e)=>e.classList.remove('page-current'));
@@ -63,17 +63,17 @@ export class History{
     if (!(name in pageTemplate)) throw new Error(`Page '${name}' does not registered.`);
     let page = this.cache[name];
     if (!page) {
-      page = new Page(pageTemplate[name]);
+      page = new Page(pageTemplate[name], option);
     }
     this.stack.push({page, option});
     if (!page._options.single) {
       this._container.append(page._element);
     }
     if (!(name in this.cache)) {
-      page._options.onCreate(page._element, option);
+      page._options.onCreate(page._element, option, page);
     }
     if (page._options.single) {
-      page._options.onOpen(page._element, option);
+      page._options.onOpen(page._element, option, page);
       this.cache[name] = page;
     }
     this._container.append(page._element);
@@ -83,7 +83,7 @@ export class History{
   home(){
     for (let i = this.stack.length - 1; i > 0; i--) {
       if (!this.stack[i].page._options.single) {
-        (this.stack[i].page._options as PageOptions).onClose();
+        (this.stack[i].page._options as PageOptions).onClose(this.stack[i].page);
         this.stack[i].page.remove();
       }
       this.stack.pop();
@@ -95,11 +95,11 @@ export class History{
     if (this.stack.length === 1) return;
     let last = this.stack.pop();
     if (!last?.page._options.single) {
-      (last?.page._options as PageOptions).onClose();
+      (last?.page._options as PageOptions).onClose((last as any).page);
       last?.page.remove();
     }
     let now = this.stack[this.stack.length - 1];
-    now.page._options.onBack(now.page._element, now.option);
+    now.page._options.onBack(now.page._element, now.option, now.page);
     now.page.show(this._container);
     this.handler(this, 'back');
   };
