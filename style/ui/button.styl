@@ -10,6 +10,7 @@ button
   font-family NotoSans
   position relative
   line-height 1
+  gap 8px
   &:not(.btn-clear)
     background var(--btn-bg)
     border-color var(--btn-border)
@@ -35,12 +36,6 @@ button
     border-bottom-color var(--btn-border-bottom-active)
     color var(--btn-color-active)
     // scale .92
-  &:has(:nth-child(2)) .icon:first-child
-    display inline
-    margin 0 10px 0 2px
-  &:not(:has(:nth-child(2))) .icon:first-child
-  &:has(.tooltip:nth-child(2)) .icon:first-child
-    margin 0 2px
   .tooltip
     top -100%
     left 0
@@ -49,3 +44,5 @@ button
     --btn-bg var(--theme)
     --btn-bg-hover var(--theme-hover)
     --btn-bg-active var(--theme-active)
+  ui-loader
+    --ui-loader-size 16px

@@ -3,6 +3,7 @@ import { initDrag } from "./drag";
 import { UIImagePicker } from "./image";
 import { UILang } from "./lang";
 import { UIList } from "./list";
+import { UILoader } from "./loader";
 import { UINumber } from "./number";
 import { UIRange } from "./range";
 import { UISelect } from "./select";
@@ -27,6 +28,7 @@ export function initUI() {
   customElements.define('ui-list', UIList);
   customElements.define('ui-setting-item', UISettingItem),
   customElements.define('ui-setting-item-child', UISettingItemChild);
+  customElements.define('ui-loader', UILoader);
   // customElements.define('ui-markdown', UIMarkdown);
   initTooltip();
 
