@@ -2,6 +2,7 @@ import { locale } from "./locale";
 import pageHome from "./page/home";
 import pageEdit from "./page/edit";
 import pageSettings from "./page/settings";
+import pageItem from "./page/item";
 import { layout } from "../helper/layout";
 
 type PageHandler = (element: HTMLElement, option: any)=>any;
@@ -27,15 +28,16 @@ let pageTemplate: {
   home: pageHome,
   edit: pageEdit,
   settings: pageSettings,
+  item: pageItem,
 };
 export class Page{
   _options: PageOptions | SinglePageOptions;
   _element: HTMLDivElement;
-  constructor(options: PageOptions | SinglePageOptions) {
+  constructor(options: PageOptions | SinglePageOptions, pugOption?: any) {
     this._options = options;
     this._element = document.createElement('div');
     this._element.classList.add('page-' + options.name);
-    this._element.innerHTML = layout('page/' + options.name, Object.assign({ lang: locale }, options.pugOption));
+    this._element.innerHTML = layout('page/' + options.name, Object.assign({ lang: locale }, Object.assign(options.pugOption, { option: pugOption })));
   }
   show(container: HTMLDivElement){
     container.querySelectorAll('.page-current').forEach((e)=>e.classList.remove('page-current'));
