@@ -1,5 +1,5 @@
 import Config, { getDefaultConfigDir, initConfig } from "./modules/config";
-import { db, initDB } from "./script/db";
+import { initDB } from "./script/db";
 import { updateLocale } from "./script/locale";
 import { initPage } from "./script/page";
 import { initSearchbar } from "./script/searchbar";

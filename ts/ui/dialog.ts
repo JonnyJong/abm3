@@ -46,3 +46,18 @@ export class Dialog{
     }, 100);
   }
 }
+export class ErrorDialog extends Dialog{
+  constructor(content: string) {
+    let contentElement = document.createElement('div');
+    contentElement.innerHTML = content;
+    super({
+      title: '<ui-lang>dialog.error</ui-lang>',
+      content: contentElement,
+      buttons: [{
+        text: '<ui-lang>dialog.confirm</ui-lang>',
+        action: ()=>this.close(),
+      }],
+    });
+    this.show();
+  }
+}
