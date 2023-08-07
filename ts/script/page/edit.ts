@@ -57,10 +57,12 @@ async function saveTab(btn: HTMLButtonElement, tab: TabObject) {
   btn.disabled = true;
   btn.innerHTML = '<ui-loader></ui-loader><ui-lang>edit.saving</ui-lang>';
   let id;
+  let data = tab.setting.value;
+  data.updated = Date.now();
   if (typeof tab.id === 'number') {
-    id = await db.createItem(tab.setting.value);
+    id = await db.createItem(data);
   } else if (db.items[tab.id]) {
-    id = await db.items[tab.id].edit(tab.setting.value);
+    id = await db.items[tab.id].edit(data);
   } else {
     new ErrorDialog('<ui-lang>edit.bangumi_has_been_delete</ui-lang>', ()=>{
       closeTab(tab.id);
