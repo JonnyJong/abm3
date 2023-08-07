@@ -11,7 +11,7 @@
         "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
       },
       "args" : ["."],
-      "preLaunchTask": "tsc: watch"
+      "preLaunchTask": "build"
     },
     {
       "name": "Debug",

@@ -24,6 +24,24 @@
         "kind": "build",
         "isDefault": false
       }
+    },
+    {
+      "type": "shell",
+      "label": "pug",
+      "command": "pug ./layout/index.pug",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      }
+    },
+    {
+      "label": "build",
+      "dependsOrder": "parallel",
+      "dependsOn": ["tsc: watch", "pug"]
     }
   ]
 }

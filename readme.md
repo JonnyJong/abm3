@@ -5,7 +5,9 @@ The project is being rebuilt, stay tuned...
 # 构建 / Build
 ```bash
 npm install -g typescript
+npm install -g pug
 npm install
+pug ./layout/index.pug
 tsc
 ```
 

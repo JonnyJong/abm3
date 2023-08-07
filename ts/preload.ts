@@ -8,6 +8,8 @@ import { initUI } from "./ui/main";
 
 let config = new Config('config');
 
+let db: Config;
+
 document.addEventListener('DOMContentLoaded',async ()=>{
   initWindowEvent();
 
@@ -15,6 +17,8 @@ document.addEventListener('DOMContentLoaded',async ()=>{
 
   await config.load();
   await updateLocale(config.store.locale);
+  db = new Config('db');
+  await db.load();
   initUI();
 
   initPage();
@@ -27,3 +31,5 @@ document.addEventListener('DOMContentLoaded',async ()=>{
     document.body.classList.remove('loading');
   }, 200);
 });
+
+window.addEventListener('keypress',({key})=> key === "\u0012" ? location.reload() : '');

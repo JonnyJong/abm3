@@ -1,7 +1,5 @@
-import { BrowserWindow, app, nativeTheme } from "electron";
+import { BrowserWindow, Menu, app, nativeTheme } from "electron";
 import path from "path";
-import { registeProtocol } from "./modules/protocol";
-import pug from "./modules/pug";
 import style from "./modules/style";
 import WindowState from "./modules/window-state";
 import { WindowEvent } from "./modules/window-event";
@@ -9,7 +7,7 @@ import { initDialog } from "./modules/dialog";
 import { initConfig } from "./modules/config";
 
 app.on('ready',()=>{
-  registeProtocol('pug', pug.portocolHandler);
+  Menu.setApplicationMenu (null);
 
   initConfig();
 
@@ -34,7 +32,7 @@ app.on('ready',()=>{
 
   let windowState = new WindowState(win);
 
-  win.loadFile(path.join(__dirname, '../layout/index.pug'));
+  win.loadFile(path.join(__dirname, '../layout/index.html'));
 
   style.insert(path.join(process.cwd(), 'style/main.styl'), win.webContents);
 
