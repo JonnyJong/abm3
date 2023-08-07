@@ -1,7 +1,7 @@
 import { SettingOption, SettingTemplate } from "../../ui/template";
 import { SinglePageOptions } from "../page";
 import { db } from "../db";
-import { Dialog } from "../../ui/dialog";
+import { Dialog, ErrorDialog } from "../../ui/dialog";
 import { locale } from "../locale";
 import { Flyout } from "../../ui/flyout";
 import template from "./edit.json";
@@ -53,6 +53,28 @@ function closeTab(id: any) {
   }, 100);
 }
 
+async function saveTab(btn: HTMLButtonElement, tab: TabObject) {
+  btn.disabled = true;
+  btn.innerHTML = '<ui-loader></ui-loader><ui-lang>edit.saving</ui-lang>';
+  let id;
+  if (typeof tab.id === 'number') {
+    id = await db.createItem(tab.setting.value);
+  } else if (db.items[tab.id]) {
+    id = await db.items[tab.id].edit(tab.setting.value);
+  } else {
+    new ErrorDialog('<ui-lang>edit.bangumi_has_been_delete</ui-lang>', ()=>{
+      closeTab(tab.id);
+    });
+    return;
+  }
+  tabs.delete(tab.id);
+  tabs.set(id, tab);
+  tab.id = id;
+  btn.disabled = false;
+  btn.innerHTML = '<i class="icon icon-Save"></i><ui-lang>edit.save</ui-lang>';
+  tab.tabName.innerHTML = db.items[tab.id].title;
+}
+
 function setSettingInBody(body: HTMLDivElement, id?: string | number) {
   body.querySelector('.settings')?.remove();
   let setting = new SettingTemplate(getEditTemplate(), id !== undefined ? db.items[id] : undefined);
@@ -71,6 +93,7 @@ function confirmHandler(btn: HTMLButtonElement, tab: TabObject) {
           text: locale.dialog.confirm,
           action: ()=>{
             dialog.close();
+            saveTab(btn, tab);
           },
           level: 'confirm'
         },
@@ -95,8 +118,7 @@ function resetHandler(btn: HTMLButtonElement, tab: TabObject) {
           name: locale.edit.reset,
           action: ()=>{
             flyout.close();
-            tab.setting = new SettingTemplate(getEditTemplate(), db.items[tab.id]);
-            tab.body.querySelector('settings')
+            tab.setting = setSettingInBody(tab.body, tab.id);
           },
         },
       ],
