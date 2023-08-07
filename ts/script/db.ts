@@ -160,6 +160,7 @@ export class Bangumi{
       for (const img of Array.from(originalPool)) {
         try {unlink(path.join(imgaesDir, img))}catch{}
       }
+      this.seasons = seasons;
     }
     if (typeof origin.date === 'number') {
       this.date = new Date(origin.date);
@@ -287,10 +288,9 @@ export class DB{
         // @ts-ignore
         this[key] = data[key];
       }
-      for (const key in this.items) {
-        if (Object.prototype.hasOwnProperty.call(this.items, key)) {
-          this.items[key] = new Bangumi(this, this.items);
-        }
+      for (const key in data.items) {
+        if (!Object.prototype.hasOwnProperty.call(data.items, key)) continue;
+        this.items[key] = new Bangumi(this, data.items[key]);
       }
     } catch {}
   }
