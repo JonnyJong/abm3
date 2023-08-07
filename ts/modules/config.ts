@@ -1,11 +1,10 @@
 import { readFile, mkdir, access, writeFile } from "fs/promises";
 import path from "path";
-// @ts-ignore
-import packageInfo from "../../package.json";
 import yaml from "yaml";
 import fs = require("fs");
+import { app, ipcRenderer } from "electron";
 
-let configDir = path.join((process.env.HOME || process.env.USERPROFILE as string), '.jonny', packageInfo.name);
+let configDir = '';
 
 export default class Config{
   name: string;
@@ -14,7 +13,6 @@ export default class Config{
   encoder: Function = JSON.stringify;
   constructor(name: string){
     this.name = name;
-    // this.load();
   }
   _loadConfig(){
     return readFile(path.join(configDir, this.name + '.json'), 'utf-8').then((value)=>this.decoder(value));
@@ -90,4 +88,11 @@ class ConfigSync{
     return this.store;
   }
 }
-export { Config, ConfigSync };
+async function initConfig() {
+  if (app) {
+    configDir = path.join(app.getPath('home'), '.jonny', app.getName());
+  } else {
+    configDir = await ipcRenderer.invoke('getAppData');
+  }
+}
+export { Config, ConfigSync, initConfig };

@@ -3,21 +3,22 @@ import path from "path";
 import { registeProtocol } from "./modules/protocol";
 import pug from "./modules/pug";
 import style from "./modules/style";
-// @ts-ignore
-import packageInfo from "../package.json";
 import WindowState from "./modules/window-state";
 import { WindowEvent } from "./modules/window-event";
 import { initDialog } from "./modules/dialog";
+import { initConfig } from "./modules/config";
 
 app.on('ready',()=>{
   registeProtocol('pug', pug.portocolHandler);
+
+  initConfig();
 
   const win = new BrowserWindow({
     show: false,
     frame: false,
     resizable: true,
     enableLargerThanScreen: false,
-    title: packageInfo.name,
+    title: app.getName(),
     icon: path.join(process.cwd(), './assets/icons/icon.ico'),
     backgroundColor: nativeTheme.shouldUseDarkColors ? '#202020' : '#f3f3f3',
     minWidth: 1160,

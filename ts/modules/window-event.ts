@@ -1,4 +1,5 @@
 import { BrowserWindow, app, ipcMain, shell } from "electron";
+import path from "path";
 
 export class WindowEvent{
   constructor(win: BrowserWindow) {
@@ -38,6 +39,9 @@ export class WindowEvent{
     });
     ipcMain.on('url',(_, url)=>{
       shell.openExternal(url);
+    });
+    ipcMain.handle('getAppData', ()=>{
+      return path.join(app.getPath('home'), '.jonny', app.getName());
     });
   }
 }
