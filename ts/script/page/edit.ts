@@ -1,6 +1,6 @@
 import { SettingOption, SettingTemplate } from "../../ui/template";
 import { SinglePageOptions } from "../page";
-import { Bangumi, db } from "../db";
+import { db } from "../db";
 import { Dialog } from "../../ui/dialog";
 import { locale } from "../locale";
 import { Flyout } from "../../ui/flyout";
@@ -53,6 +53,14 @@ function closeTab(id: any) {
   }, 100);
 }
 
+function setSettingInBody(body: HTMLDivElement, id?: string | number) {
+  body.querySelector('.settings')?.remove();
+  let setting = new SettingTemplate(getEditTemplate(), id !== undefined ? db.items[id] : undefined);
+  setting.element.classList.add('ui-width2');
+  body.append(setting.element);
+  return setting;
+}
+
 function confirmHandler(btn: HTMLButtonElement, tab: TabObject) {
   btn.addEventListener('click',()=>{
     let dialog = new Dialog({
@@ -87,6 +95,8 @@ function resetHandler(btn: HTMLButtonElement, tab: TabObject) {
           name: locale.edit.reset,
           action: ()=>{
             flyout.close();
+            tab.setting = new SettingTemplate(getEditTemplate(), db.items[tab.id]);
+            tab.body.querySelector('settings')
           },
         },
       ],
@@ -95,26 +105,23 @@ function resetHandler(btn: HTMLButtonElement, tab: TabObject) {
   });
 }
 
-function createTab(bangumi?: Bangumi) {
-  let tabId: string | number | undefined = bangumi?.id;
-  if (tabId === undefined) {
-    tabId = Date.now();
+function createTab(id?: string | number) {
+  if (id === undefined) {
+    id = Date.now();
   }
 
-  let setting = new SettingTemplate(getEditTemplate(), bangumi);
-  setting.element.classList.add('ui-width2');
   let tab = element('page/edit/tab', ['edit-tab', 'edit-tab-current']);
-  let body = element('page/edit/body', ['edit-body', 'edit-body-current'], { bangumi });
-  body.append(setting.element);
+  let body = element('page/edit/body', ['edit-body', 'edit-body-current'], { bangumi: db.items[id] });
+  let setting = setSettingInBody(body, id);
 
-  let tabObject = {id: tabId, setting, tab, body, new: !bangumi, tabName: (tab.querySelector('.edit-tab-name') as HTMLDivElement)};
-  tabs.set(tabId, tabObject);
+  let tabObject = {id, setting, tab, body, new: typeof id === 'number', tabName: (tab.querySelector('.edit-tab-name') as HTMLDivElement)};
+  tabs.set(id, tabObject);
 
   confirmHandler((body.querySelector('.edit-confirm') as HTMLButtonElement), tabObject);
   resetHandler((body.querySelector('.edit-reset') as HTMLButtonElement), tabObject);
 
   let closeBtn = (tab.querySelector('.edit-tab-close') as HTMLDivElement);
-  closeBtn.addEventListener('click',()=>closeTab(tabId));
+  closeBtn.addEventListener('click',()=>closeTab(tabObject.id));
   tab.addEventListener('click',(ev)=>{
     if (ev.composedPath().includes(closeBtn)) return;
     switchTab({tab, body});
@@ -122,7 +129,7 @@ function createTab(bangumi?: Bangumi) {
   tab.addEventListener('mousedown',(ev)=>{
     if (ev.button !== 1) return;
     ev.preventDefault();
-    closeTab(tabId);
+    closeTab(tabObject.id);
   });
 
   tabsElement.querySelectorAll('.edit-tab-current').forEach((el)=>el.classList.remove('edit-tab-current'));
@@ -149,7 +156,7 @@ const page: SinglePageOptions = {
   onBack(element, option) {
   },
   onOpen(element, option) {
-    if (db.items[option]) createTab(db.items[option]);
+    if (option !== undefined) createTab(option);
     if (tabs.size > 0) return;
     createTab();
   },
