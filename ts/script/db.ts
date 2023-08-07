@@ -73,23 +73,27 @@ export class Bangumi{
     }
     if (Array.isArray(origin.tags)) {
       for (const name of this.tags) {
+        if (!this.db.tags[name]) continue;
         this.db.tags[name].delete(this.id);
       }
       this.tags = new Set();
       for (const name of origin.tags) {
         if (typeof name !== 'string') continue;
         this.tags.add(name);
+        if (!this.db.tags[name]) this.db.tags[name] = new Set();
         this.db.tags[name].add(this.id);
       }
     }
     if (Array.isArray(origin.categories)) {
       for (const name of this.categories) {
+        if (!this.db.categories[name]) continue;
         this.db.categories[name].delete(this.id);
       }
       this.categories = new Set();
       for (const name of origin.categories) {
         if (typeof name !== 'string') continue;
         this.categories.add(name);
+        if (!this.db.categories[name]) this.db.categories[name] = new Set();
         this.db.categories[name].add(this.id);
       }
     }
@@ -163,7 +167,7 @@ export class Bangumi{
     if (typeof origin.updated === 'number') {
       this.updated = new Date(origin.updated);
     }
-    return;
+    return this.id;
   }
   remove(){
     if (this.favorite) {
@@ -188,6 +192,21 @@ export class Bangumi{
     }
     delete this.db.items[this.id];
     this.db.save();
+  }
+  toJSON() {
+    return{
+      id: this.id,
+      title: this.title,
+      content: this.content,
+      favorite: this.favorite,
+      stars: this.stars,
+      tags: this.tags,
+      categories: this.categories,
+      seasons: this.seasons,
+      date: this.date,
+      updated: this.updated,
+      ext: this.ext,
+    };
   }
 }
 export class DB{
@@ -287,7 +306,7 @@ export class DB{
       }
     })
     try {
-      return writeFile(path.join(this.dbPath, 'db.json'), JSON.stringify(data), 'utf-8');
+      return writeFile(path.join(this.dbPath, 'db.json'), data, 'utf-8');
     } catch (error) {
       console.error(error);
     }
@@ -298,7 +317,8 @@ export class DB{
     this.items[item.id] = item;
     await item.edit(origin);
     this.id = nextId(this.id);
-    return this.save();
+    await this.save();
+    return item.id;
   }
   async removeCategory(name: string){
     if (!this.categories[name]) return false;
