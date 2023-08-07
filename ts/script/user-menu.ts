@@ -18,7 +18,6 @@ export function initUserMenu() {
       {
         name: locale.user_menu.edit_bangumi,
         icon: 'Edit',
-        shortcut: 'Ctrl+N', // TODO
         action: ()=>{
           history.open('edit');
           menu.hide();

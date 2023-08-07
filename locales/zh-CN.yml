@@ -40,8 +40,8 @@ edit:
   confirm_before: 确认要保存对《
   confirm_after: 》的修改吗？
   confirm_content: 此修改无法撤销。
-  undo: 撤销
-  undo_confirm: 确认要撤销修改吗？
+  reset: 重置
+  reset_confirm: 确认要清除所有的修改吗？
 
 markdown:
   copy: 复制
