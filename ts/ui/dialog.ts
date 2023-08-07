@@ -47,7 +47,7 @@ export class Dialog{
   }
 }
 export class ErrorDialog extends Dialog{
-  constructor(content: string) {
+  constructor(content: string, onClose?: Function) {
     let contentElement = document.createElement('div');
     contentElement.innerHTML = content;
     super({
@@ -55,7 +55,10 @@ export class ErrorDialog extends Dialog{
       content: contentElement,
       buttons: [{
         text: '<ui-lang>dialog.confirm</ui-lang>',
-        action: ()=>this.close(),
+        action: ()=>{
+          this.close();
+          if (typeof onClose === 'function') onClose();
+        },
       }],
     });
     this.show();
