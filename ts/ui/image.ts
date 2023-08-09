@@ -2,6 +2,7 @@ import { ipcRenderer } from "electron";
 import { getImage } from "../helper/get-file";
 import { Dialog } from "./dialog";
 import { UIText } from "./text";
+import path from "path";
 
 export class UIImagePicker extends HTMLElement{
   private _inited: boolean = false;
@@ -45,11 +46,7 @@ export class UIImagePicker extends HTMLElement{
       }, 10);
     });
     this._default.addEventListener('click',()=>{
-      this.value = this._defaultValue;
-      if (this._defaultValue !== '') return;
-      setTimeout(() => {
-        this._info.innerHTML = '<i class="icon icon-Info"></i><ui-lang>image.empty</ui-lang>';
-      }, 10);
+      this.reset();
     });
     this._web.addEventListener('click', ()=>{
       let input = (document.createElement('ui-text') as UIText);
@@ -122,6 +119,14 @@ export class UIImagePicker extends HTMLElement{
   }
   set default(value: string) {
     this._defaultValue = value;
+  }
+  async reset() {
+    this._value = this._defaultValue;
+    if (this._defaultValue !== '') return;
+    this._img.src = path.join(await ipcRenderer.invoke('getAppData'), 'images', this._defaultValue);
+    setTimeout(() => {
+      this._info.innerHTML = '<i class="icon icon-Info"></i><ui-lang>image.empty</ui-lang>';
+    }, 10);
   }
   get error(): boolean {
     return this._error;

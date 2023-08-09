@@ -495,7 +495,8 @@ export class SettingTemplate{
     let element = (document.createElement('ui-image-picker') as UIImagePicker);
     let v = getValueByKey(value, objs.data);
     if (v !== undefined) {
-      element.value = v;
+      element.default = v;
+      element.reset();
     }
     if (Array.isArray(objs.classList)) {
       element.classList.add(...objs.classList);
