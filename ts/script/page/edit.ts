@@ -72,9 +72,10 @@ async function saveTab(btn: HTMLButtonElement, tab: TabObject) {
   tabs.delete(tab.id);
   tabs.set(id, tab);
   tab.id = id;
-  btn.disabled = false;
-  btn.innerHTML = '<i class="icon icon-Save"></i><ui-lang>edit.save</ui-lang>';
+  setSettingInBody(tab.body, id);
   tab.tabName.innerHTML = db.items[tab.id].title;
+  btn.innerHTML = '<i class="icon icon-Save"></i><ui-lang>edit.save</ui-lang>';
+  btn.disabled = false;
 }
 
 function setSettingInBody(body: HTMLDivElement, id?: string | number) {
