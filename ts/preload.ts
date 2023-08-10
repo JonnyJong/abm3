@@ -1,3 +1,4 @@
+import { timer } from "./helper/timer";
 import Config, { getDefaultConfigDir, initConfig } from "./modules/config";
 import { initDB } from "./script/db";
 import { updateLocale } from "./script/locale";
@@ -26,9 +27,8 @@ document.addEventListener('DOMContentLoaded',async ()=>{
 
   initSearchbar();
   
-  setTimeout(() => {
-    document.body.classList.remove('loading');
-  }, 200);
+  await timer(200);
+  document.body.classList.remove('loading');
 });
 
 // DEV
