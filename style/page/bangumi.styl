@@ -117,6 +117,7 @@
 .bangumi-season
   padding 6px 8px
   border-radius 6px
+  height 36px
   transition .1s background, .1s color
   &:not(.bangumi-season-current)
     &:hover
@@ -124,6 +125,8 @@
     &:active
       background var(--btn-bg-active)
       color var(--btn-color-active)
+  &:empty:first-child:last-child
+    display none
 .bangumi-season-current
   background var(--theme)
 
@@ -131,6 +134,8 @@
   background var(--bg3)
   border-radius 6px
   padding 16px 22px
+  &:empty
+    display none
 
 .bangumi-switching
   .bangumi-header-current

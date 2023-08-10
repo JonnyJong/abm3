@@ -1,6 +1,8 @@
 import { db } from "../script/db";
 import { layout } from "../helper/layout";
 import path from "path";
+import { history } from "../script/page";
+import { timer } from "../helper/timer";
 
 export class UIBangumi extends HTMLElement{
   private _inited: boolean = false;
@@ -25,6 +27,28 @@ export class UIBangumi extends HTMLElement{
     this._eval = (this.querySelector('.ui-bangumi-evaluation') as HTMLDivElement);
     this._mark = (this.querySelector('.ui-bangumi-mark') as HTMLDivElement);
     this.update();
+    this.addEventListener('click',async ()=>{
+      if (this._id === '') return;
+      let img = (this._img.children[0].cloneNode() as HTMLImageElement);
+      img.classList.add('ui-bangumi-animation');
+      let rect = this._img.getBoundingClientRect();
+      img.style.left = rect.left + 'px';
+      img.style.top = rect.top + 'px';
+      img.style.height = rect.height + 'px';
+      img.style.width = rect.width + 'px';
+      document.body.append(img);
+      document.querySelector('.page-current')?.classList.remove('page-current');
+      await timer(100);
+      img.style.top = window.innerHeight * 0.9 - 128 + 'px';
+      console.log(window.innerHeight * 0.9 - 128);
+      img.style.left = (window.innerWidth - Math.min(window.innerWidth - 32, 1080)) / 2 + 'px';
+      img.style.height = '400px';
+      img.style.width = '300px';
+      await timer(100);
+      history.open('bangumi', this._id);
+      await timer(300);
+      img.remove();
+    });
   }
   get id() {
     return this._id;

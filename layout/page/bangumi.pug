@@ -52,9 +52,8 @@ else
   .bangumi-seasons.ui-width2
     each season, i in item.seasons
       div(class="bangumi-season" + (i === 0 ? " bangumi-season-current": ""))=season.title
-  .bangumi-content.ui-width2
-    //- TODO: render markdown
-    article!=item.content
+  //- TODO: render markdown
+  article.bangumi-content.ui-width2!=item.content
   .bangumi-related.ui-width2
     .bangumi-related-title
       ui-lang bangumi.related
