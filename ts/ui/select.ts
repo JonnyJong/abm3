@@ -30,6 +30,7 @@ export class UISelect extends HTMLElement{
       let x = rect.left;
       let y = rect.top;
       let h = 12 + 32 * this._values.length + 4 * (this._values.length - 1); // 高度 height
+      let w = rect.width;
       let index = Array.from(this._list.children).findIndex((el)=>(el as any).key === this._value);
       if (index === -1) {
         index = Math.floor(this._values.length / 2);
@@ -62,6 +63,7 @@ export class UISelect extends HTMLElement{
       this._container.style.setProperty('--x', x + 'px');
       this._container.style.setProperty('--y', y + 'px');
       this._container.style.setProperty('--h', h + 'px');
+      this._container.style.setProperty('--w', w + 'px');
       this._container.style.setProperty('--o', o + 'px');
       this._show(true);
     });
