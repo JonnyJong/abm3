@@ -41,7 +41,7 @@ export class Page{
     this._element.classList.add('page-' + options.name);
     this._element.innerHTML = layout('page/' + options.name, Object.assign({ lang: locale }, (typeof this._options.layoutHandler === 'function' ? this._options.layoutHandler(option, this) : {})));
     this._element.addEventListener('scroll', ()=>{
-      this._element.querySelectorAll('.' + VListElementTag.join(',.')).forEach((el)=>(el as any).vListHandler(this._element.scrollTop));
+      this._element.querySelectorAll(VListElementTag.join(',')).forEach((el)=>(el as any).vListHandler(this._element.scrollTop));
     });
   };
   async show(container: HTMLDivElement){
