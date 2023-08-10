@@ -75,26 +75,5 @@
   justify-content flex-end
 .display-rack
   position relative
-.rack
-  margin-top 16px
-.rack-head
-  display flex
-  align-items center
-  gap 8px
-  &:hover .rack-edit
-    opacity .5
-.rack-title
-  font-size 20px
-.rack-flex
-  flex 1
-.rack-edit
-  opacity 0
-  transition .2s opacity, .1s border, .2s background, .1s scale
-.rack-head .rack-edit:hover
-    opacity 1
-.rack-expand
-  opacity .5
-  transition .2s opacity, .1s border, .2s background, .1s scale
-  &:hover
-  &:active
-    opacity 1
+  &>*
+    margin-top 16px
