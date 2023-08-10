@@ -6,18 +6,23 @@ export class UISelect extends HTMLElement{
   private _values: {name: string, value: any}[] = [];
   private _placeholder: string = '';
   private _current!: HTMLDivElement;
-  private _list!: HTMLDivElement;
+  private _list: HTMLDivElement = document.createElement('div');
+  private _container: HTMLDivElement = document.createElement('div');
+  private _hider: HTMLDivElement = document.createElement('div');
   constructor() {
     super();
+    this._container.classList.add('ui-select-container');
+    this._list.classList.add('ui-select-list');
+    this._container.append(this._list);
+    this._hider.classList.add('ui-select-hider');
   }
   connectedCallback() {
+    document.body.append(this._hider, this._container);
     if (this._inited) return;
     this._inited = true;
     this.innerHTML = layout('ui/select');
-    this._current = (document.querySelector('.ui-select-name') as HTMLDivElement);
-    // this._container = (document.querySelector('.ui-select-container') as HTMLDivElement);
-    this._list = (document.querySelector('.ui-select-list') as HTMLDivElement);
-    (document.querySelector('.ui-select') as HTMLDivElement).addEventListener('click',()=>{
+    this._current = (this.querySelector('.ui-select-name') as HTMLDivElement);
+    (this.querySelector('.ui-select') as HTMLDivElement).addEventListener('click',()=>{
       if (this._values.length === 0) return;
       // 确定简单位置
       // Determine the simple location
@@ -54,17 +59,25 @@ export class UISelect extends HTMLElement{
       }
       // 设置位置
       // Setting position
-      this.style.setProperty('--x', x + 'px');
-      this.style.setProperty('--y', y + 'px');
-      this.style.setProperty('--h', h + 'px');
-      this.style.setProperty('--o', o + 'px');
-      this.classList.add('ui-select-show');
+      this._container.style.setProperty('--x', x + 'px');
+      this._container.style.setProperty('--y', y + 'px');
+      this._container.style.setProperty('--h', h + 'px');
+      this._container.style.setProperty('--o', o + 'px');
+      this._show(true);
     });
-    (document.querySelector('.ui-select-hider') as HTMLDivElement).addEventListener('click',()=>{
-      this.classList.remove('ui-select-show');
+    this._hider.addEventListener('click',()=>{
+      this._show(false);
     });
+    this.values = this._values;
   }
-  disconnectedCallback() {}
+  disconnectedCallback() {
+    this._container.remove();
+    this._hider.remove();
+  }
+  private _show(show: boolean) {
+    this._container.classList.toggle('ui-select-show', show);
+    this._hider.classList.toggle('ui-select-show', show);
+  }
   get value(): any {
     return this._value;
   }
@@ -90,17 +103,18 @@ export class UISelect extends HTMLElement{
     return this._values;
   }
   set values(value: {name: string, value: any}[]) {
-    if (Array.isArray(value)) return;
+    if (!Array.isArray(value)) return;
     this._values = value;
     if (!this._inited) return;
     this._list.innerHTML = '';
     this._values.forEach(({name, value})=>{
       let item = document.createElement('div');
       item.classList.add('ui-select-item');
+      item.innerHTML = name;
       (item as any).key = value;
       item.addEventListener('click', ()=>{
         this.value = value;
-        this.classList.remove('ui-select-show');
+        this._show(false);
       });
       this._list.append(item);
     });
