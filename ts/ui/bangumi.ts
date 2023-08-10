@@ -20,10 +20,10 @@ export class UIBangumi extends HTMLElement{
     this._inited = true;
     this.innerHTML = layout('ui/bangumi');
     this.classList.add('ui-bangumi-loading');
-    this._img = (document.querySelector('.ui-bangumi-cover') as HTMLDivElement);
-    this._title = (document.querySelector('.ui-bangumi-title') as HTMLDivElement);
-    this._eval = (document.querySelector('.ui-bangumi-evaluation') as HTMLDivElement);
-    this._mark = (document.querySelector('.ui-bangumi-mark') as HTMLDivElement);
+    this._img = (this.querySelector('.ui-bangumi-cover') as HTMLDivElement);
+    this._title = (this.querySelector('.ui-bangumi-title') as HTMLDivElement);
+    this._eval = (this.querySelector('.ui-bangumi-evaluation') as HTMLDivElement);
+    this._mark = (this.querySelector('.ui-bangumi-mark') as HTMLDivElement);
     this.update();
   }
   get id() {
@@ -59,14 +59,14 @@ export class UIBangumi extends HTMLElement{
     for (const season of item.seasons) {
       if (!season.cover) continue;
       // TODO: get db path from setting
-      img = path.join((process.env.HOME || process.env.USERPROFILE ) as string, '.jonny/abm', season.cover);
+      img = path.join((process.env.HOME || process.env.USERPROFILE ) as string, '.jonny/abm/images', season.cover);
       break;
     }
     this._img.innerHTML = `<img src="${img}" draggable="false">`;
     this._title.textContent = item.title;
     let evaluation = `<div class="icon icon-Heart${item.favorite ? 'Fill' : ''}"></div>`;
-    for (let i = 1; i < 6; i--) {
-      evaluation += `<div class="icon icon-FavoriteStar${i <= item.stars ? 'Fill' : ''}></div>`;
+    for (let i = 1; i < 6; i++) {
+      evaluation += `<div class="icon icon-FavoriteStar${i <= item.stars ? 'Fill' : ''}"></div>`;
     }
     this._eval.innerHTML = evaluation;
     // TODO: bangumi mark
