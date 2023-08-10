@@ -71,8 +71,9 @@ export class UISelect extends HTMLElement{
   set value(value: any) {
     let index = this._values.findIndex((item)=>item.value === value);
     if (index === -1) {
-      this._current.innerHTML = this._placeholder;
       this._value = undefined;
+      if (!this._inited) return;
+      this._current.innerHTML = this._placeholder;
       return;
     };
     this._value = value;

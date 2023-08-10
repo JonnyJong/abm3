@@ -91,7 +91,7 @@ type SettingNumber = {
 };
 type SettingSelect = {
   type: 'select',
-  values: Map<any, string>,
+  values: {name: string, value: any}[],
   key: string,
   data: string,
   classList?: string[],
