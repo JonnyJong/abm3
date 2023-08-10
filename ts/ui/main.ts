@@ -1,3 +1,4 @@
+import { UIBangumi } from "./bangumi";
 import { UIColor, UIColorPicker } from "./color";
 import { initDrag } from "./drag";
 import { UIImagePicker } from "./image";
@@ -29,6 +30,7 @@ export function initUI() {
   customElements.define('ui-setting-item', UISettingItem),
   customElements.define('ui-setting-item-child', UISettingItemChild);
   customElements.define('ui-loader', UILoader);
+  customElements.define('ui-bangumi', UIBangumi);
   // customElements.define('ui-markdown', UIMarkdown);
   initTooltip();
 

@@ -1,0 +1,48 @@
+ui-bangumi
+  display flex
+  flex-direction column
+  gap 6px
+  padding 14px
+  border-radius 6px
+  transition .2s box-shadow, .2s background, .2s translate, .2s scale
+  width 268px
+  height 420px
+  &:hover
+    box-shadow 0 4px 8px #0008
+    translate 0 -4px
+    background var(--bg3)
+  &:active
+    scale .98
+.ui-bangumi-cover
+  height 320px
+  width 240px
+  border-radius 6px
+  overflow hidden
+  img
+    height 100%
+    width 100%
+    object-fit cover
+.ui-bangumi-title
+  height 24px
+  line-height 24px
+.ui-bangumi-evaluation
+  display flex
+  gap 4px
+  height 16px
+  &>:first-child
+    margin-right 8px
+.ui-bangumi-mark
+  display flex
+  gap 4px
+  margin-top 6px
+  &>*
+    height 8px
+    width 8px
+    border-radius 8px
+
+.ui-bangumi-loading
+  .ui-bangumi-cover
+  .ui-bangumi-title
+  .ui-bangumi-evaluation
+    animation var(--loading-bg)
+    border-radius 6px
