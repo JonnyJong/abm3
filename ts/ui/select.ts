@@ -3,10 +3,9 @@ import { layout } from "../helper/layout";
 export class UISelect extends HTMLElement{
   private _inited: boolean = false;
   private _value: any;
-  private _values: Map<any, string> = new Map();
+  private _values: {name: string, value: any}[] = [];
   private _placeholder: string = '';
   private _current!: HTMLDivElement;
-  // private _container!: HTMLDivElement;
   private _list!: HTMLDivElement;
   constructor() {
     super();
@@ -19,16 +18,16 @@ export class UISelect extends HTMLElement{
     // this._container = (document.querySelector('.ui-select-container') as HTMLDivElement);
     this._list = (document.querySelector('.ui-select-list') as HTMLDivElement);
     (document.querySelector('.ui-select') as HTMLDivElement).addEventListener('click',()=>{
-      if (this._values.size === 0) return;
+      if (this._values.length === 0) return;
       // 确定简单位置
       // Determine the simple location
       let rect = this.getBoundingClientRect();
       let x = rect.left;
       let y = rect.top;
-      let h = 12 + 32 * this._values.size + 4 * (this._values.size - 1); // 高度 height
+      let h = 12 + 32 * this._values.length + 4 * (this._values.length - 1); // 高度 height
       let index = Array.from(this._list.children).findIndex((el)=>(el as any).key === this._value);
       if (index === -1) {
-        index = Math.floor(this._values.size / 2);
+        index = Math.floor(this._values.length / 2);
       }
       let o = 6 + 36 * index; // 偏移 offset
       let realH = Math.min(h, window.innerHeight - 100);
@@ -70,14 +69,15 @@ export class UISelect extends HTMLElement{
     return this._value;
   }
   set value(value: any) {
-    if (!this._values.has(value)) {
+    let index = this._values.findIndex((item)=>item.value === value);
+    if (index === -1) {
       this._current.innerHTML = this._placeholder;
       this._value = undefined;
       return;
     };
     this._value = value;
     if (!this._inited) return;
-    this._current.innerHTML = (this._values.get(this._value) as string);
+    this._current.innerHTML = this._values[index].name;
     this._list.querySelectorAll('.ui-select-current').forEach((el)=>el.classList.remove('ui-select-current'));
     for (const item of Array.from(this._list.children)) {
       if ((item as any).key !== this._value) continue;
@@ -85,21 +85,20 @@ export class UISelect extends HTMLElement{
       break;
     }
   }
-  get values(): Map<any, string> {
+  get values(): {name: string, value: any}[] {
     return this._values;
   }
-  set values(value: Map<any, string>) {
-    if (typeof value !== 'object' || !(value instanceof Map)) return;
+  set values(value: {name: string, value: any}[]) {
+    if (Array.isArray(value)) return;
     this._values = value;
     if (!this._inited) return;
     this._list.innerHTML = '';
-    this._values.forEach((value, key)=>{
+    this._values.forEach(({name, value})=>{
       let item = document.createElement('div');
       item.classList.add('ui-select-item');
-      (item as any).key = key;
-      item.innerHTML = value;
-      item.addEventListener('click',()=>{
-        this.value = key;
+      (item as any).key = value;
+      item.addEventListener('click', ()=>{
+        this.value = value;
         this.classList.remove('ui-select-show');
       });
       this._list.append(item);
