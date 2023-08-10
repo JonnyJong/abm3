@@ -1,0 +1,61 @@
+if !item
+  .bangumi-error
+    ui-lang.bangumi-error-title bangumi.error
+    ui-lang.bangumi-error-detail bangumi.error_detail
+else
+  .bangumi-headers
+    each item, i in headers
+      img(class="bangumi-header" + (i === 0 ? " bangumi-header-current" : "") src=item)
+  .bangumi-info.ui-width2
+    .bangumi-covers
+      each item, i in covers
+        img(class="bangumi-cover" + (i === 0 ? " bangumi-cover-current" : "") src=item)
+    .bangumi-detail
+      .bangumi-title=item.title
+      if item.categories.size > 0
+        .bangumi-cates
+          .icon.icon-Folder
+          each name in Array.from(item.categories)
+            .bangumi-cate=name
+      if item.tags.size > 0
+        .bangumi-tags
+          .icon.icon-Tag
+          each name in Array.from(item.tags)
+            .bangumi-tag=name
+      .bangumi-evaluation
+        .bangumi-favorite
+          if item.favorite
+            .icon.icon-HeartFill
+          else
+            .icon.icon-Heart
+        .bangumi-rate
+          - let i = 5
+          while i > 0
+            if i <= item.stars
+              .icon.icon-FavoriteStarFill
+            else
+              .icon.icon-FavoriteStar
+            - i--
+      .bangumi-progresses
+        each season, i in item.seasons
+          div(class="bangumi-progress" + (i === 0 ? " bangumi-progress-current": ""))
+            if season.set > 0
+              .bangumi-progress-info
+                span=season.watched
+                span=season.set
+              .bangumi-progress-determinate(style="--p:" + season.watched / season.set * 100 + '%;')
+      .bangumi-seasons-links
+        each season, i in item.seasons
+          div(class="bangumi-links" + (i === 0 ? " bangumi-links-current": ""))
+            each link in season.links
+              button(url=link.url)=link.name
+  .bangumi-seasons.ui-width2
+    each season, i in item.seasons
+      div(class="bangumi-season" + (i === 0 ? " bangumi-season-current": ""))=season.title
+  .bangumi-content.ui-width2
+    //- TODO: render markdown
+    article!=item.content
+  .bangumi-related.ui-width2
+    .bangumi-related-title
+      ui-lang bangumi.related
+  //- TODO: related

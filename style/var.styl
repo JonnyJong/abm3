@@ -14,7 +14,7 @@ $theme = #f837be
   --theme $theme
   --theme-hover lighten($theme, 15%)
   --theme-active lighten($theme, 30%)
-  --select #fff
+  --select isDark($theme) ? #fff : #000
   --weight-factor 1
 
   --loading1 #f1f1f1
@@ -102,7 +102,6 @@ $theme = #f837be
     --bg2-tsp #2b2b2bb0
     --theme-hover lighten($theme, -15%)
     --theme-active lighten($theme, -20%)
-    --select #000
 
     --loading1 #303030
     --loading2 #494949

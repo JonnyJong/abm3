@@ -45,6 +45,11 @@ edit:
   reset_confirm: 确认要清除所有的修改吗？
   bangumi_has_been_delete: 正在编辑的番剧已被删除
 
+bangumi:
+  error: 番剧不存在
+  error_detail: 可能已经被删除或发生某些错误
+  related: 相关推荐
+
 markdown:
   copy: 复制
   paste: 粘贴

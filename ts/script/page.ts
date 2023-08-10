@@ -2,7 +2,7 @@ import { locale } from "./locale";
 import pageHome from "./page/home";
 import pageEdit from "./page/edit";
 import pageSettings from "./page/settings";
-import pageItem from "./page/item";
+import pageBangumi from "./page/bangumi";
 import { layout } from "../helper/layout";
 
 type PageHandler = (element: HTMLElement, option: any, page: Page)=>any;
@@ -28,7 +28,7 @@ let pageTemplate: {
   home: pageHome,
   edit: pageEdit,
   settings: pageSettings,
-  item: pageItem,
+  bangumi: pageBangumi,
 };
 export class Page{
   _options: PageOptions | SinglePageOptions;
@@ -38,17 +38,18 @@ export class Page{
     this._element = document.createElement('div');
     this._element.classList.add('page-' + options.name);
     this._element.innerHTML = layout('page/' + options.name, Object.assign({ lang: locale }, (typeof this._options.layoutHandler === 'function' ? this._options.layoutHandler(option, this) : {})));
-  }
+  };
   show(container: HTMLDivElement){
     container.querySelectorAll('.page-current').forEach((e)=>e.classList.remove('page-current'));
     setTimeout(() => {
       this._element.classList.add('page-current');
     }, 100);
-  }
+  };
   remove(){
     this._element.classList.remove('page-current');
     setTimeout(()=>this._element.remove(), 100);
-  }
+  };
+  [x: string]: any;
 };
 export class History{
   cache: {[name: string]: Page} = {};
