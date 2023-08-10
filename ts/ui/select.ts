@@ -89,11 +89,13 @@ export class UISelect extends HTMLElement{
       this._value = undefined;
       if (!this._inited) return;
       this._current.innerHTML = this._placeholder;
+      this._current.classList.add('ui-select-placeholder');
       return;
     };
     this._value = value;
     if (!this._inited) return;
     this._current.innerHTML = this._values[index].name;
+    this._current.classList.remove('ui-select-placeholder');
     this._list.querySelectorAll('.ui-select-current').forEach((el)=>el.classList.remove('ui-select-current'));
     for (const item of Array.from(this._list.children)) {
       if ((item as any).key !== this._value) continue;
