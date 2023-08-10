@@ -1,6 +1,6 @@
-import path from "path";
 import { OutlineRect, setPosition } from "../helper/position";
 import { layout } from "../helper/layout";
+import { timer } from "../helper/timer";
 
 type FlyoutOptions = {
   content: string,
@@ -39,14 +39,13 @@ export class Flyout{
     }
     this.hider.classList.add('ui-hider-show');
   }
-  close(){
+  async close(){
     this.container.classList.add('flyout-hide');
-    setTimeout(() => {
-      this.container.remove();
-      this.hider.remove();
-    }, 100);
     if (typeof this.onclose === 'function') {
       this.onclose();
     }
+    await timer(100);
+    this.container.remove();
+    this.hider.remove();
   }
 }

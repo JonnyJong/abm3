@@ -3,6 +3,7 @@ import { getImage } from "../helper/get-file";
 import { Dialog } from "./dialog";
 import { UIText } from "./text";
 import path from "path";
+import { timer } from "../helper/timer";
 
 export class UIImagePicker extends HTMLElement{
   private _inited: boolean = false;
@@ -39,11 +40,10 @@ export class UIImagePicker extends HTMLElement{
     if (this._inited) return;
     this._inited = true;
     this.append(this._img, this._info, this._clean, this._default, this._web, this._local);
-    this._clean.addEventListener('click',()=>{
+    this._clean.addEventListener('click',async ()=>{
       this.value = '';
-      setTimeout(() => {
-        this._info.innerHTML = '<i class="icon icon-Info"></i><ui-lang>image.empty</ui-lang>';
-      }, 10);
+      await timer(10);
+      this._info.innerHTML = '<i class="icon icon-Info"></i><ui-lang>image.empty</ui-lang>';
     });
     this._default.addEventListener('click',()=>{
       this.reset();
@@ -124,9 +124,8 @@ export class UIImagePicker extends HTMLElement{
     this._value = this._defaultValue;
     if (this._defaultValue !== '') return;
     this._img.src = path.join(await ipcRenderer.invoke('getAppData'), 'images', this._defaultValue);
-    setTimeout(() => {
-      this._info.innerHTML = '<i class="icon icon-Info"></i><ui-lang>image.empty</ui-lang>';
-    }, 10);
+    await timer(10);
+    this._info.innerHTML = '<i class="icon icon-Info"></i><ui-lang>image.empty</ui-lang>';
   }
   get error(): boolean {
     return this._error;

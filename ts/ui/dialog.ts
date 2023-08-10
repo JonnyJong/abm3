@@ -1,3 +1,4 @@
+import { timer } from "../helper/timer";
 import { layout } from "../helper/layout";
 
 type DialogOptions = {
@@ -39,11 +40,10 @@ export class Dialog{
   hide() {
     this.element.classList.remove('ui-dialog-show');
   }
-  close() {
+  async close() {
     this.element.classList.remove('ui-dialog-show');
-    setTimeout(() => {
-      this.element.remove();
-    }, 100);
+    await timer(100);
+    this.element.remove();
   }
 }
 export class ErrorDialog extends Dialog{

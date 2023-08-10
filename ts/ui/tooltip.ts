@@ -1,9 +1,10 @@
-function removeTooltip(tooltip: HTMLElement | null) {
+import { timer } from "../helper/timer";
+
+async function removeTooltip(tooltip: HTMLElement | null) {
   if (!tooltip) return;
   tooltip.classList.remove('tooltip-show');
-  setTimeout(() => {
-    tooltip.remove();
-  }, 100);
+  await timer(100);
+  tooltip.remove();
 }
 function setPosition(tooltip: HTMLElement | null, ev: PointerEvent) {
   if (!tooltip) return;

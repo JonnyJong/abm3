@@ -6,6 +6,7 @@ import { locale } from "../locale";
 import { Flyout } from "../../ui/flyout";
 import template from "./edit.json";
 import { element } from "../../helper/layout";
+import { timer } from "../../helper/timer";
 
 function tagTip(key: string): string[] | void {
   return Object.keys(db.tags).filter((name)=>name.includes(key));
@@ -34,7 +35,7 @@ function switchTab(current: {tab: HTMLDivElement, body: HTMLDivElement}) {
   current.body.classList.add('edit-body-current');
 }
 
-function closeTab(id: any) {
+async function closeTab(id: any) {
   let target = tabs.get(id);
   if (!target) return;
   let nextTab = target.tab.previousSibling || target.tab.nextSibling;
@@ -48,9 +49,8 @@ function closeTab(id: any) {
   }
   tabs.delete(id);
   (target as any).tab.remove();
-  setTimeout(() => {
-    (target as any).body.remove();
-  }, 100);
+  await timer(100);
+  (target as any).body.remove();
 }
 
 async function saveTab(btn: HTMLButtonElement, tab: TabObject) {
@@ -64,9 +64,7 @@ async function saveTab(btn: HTMLButtonElement, tab: TabObject) {
   } else if (db.items[tab.id]) {
     id = await db.items[tab.id].edit(data);
   } else {
-    new ErrorDialog('<ui-lang>edit.bangumi_has_been_delete</ui-lang>', ()=>{
-      closeTab(tab.id);
-    });
+    new ErrorDialog('<ui-lang>edit.bangumi_has_been_delete</ui-lang>', ()=>closeTab(tab.id));
     return;
   }
   tabs.delete(tab.id);

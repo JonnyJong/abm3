@@ -1,3 +1,4 @@
+import { timer } from "../helper/timer";
 import { layout } from "../helper/layout";
 
 export class UISettingItem extends HTMLElement{
@@ -30,15 +31,14 @@ export class UISettingItem extends HTMLElement{
     this.querySelector('.ui-setting-item-info')?.append(this._name, this._desc);
     this.querySelector('.ui-setting-item-info')?.after(this._head);
     this.querySelector('.ui-setting-item-body-shell')?.append(this._body);
-    this._headShell.addEventListener('click',(ev)=>{
+    this._headShell.addEventListener('click',async (ev)=>{
       let path = ev.composedPath();
       if (path.includes(this._head)) return;
       this.classList.toggle('ui-setting-item-expanded');
       this.classList.add('ui-setting-item-expanding');
-      setTimeout(() => {
-        this.classList.remove('ui-setting-item-expanding');
-      }, 200);
       this.style.setProperty('--height', this._body.getBoundingClientRect().height + 'px');
+      await timer(200);
+      this.classList.remove('ui-setting-item-expanding');
     });
   }
   set icon(value: string | undefined){

@@ -4,6 +4,7 @@ import pageEdit from "./page/edit";
 import pageSettings from "./page/settings";
 import pageBangumi from "./page/bangumi";
 import { layout } from "../helper/layout";
+import { timer } from "../helper/timer";
 
 type PageHandler = (element: HTMLElement, option: any, page: Page)=>any;
 export type PageOptions = {
@@ -39,15 +40,15 @@ export class Page{
     this._element.classList.add('page-' + options.name);
     this._element.innerHTML = layout('page/' + options.name, Object.assign({ lang: locale }, (typeof this._options.layoutHandler === 'function' ? this._options.layoutHandler(option, this) : {})));
   };
-  show(container: HTMLDivElement){
+  async show(container: HTMLDivElement){
     container.querySelectorAll('.page-current').forEach((e)=>e.classList.remove('page-current'));
-    setTimeout(() => {
-      this._element.classList.add('page-current');
-    }, 100);
+    await timer(100);
+    this._element.classList.add('page-current');
   };
-  remove(){
+  async remove(){
     this._element.classList.remove('page-current');
-    setTimeout(()=>this._element.remove(), 100);
+    await timer(100);
+    this._element.remove();
   };
   [x: string]: any;
 };

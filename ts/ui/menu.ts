@@ -1,3 +1,4 @@
+import { timer } from "../helper/timer";
 import { OutlineRect, setPosition } from "../helper/position";
 
 type MenuItem = {
@@ -75,16 +76,15 @@ export class Menu{
     }
     this.hider.classList.add('ui-hider-show');
   }
-  hide() {
+  async hide() {
     if (this._removed) return;
     this.shell.classList.add('menu-hide');
     this.hider.classList.remove('ui-hider-show');
-    setTimeout(() => {
-      this.shell.classList.remove('menu-show-top', 'menu-show-bottom', 'menu-hide');
-      if (typeof this.onhided === 'function') {
-        this.onhided();
-      }
-    }, 100);
+    await timer(100);
+    this.shell.classList.remove('menu-show-top', 'menu-show-bottom', 'menu-hide');
+    if (typeof this.onhided === 'function') {
+      this.onhided();
+    }
   }
   remove() {
     this.hide();
