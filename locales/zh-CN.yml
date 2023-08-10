@@ -21,8 +21,6 @@ home:
   rcmd_subtitle: 每周推荐
   rack_add: 添加陈列架
   rack_sort: 排序
-  rack_expand: 展开 / 收起
-  rack_edit: 编辑
 
 edit:
   new: 新建番剧
@@ -109,6 +107,16 @@ image:
 
 tags:
   add: 添加
+
+rack:
+  content: 内容
+  select_type: 选择一种陈列内容
+  all_bangumi: 所有番剧
+  expand: 展开 / 收起
+  edit: 编辑
+  category: 分类：
+  tag: 标签：
+  edit_rack: 编辑陈列架
 
 settings:
   confirm: 确认

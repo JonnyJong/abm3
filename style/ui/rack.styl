@@ -1,0 +1,42 @@
+ui-rack
+  display block
+.rack-head
+  display flex
+  align-items center
+  gap 8px
+  &:hover .rack-edit
+    opacity .5
+.rack-title
+  font-size 20px
+.rack-flex
+  flex 1
+.rack-edit
+  opacity 0
+  transition .2s opacity, .1s border, .2s background, .1s scale
+.rack-head .rack-edit:hover
+    opacity 1
+.rack-expand
+  opacity .5
+  transition .2s opacity, .1s border, .2s background, .1s scale
+  &:hover
+  &:active
+    opacity 1
+.rack-edit-select
+  width 400px
+.rack-expand
+  .icon-ChevronDown
+    transition .3s rotate
+.rack-body
+  position relative
+  height var(--height)
+  overflow hidden
+  transition .5s height cubic-bezier(1, 0, 0, 1)
+  &>*
+    position absolute
+
+.rack-fold
+  .icon-ChevronDown
+    rotate 180deg
+.rack-folded
+  .rack-body
+    height 428px

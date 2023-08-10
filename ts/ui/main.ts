@@ -6,6 +6,7 @@ import { UILang } from "./lang";
 import { UIList } from "./list";
 import { UILoader } from "./loader";
 import { UINumber } from "./number";
+import { UIRack } from "./rack";
 import { UIRange } from "./range";
 import { UISelect } from "./select";
 import { UISettingItem, UISettingItemChild } from "./settings";
@@ -31,6 +32,7 @@ export function initUI() {
   customElements.define('ui-setting-item-child', UISettingItemChild);
   customElements.define('ui-loader', UILoader);
   customElements.define('ui-bangumi', UIBangumi);
+  customElements.define('ui-rack', UIRack);
   // customElements.define('ui-markdown', UIMarkdown);
   initTooltip();
 
