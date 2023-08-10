@@ -35,7 +35,7 @@ else
               .icon.icon-FavoriteStarFill
             else
               .icon.icon-FavoriteStar
-            - i--
+            - i++
       .bangumi-progresses
         each season, i in item.seasons
           div(class="bangumi-progress" + (i === 0 ? " bangumi-progress-current": ""))
