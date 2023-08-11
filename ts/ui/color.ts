@@ -178,16 +178,16 @@ export class UIColorPicker extends HTMLElement{
     if (this._inited) return;
     this._inited = true;
     this.innerHTML = layout('ui/color');
-    this._spectrum = (this.querySelector('.ui-color-spectrum') as HTMLDivElement);
-    this._preview = (this.querySelector('.ui-color-preview') as HTMLDivElement);
-    this._brightness = (this.querySelector('.ui-color-brightness') as HTMLDivElement);
-    this._hex = (this.querySelector('.ui-color-hex') as HTMLInputElement);
-    this._red = (this.querySelector('.ui-color-red') as HTMLInputElement);
-    this._green = (this.querySelector('.ui-color-green') as HTMLInputElement);
-    this._blue = (this.querySelector('.ui-color-blue') as HTMLInputElement);
-    this._hue = (this.querySelector('.ui-color-hue') as HTMLInputElement);
-    this._saturation = (this.querySelector('.ui-color-saturation') as HTMLInputElement);
-    this._value = (this.querySelector('.ui-color-value') as HTMLInputElement);
+    this._spectrum = this.querySelector('.ui-color-spectrum') as HTMLDivElement;
+    this._preview = this.querySelector('.ui-color-preview') as HTMLDivElement;
+    this._brightness = this.querySelector('.ui-color-brightness') as HTMLDivElement;
+    this._hex = this.querySelector('.ui-color-hex') as HTMLInputElement;
+    this._red = this.querySelector('.ui-color-red') as HTMLInputElement;
+    this._green = this.querySelector('.ui-color-green') as HTMLInputElement;
+    this._blue = this.querySelector('.ui-color-blue') as HTMLInputElement;
+    this._hue = this.querySelector('.ui-color-hue') as HTMLInputElement;
+    this._saturation = this.querySelector('.ui-color-saturation') as HTMLInputElement;
+    this._value = this.querySelector('.ui-color-value') as HTMLInputElement;
     this._spectrum.addEventListener('pointerdown',(ev)=>{
       this._draging = 1;
       this._pointermoveHandler(ev);

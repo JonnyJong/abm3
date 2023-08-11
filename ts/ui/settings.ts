@@ -26,7 +26,7 @@ export class UISettingItem extends HTMLElement{
     if (this._inited) return;
     this._inited = true;
     this.innerHTML = layout('ui/setting-item', {body: true});
-    this._headShell = (this.querySelector('.ui-setting-item-head-shell') as HTMLDivElement);
+    this._headShell = this.querySelector('.ui-setting-item-head-shell') as HTMLDivElement;
     this._headShell.prepend(this._icon);
     this.querySelector('.ui-setting-item-info')?.append(this._name, this._desc);
     this.querySelector('.ui-setting-item-info')?.after(this._head);

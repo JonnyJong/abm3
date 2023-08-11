@@ -34,6 +34,38 @@ function getRackTypeList(current: RackType): {name: string, value: RackType}[] {
   return list;
 }
 
+export function createSetRackTypeDialog(current: RackType) {
+  return new Promise<{isCanceled: boolean, value: RackType}>((resolve)=>{
+    let selecter = (document.createElement('ui-select') as UISelect);
+    selecter.classList.add('rack-edit-select');
+    selecter.values = getRackTypeList(current);
+    selecter.placeholder = '<ui-lang>rack.select_type</ui-lang>';
+    selecter.value = current;
+    
+    let dialog = new Dialog({
+      title: '<ui-lang>rack.edit_rack</ui-lang>',
+      content: selecter,
+      buttons: [
+        {
+          text: '<ui-lang>dialog.confirm</ui-lang>',
+          action: ()=>{
+            resolve({isCanceled: false, value: selecter.value || {type: 'none', value: ''}});
+            dialog.close();
+          },
+        },
+        {
+          text: '<ui-lang>dialog.cancel</ui-lang>',
+          action: ()=>{
+            resolve({isCanceled: true, value: {type: 'none', value: ''}});
+            dialog.close();
+          },
+        },
+      ],
+    });
+    dialog.show();
+  });
+}
+
 export class UIRack extends HTMLElement{
   private _inited: boolean = false;
   private _type: RackType = {type: 'none', value: ''};
@@ -47,37 +79,14 @@ export class UIRack extends HTMLElement{
     if (this._inited) return;
     this._inited = true;
     this.innerHTML = layout('ui/rack');
-    this._title = (this.querySelector('.rack-title') as HTMLDivElement);
-    this._body = (this.querySelector('.rack-body') as HTMLDivElement);
-    this._btnEdit = (this.querySelector('.rack-edit') as HTMLButtonElement);
-    this._btnExpand = (this.querySelector('.rack-expand') as HTMLButtonElement);
-    this._btnEdit.addEventListener('click',()=>{
-      let selecter = (document.createElement('ui-select') as UISelect);
-      selecter.classList.add('rack-edit-select');
-      selecter.values = getRackTypeList(this._type);
-      selecter.placeholder = '<ui-lang>rack.select_type</ui-lang>';
-      selecter.value = this._type;
-      
-      let dialog = new Dialog({
-        title: '<ui-lang>rack.edit_rack</ui-lang>',
-        content: selecter,
-        buttons: [
-          {
-            text: '<ui-lang>dialog.confirm</ui-lang>',
-            action: ()=>{
-              this.type = selecter.value;
-              dialog.close();
-            },
-          },
-          {
-            text: '<ui-lang>dialog.cancel</ui-lang>',
-            action: ()=>{
-              dialog.close();
-            },
-          },
-        ],
-      });
-      dialog.show();
+    this._title = this.querySelector('.rack-title') as HTMLDivElement;
+    this._body = this.querySelector('.rack-body') as HTMLDivElement;
+    this._btnEdit = this.querySelector('.rack-edit') as HTMLButtonElement;
+    this._btnExpand = this.querySelector('.rack-expand') as HTMLButtonElement;
+    this._btnEdit.addEventListener('click',async ()=>{
+      let { isCanceled, value } = await createSetRackTypeDialog(this._type);
+      if (isCanceled) return;
+      this.type = value;
     });
     this._btnExpand.addEventListener('click',()=>{
       let folded = this.classList.toggle('rack-fold');

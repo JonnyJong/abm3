@@ -66,7 +66,7 @@ function createHeading(content: HTMLDivElement, level: string) {
   div.classList.add('md-h');
   div.setAttribute('heading', level);
   div.innerHTML = '<div class="icon icon-e18a"></div><input>';
-  addMarkdownElement(content, div, (div.querySelector('input') as HTMLInputElement));
+  addMarkdownElement(content, div, div.querySelector('input') as HTMLInputElement);
 }
 function heading(content: HTMLDivElement, btn: HTMLButtonElement) {
   let menu = new Menu([
@@ -148,17 +148,17 @@ async function image(content: HTMLDivElement) {
   let div = document.createElement('div');
   div.classList.add('md-image');
   div.innerHTML = renderFile(imageLayoutPath, { path: filePaths[0], name: path.basename(filePaths[0]) });
-  addMarkdownElement(content, div, (div.querySelector('input') as HTMLInputElement));
-  let img = (div.querySelector('img') as HTMLImageElement);
+  addMarkdownElement(content, div, div.querySelector('input') as HTMLInputElement);
+  let img = div.querySelector('img') as HTMLImageElement;
   img.addEventListener('load',()=>{
     if (typeof (img as any).path === 'string') return;
     (img as any).path = img.src;
     getImageBase64(img);
   });
-  let btnS = (div.querySelector('.md-imgc-switch') as HTMLButtonElement);
-  let btnC = (div.querySelector('.md-imgc-choose') as HTMLButtonElement);
-  let btnD = (div.querySelector('.md-imgc-delete') as HTMLButtonElement);
-  let icon = (btnS.querySelector('.icon') as HTMLDivElement);
+  let btnS = div.querySelector('.md-imgc-switch') as HTMLButtonElement;
+  let btnC = div.querySelector('.md-imgc-choose') as HTMLButtonElement;
+  let btnD = div.querySelector('.md-imgc-delete') as HTMLButtonElement;
+  let icon = btnS.querySelector('.icon') as HTMLDivElement;
   btnS.addEventListener('pointerdown', (ev)=>{
     ev.preventDefault();
     if (img.getAttribute('type') === 'link') {

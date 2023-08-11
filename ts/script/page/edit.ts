@@ -147,16 +147,16 @@ function createTab(id?: string | number) { // TODO: fix page.open('edit', 'g0')
   let body = element('page/edit/body', ['edit-body', 'edit-body-current'], { bangumi: db.items[id] });
   let setting = setSettingInBody(body, id);
 
-  let tabObject = {id, setting, tab, body, new: typeof id === 'number', tabName: (tab.querySelector('.edit-tab-name') as HTMLDivElement)};
+  let tabObject = {id, setting, tab, body, new: typeof id === 'number', tabName: tab.querySelector('.edit-tab-name') as HTMLDivElement};
   tabs.set(id, tabObject);
   if (db.items[id]) {
     tabObject.tabName.textContent = db.items[id].title;
   }
 
-  confirmHandler((body.querySelector('.edit-confirm') as HTMLButtonElement), tabObject);
-  resetHandler((body.querySelector('.edit-reset') as HTMLButtonElement), tabObject);
+  confirmHandler(body.querySelector('.edit-confirm') as HTMLButtonElement, tabObject);
+  resetHandler(body.querySelector('.edit-reset') as HTMLButtonElement, tabObject);
 
-  let closeBtn = (tab.querySelector('.edit-tab-close') as HTMLDivElement);
+  let closeBtn = tab.querySelector('.edit-tab-close') as HTMLDivElement;
   closeBtn.addEventListener('click',()=>closeTab(tabObject.id));
   tab.addEventListener('click',(ev)=>{
     if (ev.composedPath().includes(closeBtn)) return;
@@ -178,12 +178,12 @@ const page: SinglePageOptions = {
   name: 'edit',
   single: true,
   onCreate(element, option) {
-    tabsElement = (element.querySelector('.edit-tabs') as HTMLDivElement);
+    tabsElement = element.querySelector('.edit-tabs') as HTMLDivElement;
     tabsElement.addEventListener('wheel',(ev)=>{
       tabsElement.scrollLeft += ev.deltaY;
     });
-    bodysElement = (element.querySelector('.edit-bodys') as HTMLDivElement);
-    addBtnElement = (tabsElement.querySelector('.edit-tab-add') as HTMLDivElement);
+    bodysElement = element.querySelector('.edit-bodys') as HTMLDivElement;
+    addBtnElement = tabsElement.querySelector('.edit-tab-add') as HTMLDivElement;
     addBtnElement.addEventListener('click',()=>{
       createTab();
       tabsElement.scrollLeft = tabsElement.scrollWidth;

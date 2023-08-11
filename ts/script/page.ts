@@ -64,7 +64,7 @@ export class History{
     return this.stack[this.stack.length - 1];
   }
   init(){
-    this._container = (document.querySelector('.page') as HTMLDivElement);
+    this._container = document.querySelector('.page') as HTMLDivElement;
     this.open('home');
   };
   handler!: (self: History, event: string)=>void;

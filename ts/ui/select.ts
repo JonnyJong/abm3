@@ -21,7 +21,7 @@ export class UISelect extends HTMLElement{
     if (this._inited) return;
     this._inited = true;
     this.innerHTML = layout('ui/select');
-    this._current = (this.querySelector('.ui-select-name') as HTMLDivElement);
+    this._current = this.querySelector('.ui-select-name') as HTMLDivElement;
     (this.querySelector('.ui-select') as HTMLDivElement).addEventListener('click',()=>{
       if (this._values.length === 0) return;
       // 确定简单位置

@@ -22,10 +22,10 @@ export class UIBangumi extends HTMLElement{
     this._inited = true;
     this.innerHTML = layout('ui/bangumi');
     this.classList.add('ui-bangumi-loading');
-    this._img = (this.querySelector('.ui-bangumi-cover') as HTMLDivElement);
-    this._title = (this.querySelector('.ui-bangumi-title') as HTMLDivElement);
-    this._eval = (this.querySelector('.ui-bangumi-evaluation') as HTMLDivElement);
-    this._mark = (this.querySelector('.ui-bangumi-mark') as HTMLDivElement);
+    this._img = this.querySelector('.ui-bangumi-cover') as HTMLDivElement;
+    this._title = this.querySelector('.ui-bangumi-title') as HTMLDivElement;
+    this._eval = this.querySelector('.ui-bangumi-evaluation') as HTMLDivElement;
+    this._mark = this.querySelector('.ui-bangumi-mark') as HTMLDivElement;
     this.update();
     this.addEventListener('click',async ()=>{
       if (this._id === '') return;
