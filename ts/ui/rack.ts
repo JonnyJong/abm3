@@ -80,6 +80,7 @@ export class UIRack extends HTMLElement{
   private _list: string[] = [];
   connectedCallback() {
     window.addEventListener('resize', this._resizeHandler);
+    window.addEventListener('db', this.update);
     if (this._inited) return;
     this._inited = true;
     this.innerHTML = layout('ui/rack');
@@ -101,6 +102,7 @@ export class UIRack extends HTMLElement{
   }
   disconnectedCallback() {
     window.removeEventListener('resize', this._resizeHandler);
+    window.removeEventListener('db', this.update);
   }
   updateVList() {
     this._resizeHandler();
@@ -162,7 +164,8 @@ export class UIRack extends HTMLElement{
       }
     }
   }
-  update() {
+  update = ()=>{
+    if (!db.inited) return;
     switch (this._type.type) {
       case "none":
         this.title = '';

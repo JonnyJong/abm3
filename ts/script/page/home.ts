@@ -107,7 +107,6 @@ const page: SinglePageOptions = {
       });
       dialog.show();
     });
-    window.addEventListener('db', loadRacks);
   },
   onBack(element, option) {
   },
