@@ -34,7 +34,7 @@ function getRackTypeList(current: RackType): {name: string, value: RackType}[] {
   return list;
 }
 
-export function createSetRackTypeDialog(current: RackType) {
+export function createSetRackTypeDialog(current: RackType = {type: 'none', value: ''}, title: string = '<ui-lang>rack.edit_rack</ui-lang>') {
   return new Promise<{isCanceled: boolean, value: RackType}>((resolve)=>{
     let selecter = (document.createElement('ui-select') as UISelect);
     selecter.classList.add('rack-edit-select');
@@ -43,7 +43,7 @@ export function createSetRackTypeDialog(current: RackType) {
     selecter.value = current;
     
     let dialog = new Dialog({
-      title: '<ui-lang>rack.edit_rack</ui-lang>',
+      title,
       content: selecter,
       buttons: [
         {
