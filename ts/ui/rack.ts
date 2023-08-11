@@ -173,11 +173,19 @@ export class UIRack extends HTMLElement{
         break;
       case "category":
         this.title = '<ui-lang>rack.category</ui-lang>' + this._type.value;
-        this._list = Array.from(db.categories[this._type.value] || []);
+        if (db.categories[this._type.value]) {
+          this._list = Array.from(db.categories[this._type.value]);
+        } else {
+          (this._list as any) = undefined;
+        }
         break;
       case "tag":
-        this.title = '<ui-lang>rack.tag</ui-lang>' + this._type.value;
-        this._list = Array.from(db.tags[this._type.value] || []);
+        this.title = `<ui-lang>rack.tag</ui-lang>` + this._type.value;
+        if (db.tags[this._type.value]) {
+          this._list = Array.from(db.tags[this._type.value]);
+        } else {
+          (this._list as any) = undefined;
+        }
         break;
     }
     this._renderList();
