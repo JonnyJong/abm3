@@ -104,7 +104,7 @@ export class UIImagePicker extends HTMLElement{
     this.addEventListener('dragstart',(ev)=>{
       if (this._error) return;
       ev.preventDefault();
-      ipcRenderer.send('drag', this._value);
+      ipcRenderer.send('drag', this._img.src);
     });
   }
   get value(): string {
@@ -120,12 +120,10 @@ export class UIImagePicker extends HTMLElement{
   set default(value: string) {
     this._defaultValue = value;
   }
-  async reset() {
+  reset() {
     this._value = this._defaultValue;
-    if (this._defaultValue !== '') return;
-    this._img.src = path.join(await ipcRenderer.invoke('getAppData'), 'images', this._defaultValue);
-    await timer(10);
-    this._info.innerHTML = '<i class="icon icon-Info"></i><ui-lang>image.empty</ui-lang>';
+    if (this._defaultValue === '') return;
+    this._img.src = path.join((process.env.HOME || process.env.USERPROFILE) as string, '.jonny/abm/images', this._defaultValue); // TODO: get db path from setting
   }
   get error(): boolean {
     return this._error;
