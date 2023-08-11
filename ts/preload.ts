@@ -1,24 +1,24 @@
 import { timer } from "./helper/timer";
-import Config, { getDefaultConfigDir, initConfig } from "./modules/config";
+import { initConfig } from "./modules/config";
 import { initDB } from "./script/db";
 import { updateLocale } from "./script/locale";
 import { initPage } from "./script/page";
 import { initSearchbar } from "./script/searchbar";
+import { settings } from "./script/settings";
 import { initUserMenu } from "./script/user-menu";
 import { initWindowEvent } from "./script/window-event";
 import { initUI } from "./ui/main";
-
-let config = new Config('config');
 
 document.addEventListener('DOMContentLoaded',async ()=>{
   initWindowEvent();
 
   await initConfig();
 
-  await config.load();
-  await initDB(config.store.db ? config.store.db : getDefaultConfigDir());
+  await settings.init();
+  
+  await initDB();
 
-  await updateLocale(config.store.locale);
+  await updateLocale(settings.getLocale());
   initUI();
 
   initPage();
