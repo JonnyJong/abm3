@@ -18,6 +18,7 @@ export class UIText extends HTMLElement{
   private _input: HTMLInputElement;
   private _rightBtn: HTMLDivElement;
   private _list: HTMLDivElement;
+  private _userInput: string = '';
   onconfirmed: ((this: UIText)=>void) | undefined;
   private _inputed(event?: boolean) {
     this.classList.toggle('ui-text-filled', this._input.value !== '');
@@ -25,7 +26,7 @@ export class UIText extends HTMLElement{
     this.dispatchEvent(new InputEvent('input'));
   }
   private _listHandler(key: string) {
-    let current = this.querySelector('.ui-text-item-current');
+    let current = this._list.querySelector('.ui-text-item-current');
     if (current) {
       switch (key) {
         case 'Enter':
@@ -58,9 +59,7 @@ export class UIText extends HTMLElement{
           break;
       }
     }
-    if (typeof (this._input as any).origin === 'string') {
-      this._input.value = (this._input as any).origin;
-    }
+    this._input.value = this._userInput;
     if (!current) {
       this._inputed();
       return;
@@ -81,28 +80,40 @@ export class UIText extends HTMLElement{
     this._list = document.createElement('div');
     this._list.classList.add('ui-text-list');
   }
+  private _setListShape = ()=>{
+    let { width, bottom, left } = this.getBoundingClientRect();
+    this._list.style.width = width + 'px';
+    this._list.style.left = left + 'px';
+    this._list.style.top = bottom + 'px';
+    if (this.parentNode) {
+      requestAnimationFrame(this._setListShape);
+    }
+  }
   connectedCallback() {
+    document.body.append(this._list);
     if (this._inited) return;
     this._inited = true;
-    this.append(this._leftBtn, this._input, this._rightBtn, this._list);
+    this.append(this._leftBtn, this._input, this._rightBtn);
     try {
       if ((this as any).placeholderText) {
         this._input.placeholder = (this as any).placeholderText;
       }
     } catch {}
     this._input.addEventListener('input', ()=>{
-      this._inputed();
-      delete (this._input as any).origin;
+      this._userInput = this._input.value;
+      this._inputed(true);
     });
     this._input.addEventListener('focus', ()=>{
       this.classList.toggle('ui-text-focus', true);
+      this._list.classList.toggle('ui-text-focus', true);
     });
     this._input.addEventListener('blur',()=>{
       this.classList.toggle('ui-text-focus', false);
+      this._list.classList.toggle('ui-text-focus', false);
     });
     this._input.addEventListener('keydown', (ev)=>{
       if (!['Enter','ArrowUp','ArrowDown'].includes(ev.key)) {
-        (this._input as any).origin = this._input.value;
+        this._userInput = this._input.value;
         return;
       };
       ev.preventDefault();
@@ -111,13 +122,17 @@ export class UIText extends HTMLElement{
     this._list.addEventListener('pointermove',()=>{
       this._list.classList.add('ui-text-list-point');
     });
+    requestAnimationFrame(this._setListShape);
+  }
+  disconnectedCallback() {
+    this._list.remove();
   }
   get value(): string {
     return this._input.value;
   }
   set value(value: string) {
     this._input.value = value;
-    delete (this._input as any).origin;
+    this._userInput = String(value);
     this._inputed(true);
   }
   private _setButtons(container: HTMLDivElement ,buttons: ButtonOption[]) {
@@ -157,6 +172,7 @@ export class UIText extends HTMLElement{
   }
   set list(list: (ListAutoCompleteOption | ListItemOption)[]) {
     this._list.classList.remove('ui-text-list-point');
+    this.classList.remove('ui-text-list-filled');
     this._list.innerHTML = '';
     for (const item of list) {
       let div = document.createElement('div');
@@ -167,6 +183,7 @@ export class UIText extends HTMLElement{
         div.addEventListener('pointerdown', (ev)=>{
           ev.preventDefault();
           this._input.value = (div.textContent as string);
+          this._userInput = this._input.value;
           this._inputed(true);
         });
         this._list.append(div);
@@ -179,6 +196,9 @@ export class UIText extends HTMLElement{
         (div as any).action();
       });
       this._list.append(div);
+    }
+    if (this._list.children.length > 0) {
+      this.classList.add('ui-text-list-filled');
     }
   }
   get placeholder(): string {
