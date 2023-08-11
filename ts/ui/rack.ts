@@ -5,6 +5,7 @@ import { Dialog } from "./dialog";
 import { UIBangumi } from "./bangumi";
 import { locale } from "../script/locale";
 import { timer } from "../helper/timer";
+import { encode } from "../helper/html";
 
 export type RackType = {type: 'none' | 'all' | 'category' | 'tag' | 'custom', value: string};
 
@@ -176,7 +177,7 @@ export class UIRack extends HTMLElement{
         this._list = Object.keys(db.items);
         break;
       case "category":
-        this.title = '<ui-lang>rack.category</ui-lang>' + this._type.value;
+        this.title = '<ui-lang>rack.category</ui-lang>' + encode(this._type.value);
         if (db.categories[this._type.value]) {
           this._list = Array.from(db.categories[this._type.value]);
         } else {
@@ -184,7 +185,7 @@ export class UIRack extends HTMLElement{
         }
         break;
       case "tag":
-        this.title = `<ui-lang>rack.tag</ui-lang>` + this._type.value;
+        this.title = `<ui-lang>rack.tag</ui-lang>` + encode(this._type.value);
         if (db.tags[this._type.value]) {
           this._list = Array.from(db.tags[this._type.value]);
         } else {
