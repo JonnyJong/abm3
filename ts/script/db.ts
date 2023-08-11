@@ -1,7 +1,8 @@
 import path from "path";
-import { download } from "./db/image";
+import { download } from "../helper/image";
 import { readFile, unlink, writeFile } from "fs/promises";
 import { nextId } from "../helper/id";
+import { settings } from "./settings";
 
 type Link = {
   name: string,
@@ -130,7 +131,7 @@ export class Bangumi{
           originalPool.add(season.header);
         }
       }
-      let imgaesDir = path.join(this.db.dbPath, 'images');
+      let imgaesDir = path.join(settings.getDB(), 'images');
       for (const season of seasons) {
         if (season.cover !== '') {
           if (newPool[season.cover]) {
@@ -268,13 +269,9 @@ export class DB{
   ext: {
     [x: string]: any,
   } = {};
-  dbPath: string;
-  constructor(dbPath: string){
-    this.dbPath = dbPath;
-  }
   async init(){
     try {
-      let file = await readFile(path.join(this.dbPath, 'db.json'), 'utf-8');
+      let file = await readFile(path.join(settings.getDB(), 'db.json'), 'utf-8');
       let data = JSON.parse(file, (key, value)=>{
         if (typeof value === 'number' && ['date', 'updated'].includes(key)) {
           return new Date(value);
@@ -306,7 +303,7 @@ export class DB{
       }
     })
     try {
-      return writeFile(path.join(this.dbPath, 'db.json'), data, 'utf-8');
+      return writeFile(path.join(settings.getDB(), 'db.json'), data, 'utf-8');
     } catch (error) {
       console.error(error);
     }
@@ -384,7 +381,7 @@ export class DB{
 
 export let db: DB;
 
-export async function initDB(dbPath: string) {
-  db = new DB(dbPath);
+export async function initDB() {
+  db = new DB();
   await db.init();
 }
