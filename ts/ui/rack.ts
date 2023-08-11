@@ -4,7 +4,7 @@ import { UISelect } from "./select";
 import { Dialog } from "./dialog";
 import { UIBangumi } from "./bangumi";
 
-type RackType = {type: 'none' | 'all' | 'category' | 'tag' | 'custom', value: string};
+export type RackType = {type: 'none' | 'all' | 'category' | 'tag' | 'custom', value: string};
 
 const ITEM_WIDTH = 276;
 const ITEM_HEIGHT = 428;
