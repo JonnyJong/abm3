@@ -46,7 +46,7 @@ else
               .bangumi-progress-info
                 span=season.watched
                 span=season.set
-              .bangumi-progress-determinate(style="--p:" + season.watched / season.set * 100 + '%;')
+              .bangumi-progress-determinate(style="--p:" + Math.min(100, season.watched / season.set * 100) + '%;')
       .bangumi-seasons-links
         each season, i in item.seasons
           div(class="bangumi-links" + (i === 0 ? " bangumi-links-current": ""))
