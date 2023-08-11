@@ -44,7 +44,7 @@ async function closeTab(id: any) {
   } else if (target.tab.classList.contains('edit-tab-current')) {
     tabs.forEach((item)=>{
       if (item.tab !== nextTab) return;
-      switchTab({tab: item.tab, body: item.body});
+      switchTab(item);
     });
   }
   tabs.delete(id);
@@ -160,7 +160,7 @@ function createTab(id?: string | number) {
   closeBtn.addEventListener('click',()=>closeTab(tabObject.id));
   tab.addEventListener('click',(ev)=>{
     if (ev.composedPath().includes(closeBtn)) return;
-    switchTab({tab, body});
+    switchTab(tabObject);
   });
   tab.addEventListener('mousedown',(ev)=>{
     if (ev.button !== 1) return;
@@ -192,7 +192,14 @@ const page: SinglePageOptions = {
   onBack(element, option) {
   },
   onOpen(element, option) {
-    if (option !== undefined) createTab(option);
+    if (option !== undefined) {
+      let target = tabs.get(option);
+      if (target) {
+        switchTab(target);
+      } else {
+        createTab(option);
+      }
+    };
     if (tabs.size > 0) return;
     createTab();
   },
