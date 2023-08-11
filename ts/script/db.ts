@@ -303,7 +303,7 @@ export class DB{
       } else {
         return value;
       }
-    })
+    });
     try {
       return writeFile(path.join(settings.getDB(), 'db.json'), data, 'utf-8');
     } catch (error) {
