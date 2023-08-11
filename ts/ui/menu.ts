@@ -1,25 +1,31 @@
 import { timer } from "../helper/timer";
 import { OutlineRect, setPosition } from "../helper/position";
 
-type MenuItem = {
-  separator?: boolean,
-  HTML?: string,
-  name?: string,
+type MenuSeparator = {
+  type: 'separator',
+  disabled?: boolean
+};
+type MenuCustomItem = {
+  type: 'custom',
+  element: HTMLElement,
+  disabled?: boolean
+};
+type MenuNormalItem = {
+  type: 'item',
+  name: string,
   icon?: string,
-  items?: Array<MenuItem>,
   action?: (event: PointerEvent)=>void,
   disabled?: false,
   shortcut?: string,
-};
+  // items?: Array<MenuItem>,
+}
+export type MenuItem = MenuSeparator | MenuCustomItem | MenuNormalItem;
 export class Menu{
   shell: HTMLDivElement;
   container: HTMLDivElement;
   hider: HTMLDivElement;
   _removed = false;
-  onhided: Function | undefined = ()=>{
-    this.shell.remove();
-    this.hider.remove();
-  };
+  onhided: Function | undefined = ()=>{this.remove()};
   constructor(items: Array<MenuItem>) {
     this.shell = document.createElement('div');
     this.shell.classList.add('menu-shell');
@@ -35,26 +41,28 @@ export class Menu{
       if (item.disabled) {
         element.setAttribute('disabled', '');
       }
-      if (item.separator) {
-        element.classList.add('menu-separator');
-        continue;
-      }
-      if (typeof item.HTML === 'string') {
-        element.classList.add('menu-html');
-        element.innerHTML = item.HTML;
-      }else{
-        element.classList.add('menu-normal')
-        if (typeof item.icon === 'string') {
-          element.innerHTML = `<div class="icon icon-${item.icon}"></div>`;
-        }
-        element.innerHTML += `<div class="menu-item-name">${item.name ? item.name : ''}</div>`;
-        if (item.shortcut) {
-          element.innerHTML += `<div class="menu-item-short">${item.shortcut}</div>`;
-        }
-      }
-      if (typeof item.action === 'function') {
-        // @ts-ignore
-        element.addEventListener('pointerdown', item.action);
+      switch (item.type) {
+        case "separator":
+          element.classList.add('menu-separator');
+          continue;
+        case "custom":
+          element.classList.add('menu-custom');
+          element.append(item.element);
+          continue;
+        case "item":
+          element.classList.add('menu-normal');
+          if (typeof item.icon === 'string') {
+            element.innerHTML = `<div class="icon icon-${item.icon}"></div>`;
+          }
+          element.innerHTML += `<div class="menu-item-name">${item.name}</div>`;
+          if (item.shortcut) {
+            element.innerHTML += `<div class="menu-item-short">${item.shortcut}</div>`;
+          }
+          if (typeof item.action === 'function') {
+            element.addEventListener('pointerdown', ()=>this.hide());
+            element.addEventListener('pointerdown', item.action);
+          }
+          break;
       }
     }
     this.hider.addEventListener('pointerdown', (ev)=>{
@@ -86,7 +94,11 @@ export class Menu{
       this.onhided();
     }
   }
-  remove() {
-    this.hide();
+  async remove() {
+    if (this._removed) return;
+    await this.hide();
+    this._removed = true;
+    this.shell.remove();
+    this.hider.remove();
   }
 }
