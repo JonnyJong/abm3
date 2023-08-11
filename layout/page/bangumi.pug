@@ -5,7 +5,10 @@ if !item
 else
   .bangumi-headers
     each item, i in headers
-      img(class="bangumi-header" + (i === 0 ? " bangumi-header-current" : "") src=item)
+      if item === '../assets/defaultCover.png'
+        img(class="bangumi-header bangumi-header-blur" + (i === 0 ? " bangumi-header-current" : "") src=covers[i])
+      else
+        img(class="bangumi-header" + (i === 0 ? " bangumi-header-current" : "") src=item)
   .bangumi-info.ui-width2
     .bangumi-covers
       each item, i in covers
