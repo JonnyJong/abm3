@@ -60,6 +60,9 @@ export class History{
   cache: {[name: string]: Page} = {};
   stack: {page: Page, option: any}[] = [];
   private _container!: HTMLDivElement;
+  get now() {
+    return this.stack[this.stack.length - 1];
+  }
   init(){
     this._container = (document.querySelector('.page') as HTMLDivElement);
     this.open('home');
