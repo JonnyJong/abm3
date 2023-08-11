@@ -72,7 +72,7 @@ export class WindowEvent{
       nativeTheme.themeSource = theme;
     });
     ipcMain.handle('theme:color', ()=>{
-      return systemPreferences.getAccentColor().slice(0, 7);
+      return ('#' + systemPreferences.getAccentColor()).slice(0, 7);
     });
   }
 }
