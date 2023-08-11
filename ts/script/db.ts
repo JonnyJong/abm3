@@ -169,6 +169,7 @@ export class Bangumi{
     if (typeof origin.updated === 'number') {
       this.updated = new Date(origin.updated);
     }
+    await this.db.save();
     dispatchEvent(new Event('db'));
     return this.id;
   }
@@ -313,9 +314,8 @@ export class DB{
   async createItem(origin: BangumiOriginData){
     let item = new Bangumi(this, {id: this.id});
     this.items[item.id] = item;
-    await item.edit(origin);
     this.id = nextId(this.id);
-    await this.save();
+    await item.edit(origin);
     return item.id;
   }
   async removeCategory(name: string){
