@@ -1,4 +1,4 @@
-import { BrowserWindow, app, ipcMain, nativeImage, shell } from "electron";
+import { BrowserWindow, app, ipcMain, nativeImage, nativeTheme, shell, systemPreferences } from "electron";
 import path from "path";
 
 export class WindowEvent{
@@ -54,6 +54,25 @@ export class WindowEvent{
         file,
         icon,
       });
+    });
+    ipcMain.on('theme', (_, theme: 'system' | 'light' | 'dark')=>{
+      let bg = '';
+      switch (theme) {
+        case "system":
+          bg = nativeTheme.shouldUseDarkColors ? '#202020' : '#f3f3f3';
+          break;
+        case "light":
+          bg = '#f3f3f3';
+          break;
+        case "dark":
+          bg = '#202020';
+          break;
+      }
+      win.setBackgroundColor(bg);
+      nativeTheme.themeSource = theme;
+    });
+    ipcMain.handle('theme:color', ()=>{
+      return systemPreferences.getAccentColor().slice(0, 7);
     });
   }
 }

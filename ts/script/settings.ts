@@ -27,7 +27,7 @@ class DBMover{
     }
     this.status = 'scaning';
     this.onProgress(this);
-    let files: string[] = [];
+    let files: string[] = ['db.json'];
     let images = path.join(origin, 'images')
     let avatar = settings.getAvatar();
     if (avatar !== DEFAULT_AVATAR) {
