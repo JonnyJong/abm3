@@ -6,8 +6,8 @@ import { UIBangumi } from "./bangumi";
 
 type RackType = {type: 'none' | 'all' | 'category' | 'tag' | 'custom', value: string};
 
-const ItemWidth = 276;
-const ItemHeight = 428;
+const ITEM_WIDTH = 276;
+const ITEM_HEIGHT = 428;
 
 function getRackTypeList(current: RackType): {name: string, value: RackType}[] {
   let list: {name: string, value: RackType}[] = [
@@ -99,21 +99,21 @@ export class UIRack extends HTMLElement{
   }
   private _resizeHandler = ()=>{
     let width = this.getBoundingClientRect().width;
-    let countInLine = Math.floor(width / ItemWidth);
-    let offsetLeft = (width - countInLine * ItemWidth) / (countInLine + 1);
+    let countInLine = Math.floor(width / ITEM_WIDTH);
+    let offsetLeft = (width - countInLine * ITEM_WIDTH) / (countInLine + 1);
     let count = 0;
     let line = 0;
     for (const item of (this._body.children as unknown as HTMLElement[])) {
-      item.style.left = count * ItemWidth + (count + 1) * offsetLeft + 'px';
-      item.style.top = line * ItemHeight + 'px';
-      (item as any).line = line * ItemHeight;
+      item.style.left = count * ITEM_WIDTH + (count + 1) * offsetLeft + 'px';
+      item.style.top = line * ITEM_HEIGHT + 'px';
+      (item as any).line = line * ITEM_HEIGHT;
       count++;
       if (count >= countInLine) {
         count = 0;
         line++;
       }
     }
-    this._body.style.setProperty('--height', Math.ceil(this._list.length / countInLine) * ItemHeight + 'px');
+    this._body.style.setProperty('--height', Math.ceil(this._list.length / countInLine) * ITEM_HEIGHT + 'px');
     this.vListHandler();
   }
   get title() {
@@ -141,7 +141,7 @@ export class UIRack extends HTMLElement{
   }
   vListHandler() {
     let rect = this.getBoundingClientRect();
-    let startH = Math.max(-rect.top, 0) - ItemHeight;
+    let startH = Math.max(-rect.top, 0) - ITEM_HEIGHT;
     let endH = window.innerHeight - rect.top;
     for (const item of (this._body.children as unknown as HTMLElement[])) {
       if ((item as any).line >= startH && (item as any).line <= endH) {

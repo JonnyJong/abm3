@@ -1,6 +1,3 @@
-import { UIImagePicker } from "./image";
-
-const Dropabled = [UIImagePicker];
 function findDropTarget(ev: DragEvent) {
   let path = ev.composedPath();
   for (const element of path) {

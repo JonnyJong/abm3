@@ -51,7 +51,7 @@ function autoHeaderCover(item: Bangumi) {
   return{headers, covers};
 }
 
-const currentClasses = ['bangumi-links-current','bangumi-progress-current','bangumi-cover-current','bangumi-header-current'];
+const CURRENT_CLASSES = ['bangumi-links-current','bangumi-progress-current','bangumi-cover-current','bangumi-header-current'];
 
 async function switchSeason(element: HTMLElement, btn: Element, i: number) {
   if (btn.classList.contains('bangumi-season-current')) return;
@@ -59,11 +59,11 @@ async function switchSeason(element: HTMLElement, btn: Element, i: number) {
   element.querySelector('.bangumi-season-current')?.classList.remove('bangumi-season-current');
   btn.classList.add('bangumi-season-current');
   await timer(200);
-  element.querySelectorAll('.' + currentClasses.join(',.')).forEach((el)=>el.classList.remove(...currentClasses));
-  element.querySelectorAll('.bangumi-links')[i].classList.add(currentClasses[0]);
-  element.querySelectorAll('.bangumi-progress')[i].classList.add(currentClasses[1]);
-  element.querySelectorAll('.bangumi-cover')[i].classList.add(currentClasses[2]);
-  element.querySelectorAll('.bangumi-header')[i].classList.add(currentClasses[3]);
+  element.querySelectorAll('.' + CURRENT_CLASSES.join(',.')).forEach((el)=>el.classList.remove(...CURRENT_CLASSES));
+  element.querySelectorAll('.bangumi-links')[i].classList.add(CURRENT_CLASSES[0]);
+  element.querySelectorAll('.bangumi-progress')[i].classList.add(CURRENT_CLASSES[1]);
+  element.querySelectorAll('.bangumi-cover')[i].classList.add(CURRENT_CLASSES[2]);
+  element.querySelectorAll('.bangumi-header')[i].classList.add(CURRENT_CLASSES[3]);
   await timer(10);
   element.classList.remove('bangumi-switching');
 }
