@@ -169,6 +169,7 @@ export class Bangumi{
     if (typeof origin.updated === 'number') {
       this.updated = new Date(origin.updated);
     }
+    dispatchEvent(new Event('db'));
     return this.id;
   }
   remove(){
@@ -322,7 +323,9 @@ export class DB{
     for (const item of Array.from(this.categories[name])) {
       this.items[item].categories.delete(name);
     }
+    delete this.mark.categories[name];
     await this.save();
+    dispatchEvent(new Event('db'));
     return true;
   }
   async removeTag(name: string){
@@ -330,7 +333,9 @@ export class DB{
     for (const item of Array.from(this.tags[name])) {
       this.items[item].tags.delete(name);
     }
+    delete this.mark.tags[name];
     await this.save();
+    dispatchEvent(new Event('db'));
     return true;
   }
   async mergeCategory(main: string, branch: string){
@@ -341,7 +346,9 @@ export class DB{
       this.categories[main].add(item);
     }
     delete this.categories[branch];
+    delete this.mark.categories[branch];
     await this.save();
+    dispatchEvent(new Event('db'));
     return true;
   }
   async mergeTag(main: string, branch: string){
@@ -352,7 +359,9 @@ export class DB{
       this.tags[main].add(item);
     }
     delete this.tags[branch];
+    delete this.mark.tags[branch];
     await this.save();
+    dispatchEvent(new Event('db'));
     return true;
   }
   async renameCategory(before: string, after: string){
@@ -363,7 +372,10 @@ export class DB{
       this.items[item].categories.delete(before);
       this.items[item].categories.add(after);
     }
+    this.mark.categories[after] = this.mark.categories[before];
+    delete this.mark.categories[before];
     await this.save();
+    dispatchEvent(new Event('db'));
     return true;
   }
   async renameTag(before: string, after: string){
@@ -374,7 +386,10 @@ export class DB{
       this.items[item].tags.delete(before);
       this.items[item].tags.add(after);
     }
+    this.mark.tags[after] = this.mark.tags[before];
+    delete this.mark.tags[before];
     await this.save();
+    dispatchEvent(new Event('db'));
     return true;
   }
 }
