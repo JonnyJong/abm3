@@ -4,6 +4,9 @@ username: ''
 theme: 'system'
 themeColor: 'system'
 db: null
+rack:
+  - type: all
+    value: ''
 extensions: {}
 # <Extension Path>:
 #   enable: true
