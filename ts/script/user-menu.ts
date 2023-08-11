@@ -19,7 +19,7 @@ export function initUserMenu() {
         name: locale.user_menu.edit_bangumi,
         icon: 'Edit',
         action: ()=>{
-          history.open('edit');
+          history.open('edit', (history.now.page._options.name === 'bangumi' ? history.now.option : undefined));
           menu.hide();
         },
       },
