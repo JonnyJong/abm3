@@ -1,0 +1,15 @@
+.home-rack-sort-item-up
+  .icon.icon-ChevronUp
+.home-rack-sort-item-down
+  .icon.icon-ChevronDown
+.home-rack-sort-item-name
+  case type
+    when 'all'
+      ui-lang rack.all_bangumi
+    when 'category'
+      ui-lang rack.category
+    when 'tag'
+      ui-lang rack.tag
+  =value
+.home-rack-sort-item-remove
+  .icon.icon-Remove

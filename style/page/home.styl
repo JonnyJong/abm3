@@ -9,7 +9,7 @@
   to
     left 100%
 .page-home
-  padding 0
+  padding 0 0 32px 0
 .rcmd
   position relative
   padding 128px
@@ -77,3 +77,27 @@
   position relative
   &>*
     margin-top 16px
+.home-rack-sort-items
+  width 400px
+.home-rack-sort-item
+  display flex
+  align-items center
+  gap 8px
+  border-radius 6px
+  padding 8px
+  transition .1s background
+  &:hover
+    background var(--bg3)
+.home-rack-sort-item-name
+  flex 1
+.home-rack-sort-item-up
+.home-rack-sort-item-down
+.home-rack-sort-item-remove
+  padding 8px
+  border-radius 6px
+  transition .1s background, .1s color
+  &:hover
+    background var(--btn-bg-hover)
+  &:active
+    background var(--btn-bg-active)
+    color var(--btn-color-active)
