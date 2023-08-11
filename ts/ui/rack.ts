@@ -129,6 +129,7 @@ export class UIRack extends HTMLElement{
   set type(value: RackType) {
     this._type = value;
     this.update();
+    this.dispatchEvent(new Event('change'));
   }
   get list() {
     return this._list;
