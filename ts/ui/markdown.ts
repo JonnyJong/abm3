@@ -69,7 +69,7 @@ function createHeading(content: HTMLDivElement, level: string) {
   addMarkdownElement(content, div, div.querySelector('input') as HTMLInputElement);
 }
 function heading(content: HTMLDivElement, btn: HTMLButtonElement) {
-  let menu = new Menu([
+/*   let menu = new Menu([
     {
       name: locale.markdown.h1,
       action: (ev)=>{
@@ -120,7 +120,7 @@ function heading(content: HTMLDivElement, btn: HTMLButtonElement) {
     },
   ]);
   let { top, bottom, left } = btn.getBoundingClientRect();
-  menu.show({ top, bottom, left, right: left});
+  menu.show({ top, bottom, left, right: left}); */
 }
 const imageLayoutPath = path.join(process.cwd(), 'layout/ui/component/markdown-image.pug');
 function chooseImage() {

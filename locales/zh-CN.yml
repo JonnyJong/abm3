@@ -11,10 +11,13 @@ search:
 
 user_menu:
   try_luck: 试试手气
-  edit_bangumi: 编辑番剧
+  edit_bangumi: 添加/编辑番剧
   edit_this_bangumi: 编辑此番剧
   del_this_bangumi: 删除此番剧
   settings: 设置
+  confirm_delete_before: 确认要删除《
+  confirm_delete_after: 》吗？
+  confirm_delete_detail: 此操作无法撤销
 
 home:
   rcmd_check: 查看详情
