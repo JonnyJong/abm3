@@ -3,6 +3,7 @@ import { layout } from "../helper/layout";
 import { UISelect } from "./select";
 import { Dialog } from "./dialog";
 import { UIBangumi } from "./bangumi";
+import { locale } from "../script/locale";
 
 export type RackType = {type: 'none' | 'all' | 'category' | 'tag' | 'custom', value: string};
 
@@ -52,6 +53,7 @@ export function createSetRackTypeDialog(current: RackType = {type: 'none', value
             resolve({isCanceled: false, value: selecter.value || {type: 'none', value: ''}});
             dialog.close();
           },
+          level: 'confirm',
         },
         {
           text: '<ui-lang>dialog.cancel</ui-lang>',
@@ -69,6 +71,7 @@ export function createSetRackTypeDialog(current: RackType = {type: 'none', value
 export class UIRack extends HTMLElement{
   private _inited: boolean = false;
   private _type: RackType = {type: 'none', value: ''};
+  private _titleContent: string = '';
   private _title!: HTMLDivElement;
   private _body!: HTMLDivElement;
   private _btnEdit!: HTMLButtonElement;
@@ -92,10 +95,14 @@ export class UIRack extends HTMLElement{
       let folded = this.classList.toggle('rack-fold');
       this.classList.toggle('rack-folded', folded && this._list.length > 0);
     });
-    this._resizeHandler();
+    this.title = this._titleContent;
+    this.update();
   }
   disconnectedCallback() {
     window.removeEventListener('resize', this._resizeHandler);
+  }
+  updateVList() {
+    this._resizeHandler();
   }
   private _resizeHandler = ()=>{
     let width = this.getBoundingClientRect().width;
@@ -117,17 +124,20 @@ export class UIRack extends HTMLElement{
     this.vListHandler();
   }
   get title() {
-    return (this._title.textContent as string);
+    return this._titleContent;
   }
   set title(title: string) {
-    if (this._type.type !== 'custom') return;
-    this._title.textContent = String(title);
+    if (typeof title !== 'string') return;
+    this._titleContent = title;
+    if (!this._inited) return;
+    this._title.innerHTML = this._titleContent;
   }
   get type() {
     return {type: this._type.type, value: this._type.value};
   }
   set type(value: RackType) {
     this._type = value;
+    if (!this._inited) return;
     this.update();
     this.dispatchEvent(new Event('change'));
   }
@@ -154,20 +164,19 @@ export class UIRack extends HTMLElement{
   update() {
     switch (this._type.type) {
       case "none":
-      case "custom":
-        this._title.innerHTML = '';
+        this.title = '';
         this._list = [];
         break;
       case "all":
-        this._title.innerHTML = '<ui-lang>rack.all_bangumi</ui-lang>';
+        this.title = '<ui-lang>rack.all_bangumi</ui-lang>';
         this._list = Object.keys(db.items);
         break;
       case "category":
-        this._title.innerHTML = '<ui-lang>rack.category</ui-lang>' + this._type.value;
+        this.title = '<ui-lang>rack.category</ui-lang>' + this._type.value;
         this._list = Array.from(db.categories[this._type.value]);
         break;
       case "tag":
-        this._title.innerHTML = '<ui-lang>rack.tag</ui-lang>' + this._type.value;
+        this.title = '<ui-lang>rack.tag</ui-lang>' + this._type.value;
         this._list = Array.from(db.tags[this._type.value]);
         break;
     }
@@ -175,6 +184,10 @@ export class UIRack extends HTMLElement{
   }
   private _renderList() {
     this._body.innerHTML = '';
+    if (this._list === undefined) {
+      this.title = [locale.rack.category_miss, locale.rack.tag_miss][['category', 'tag'].indexOf(this._type.type)].replace('%s', this._type.value);
+      return this._resizeHandler();
+    }
     for (const item of this._list) {
       let element = (document.createElement('ui-bangumi') as UIBangumi);
       element.id = item;
