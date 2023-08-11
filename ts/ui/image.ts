@@ -124,7 +124,7 @@ export class UIImagePicker extends HTMLElement{
   reset() {
     this._value = this._defaultValue;
     if (this._defaultValue === '') return;
-    this._img.src = path.join(settings.getDB(), '.jonny/abm/images', this._defaultValue);
+    this._img.src = path.join(settings.getDB(), 'images', this._defaultValue);
   }
   get error(): boolean {
     return this._error;

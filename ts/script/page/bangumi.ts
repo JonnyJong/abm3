@@ -1,12 +1,12 @@
 import { timer } from "../../helper/timer";
 import { layout } from "../../helper/layout";
 import { Bangumi, db } from "../db";
-import { PageOptions } from "../page";
+import { Page, PageOptions } from "../page";
 import path from "path";
 import { settings } from "../settings";
 
 function autoHeaderCover(item: Bangumi) {
-  let base = path.join(settings.getDB(), '.jonny/abm/images');
+  let base = path.join(settings.getDB(), 'images');
   let headers = new Array(item.seasons.length);
   let covers = new Array(item.seasons.length);
   let defaultHeader = '../assets/defaultCover.png';
@@ -72,28 +72,28 @@ function initSwitchSeason(element: HTMLElement) {
   element.querySelectorAll('.bangumi-season').forEach((btn, i)=>btn.addEventListener('click', ()=>switchSeason(element, btn, i)));
 }
 
-const page: PageOptions = {
-  name: "bangumi",
-  onCreate: function (element: HTMLElement, option: any) {
+class page implements PageOptions {
+  name = "bangumi";
+  onCreate (element: HTMLElement, option: any) {
     element.addEventListener('scroll',()=>{
       element.style.setProperty('--h', element.scrollTop + 'px');
     });
     initSwitchSeason(element);
-  },
-  onBack: function (element: HTMLElement, option: any, page) {
+  };
+  onBack (element: HTMLElement, option: any, page: Page) {
     if (db.items[option]?.updated === page.date) return;
-    element.innerHTML = layout('page/bangumi', page.layoutHandler(option, page));
+    element.innerHTML = layout('page/bangumi', this.layoutHandler(option, page));
     initSwitchSeason(element);
-  },
-  onClose: ()=>{},
-  layoutHandler(option, page) {
+  };
+  onClose(){};
+  layoutHandler(option: any, page: Page) {
     page.date = db.items[option]?.updated;
     if (typeof option === 'string' && db.items[option]) {
       let { headers, covers } = autoHeaderCover(db.items[option]);
       return {item: db.items[option], headers, covers};
     }
     return {};
-  },
+  };
 };
 
-export default page;
+export default new page();

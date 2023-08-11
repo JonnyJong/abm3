@@ -83,7 +83,7 @@ export class UIBangumi extends HTMLElement{
     let img = "../assets/defaultCover.png";
     for (const season of item.seasons) {
       if (!season.cover) continue;
-      img = path.join(settings.getDB(), '.jonny/abm/images', season.cover);
+      img = path.join(settings.getDB(), 'images', season.cover);
       break;
     }
     this._img.innerHTML = `<img src="${img}" draggable="false">`;
