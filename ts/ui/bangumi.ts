@@ -3,6 +3,7 @@ import { layout } from "../helper/layout";
 import path from "path";
 import { history } from "../script/page";
 import { timer } from "../helper/timer";
+import { settings } from "../script/settings";
 
 export class UIBangumi extends HTMLElement{
   private _inited: boolean = false;
@@ -82,8 +83,7 @@ export class UIBangumi extends HTMLElement{
     let img = "../assets/defaultCover.png";
     for (const season of item.seasons) {
       if (!season.cover) continue;
-      // TODO: get db path from setting
-      img = path.join((process.env.HOME || process.env.USERPROFILE ) as string, '.jonny/abm/images', season.cover);
+      img = path.join(settings.getDB(), '.jonny/abm/images', season.cover);
       break;
     }
     this._img.innerHTML = `<img src="${img}" draggable="false">`;
@@ -93,8 +93,17 @@ export class UIBangumi extends HTMLElement{
       evaluation += `<div class="icon icon-FavoriteStar${i <= item.stars ? 'Fill' : ''}"></div>`;
     }
     this._eval.innerHTML = evaluation;
-    // TODO: bangumi mark
     this._mark.innerHTML = '';
+    item.categories.forEach((name)=>{
+      if (db.mark.categories[name]) {
+        this._mark.innerHTML += `<div style="background:${db.mark.categories[name]};"></div>`
+      }
+    });
+    item.tags.forEach((name)=>{
+      if (db.mark.tags[name]) {
+        this._mark.innerHTML += `<div style="background:${db.mark.tags[name]};"></div>`
+      }
+    });
     this.inert = false;
     this.classList.remove('ui-bangumi-loading');
   }
