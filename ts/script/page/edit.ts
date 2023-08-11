@@ -71,14 +71,24 @@ async function saveTab(btn: HTMLButtonElement, tab: TabObject) {
   tabs.set(id, tab);
   tab.id = id;
   setSettingInBody(tab.body, id);
-  tab.tabName.innerHTML = db.items[tab.id].title;
+  tab.tabName.textContent = db.items[tab.id].title;
   btn.innerHTML = '<i class="icon icon-Save"></i><ui-lang>edit.save</ui-lang>';
   btn.disabled = false;
 }
 
 function setSettingInBody(body: HTMLDivElement, id?: string | number) {
   body.querySelector('.settings')?.remove();
-  let setting = new SettingTemplate(getEditTemplate(), id !== undefined ? db.items[id] : undefined);
+  let value = undefined;
+  if (id !== undefined && db.items[id]) {
+    value = {
+      title: db.items[id].title,
+      content: db.items[id].content,
+      tags: Array.from(db.items[id].tags),
+      categories: Array.from(db.items[id].categories),
+      seasons: db.items[id].seasons,
+    };
+  }
+  let setting = new SettingTemplate(getEditTemplate(), value);
   setting.element.classList.add('ui-width2');
   body.append(setting.element);
   return setting;
@@ -128,7 +138,7 @@ function resetHandler(btn: HTMLButtonElement, tab: TabObject) {
   });
 }
 
-function createTab(id?: string | number) {
+function createTab(id?: string | number) { // TODO: fix page.open('edit', 'g0')
   if (id === undefined) {
     id = Date.now();
   }
@@ -139,6 +149,9 @@ function createTab(id?: string | number) {
 
   let tabObject = {id, setting, tab, body, new: typeof id === 'number', tabName: (tab.querySelector('.edit-tab-name') as HTMLDivElement)};
   tabs.set(id, tabObject);
+  if (db.items[id]) {
+    tabObject.tabName.textContent = db.items[id].title;
+  }
 
   confirmHandler((body.querySelector('.edit-confirm') as HTMLButtonElement), tabObject);
   resetHandler((body.querySelector('.edit-reset') as HTMLButtonElement), tabObject);
