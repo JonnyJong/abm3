@@ -214,6 +214,7 @@ export class Bangumi{
   }
 }
 export class DB{
+  inited: boolean = false;
   id: string = 'a0';
   items: {
     [x:  string]: Bangumi,
@@ -272,6 +273,7 @@ export class DB{
     [x: string]: any,
   } = {};
   async init(){
+    if (this.inited) return;
     try {
       let file = await readFile(path.join(settings.getDB(), 'db.json'), 'utf-8');
       let data = JSON.parse(file, (key, value)=>{
@@ -292,6 +294,8 @@ export class DB{
         this.items[key] = new Bangumi(this, data.items[key]);
       }
     } catch {}
+    this.inited = true;
+    dispatchEvent(new Event('db'));
   }
   async save(){
     let data = JSON.stringify(this, (key, value)=>{
@@ -394,9 +398,8 @@ export class DB{
   }
 }
 
-export let db: DB;
+export let db = new DB();
 
 export async function initDB() {
-  db = new DB();
   await db.init();
 }

@@ -4,6 +4,7 @@ import { UISelect } from "./select";
 import { Dialog } from "./dialog";
 import { UIBangumi } from "./bangumi";
 import { locale } from "../script/locale";
+import { timer } from "../helper/timer";
 
 export type RackType = {type: 'none' | 'all' | 'category' | 'tag' | 'custom', value: string};
 
@@ -104,7 +105,7 @@ export class UIRack extends HTMLElement{
   updateVList() {
     this._resizeHandler();
   }
-  private _resizeHandler = ()=>{
+  private _resizeHandler = async ()=>{
     let width = this.getBoundingClientRect().width;
     let countInLine = Math.floor(width / ITEM_WIDTH);
     let offsetLeft = (width - countInLine * ITEM_WIDTH) / (countInLine + 1);
@@ -149,7 +150,7 @@ export class UIRack extends HTMLElement{
     this._list = value;
     this._renderList();
   }
-  vListHandler() {
+  async vListHandler() {
     let rect = this.getBoundingClientRect();
     let startH = Math.max(-rect.top, 0) - ITEM_HEIGHT;
     let endH = window.innerHeight - rect.top;
@@ -190,7 +191,8 @@ export class UIRack extends HTMLElement{
     }
     this._renderList();
   }
-  private _renderList() {
+  private async _renderList() {
+    await timer(1);
     this._body.innerHTML = '';
     if (this._list === undefined) {
       this.title = [locale.rack.category_miss, locale.rack.tag_miss][['category', 'tag'].indexOf(this._type.type)].replace('%s', this._type.value);

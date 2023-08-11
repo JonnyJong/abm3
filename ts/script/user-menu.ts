@@ -66,7 +66,7 @@ const openSettings: MenuItem = {
   },
 };
 
-export function initUserMenu() {
+export async function initUserMenu() {
   document.querySelector('.user')?.addEventListener('click',()=>{
     let menu = new Menu([tryLuck, separator, editBangumi, ...(history.now.page._options.name === 'bangumi' ? [separator, editThisBangumi, removeThisBangumi] : []), separator, openSettings]);
     menu.show((document.querySelector('.user')?.getBoundingClientRect() as DOMRect));

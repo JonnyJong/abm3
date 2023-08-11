@@ -1,22 +1,22 @@
 import { readFile, readdir } from "fs/promises";
 import path from "path";
 import yaml from "yaml";
+const locales: string[] = require('../../locales/manifest.json');
 
 export let locale: any = {};
 
 async function loadLocale(id: string) {
-  let localeFiles = await readdir(path.join(process.cwd(), 'locales'));
   let target;
-  for (const file of localeFiles) {
-    if (file.split('.')[0] !== id) continue;
-    target = file;
+  for (const item of locales) {
+    if (item.split('.')[0] !== id) continue;
+    target = item;
     break;
   }
   if (!target) {
     EACH_LANG: for (const lang of navigator.languages) {
-      for (const file of localeFiles) {
-        if (file.split('.')[0] !== lang) continue;
-        target = file;
+      for (const item of locales) {
+        if (item.split('.')[0] !== lang) continue;
+        target = item;
         break EACH_LANG;
       }
     }

@@ -1,6 +1,6 @@
 import { UIText } from "ts/ui/text";
 
-export function initSearchbar() {
+export async function initSearchbar() {
   let searchbar = (document.querySelector('ui-text') as UIText);
   searchbar.buttonsLeft = [{
     icon: 'Search',

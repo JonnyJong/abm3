@@ -9,26 +9,34 @@ import { initUserMenu } from "./script/user-menu";
 import { initWindowEvent } from "./script/window-event";
 import { initUI } from "./ui/main";
 
+console.time('ready');
 document.addEventListener('DOMContentLoaded',async ()=>{
   initWindowEvent();
 
   await initConfig();
 
+  console.time('settings');
   await settings.init();
-  
-  await initDB();
+  console.timeEnd('settings');
 
+  console.time('locale');
   await updateLocale(settings.getLocale());
+  console.timeEnd('locale');
   initUI();
 
+  console.time('page');
   initPage();
+  console.timeEnd('page');
 
   initUserMenu();
 
   initSearchbar();
   
-  await timer(200);
+  console.timeEnd('ready');
   document.body.classList.remove('loading');
+  
+  await timer(1);
+  initDB();
 });
 
 // DEV
