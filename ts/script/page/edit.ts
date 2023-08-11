@@ -138,7 +138,7 @@ function resetHandler(btn: HTMLButtonElement, tab: TabObject) {
   });
 }
 
-function createTab(id?: string | number) { // TODO: fix page.open('edit', 'g0')
+function createTab(id?: string | number) {
   if (id === undefined) {
     id = Date.now();
   }

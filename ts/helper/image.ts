@@ -1,4 +1,4 @@
-import { access, constants, mkdir, readFile, stat, writeFile } from "fs/promises";
+import { access, mkdir, readFile, stat, writeFile } from "fs/promises";
 import path from "path";
 
 export function getImgSuffix(data: Buffer): string {

@@ -3,10 +3,10 @@ import { layout } from "../../helper/layout";
 import { Bangumi, db } from "../db";
 import { PageOptions } from "../page";
 import path from "path";
+import { settings } from "../settings";
 
 function autoHeaderCover(item: Bangumi) {
-  // TODO: get db path from setting
-  let base = path.join((process.env.HOME || process.env.USERPROFILE ) as string, '.jonny/abm');
+  let base = path.join(settings.getDB(), '.jonny/abm/images');
   let headers = new Array(item.seasons.length);
   let covers = new Array(item.seasons.length);
   let defaultHeader = '../assets/defaultCover.png';
@@ -19,18 +19,18 @@ function autoHeaderCover(item: Bangumi) {
   item.seasons.forEach((season, i)=>{
     if (season.header) {
       if (!currentHeader) {
-        defaultHeader = path.join(base, 'images', season.header);
+        defaultHeader = path.join(base, season.header);
       }
-      currentHeader = path.join(base, 'images', season.header);
+      currentHeader = path.join(base, season.header);
     }
     if (currentHeader) {
       headers[i] = currentHeader;
     }
     if (season.cover) {
       if (!currentCover) {
-        defaultCover = path.join(base, 'images', season.cover);
+        defaultCover = path.join(base, season.cover);
       }
-      currentCover = path.join(base, 'images', season.cover);
+      currentCover = path.join(base, season.cover);
     }
     if (currentCover) {
       covers[i] = currentCover;

@@ -4,6 +4,7 @@ import { Dialog } from "./dialog";
 import { UIText } from "./text";
 import path from "path";
 import { timer } from "../helper/timer";
+import { settings } from "../script/settings";
 
 export class UIImagePicker extends HTMLElement{
   private _inited: boolean = false;
@@ -123,7 +124,7 @@ export class UIImagePicker extends HTMLElement{
   reset() {
     this._value = this._defaultValue;
     if (this._defaultValue === '') return;
-    this._img.src = path.join((process.env.HOME || process.env.USERPROFILE) as string, '.jonny/abm/images', this._defaultValue); // TODO: get db path from setting
+    this._img.src = path.join(settings.getDB(), '.jonny/abm/images', this._defaultValue);
   }
   get error(): boolean {
     return this._error;
