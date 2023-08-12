@@ -48,8 +48,8 @@ function createRackSorter() {
   for (const rack of racks) {
     let item = element('page/home/rack', ['home-rack-sort-item'], rack);
     (item as any).value = rack;
-    item.querySelector('.home-rack-sort-item-up')?.addEventListener('click', ()=>item.previousSibling?.after(item));
-    item.querySelector('.home-rack-sort-item-down')?.addEventListener('click', ()=>item.nextElementSibling?.before(item));
+    item.querySelector('.home-rack-sort-item-up')?.addEventListener('click', ()=>item.previousSibling?.before(item));
+    item.querySelector('.home-rack-sort-item-down')?.addEventListener('click', ()=>item.nextElementSibling?.after(item));
     item.querySelector('.home-rack-sort-item-remove')?.addEventListener('click',()=>item.remove());
     container.append(item);
   }
