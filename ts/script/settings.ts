@@ -4,7 +4,6 @@ import { download } from "../helper/image";
 import { access, constants, readdir, rename, unlink } from "fs/promises";
 import { ipcRenderer } from "electron";
 import stylus from "stylus";
-import { RackType } from "../ui/rack";
 
 const DEFAULT_AVATAR = '../assets/defaultAvatar.bmp';
 
@@ -149,10 +148,10 @@ class Settings{
     await this._config.save();
     await this._setColor();
   }
-  getRack(): RackType[] {
+  getRack(): {type: 'none' | 'all' | 'category' | 'tag' | 'custom', value: string, fold: boolean}[] {
     return this._config.store.rack;
   }
-  async setRack(racks: RackType[]) {
+  async setRack(racks: {type: 'none' | 'all' | 'category' | 'tag' | 'custom', value: string, fold: boolean}[]) {
     this._config.store.rack = racks;
     await this._config.save();
   }

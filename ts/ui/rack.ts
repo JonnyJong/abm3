@@ -95,8 +95,8 @@ export class UIRack extends HTMLElement{
       this.type = value;
     });
     this._btnExpand.addEventListener('click',()=>{
-      let folded = this.classList.toggle('rack-fold');
-      this.classList.toggle('rack-folded', folded && this._list.length > 0);
+      this.folded = undefined;
+      this.dispatchEvent(new Event('change'));
     });
     this.title = this._titleContent;
     this.update();
@@ -209,5 +209,11 @@ export class UIRack extends HTMLElement{
       this._body.append(element);
     }
     this._resizeHandler();
+  }
+  get folded(): boolean {
+    return this.classList.contains('rack-fold');
+  }
+  set folded(value: boolean | undefined) {
+    this.classList.toggle('rack-fold', value);
   }
 }

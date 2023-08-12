@@ -1,24 +1,28 @@
 import { Dialog } from "../../ui/dialog";
 import { element } from "../../helper/layout";
-import { RackType, UIRack, createSetRackTypeDialog } from "../../ui/rack";
+import { UIRack, createSetRackTypeDialog } from "../../ui/rack";
 import { SinglePageOptions } from "../page";
 import { settings } from "../settings";
 
-type RackObject = {element: UIRack, type: 'none' | 'all' | 'category' | 'tag' | 'custom', value: string};
+type RackObject = {element: UIRack, type: 'none' | 'all' | 'category' | 'tag' | 'custom', value: string, fold: boolean};
 
 let racks: RackObject[] = []
 
 let container: HTMLDivElement;
 
-function addRack(type: RackType) {
+function addRack(type: {type: 'none' | 'all' | 'category' | 'tag' | 'custom', value: string, fold?: boolean}) {
   let rack = (document.createElement('ui-rack') as UIRack);
   rack.type = type;
-  let obj: RackObject = {element: rack, type: type.type, value: type.value};
+  if (typeof type.fold === 'boolean') {
+    rack.folded = type.fold;
+  }
+  let obj: RackObject = {element: rack, type: type.type, value: type.value, fold: false};
   racks.push(obj);
   container.append(rack);
   rack.addEventListener('change',()=>{
     obj.type = rack.type.type;
     obj.value = rack.type.value;
+    obj.fold = rack.folded;
     saveRack();
   });
 }
@@ -26,7 +30,7 @@ function addRack(type: RackType) {
 function saveRack() {
   let value = [];
   for (const rack of racks) {
-    value.push({type: rack.type, value: rack.value});
+    value.push({type: rack.type, value: rack.value, fold: rack.fold});
   }
   settings.setRack(value);
 }
