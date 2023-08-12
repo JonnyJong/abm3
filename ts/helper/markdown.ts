@@ -18,4 +18,5 @@ export function render(content: string) {
     text += '</div>';
     return text;
   });
+  return content;
 }

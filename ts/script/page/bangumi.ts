@@ -5,6 +5,7 @@ import { Page, PageOptions } from "../page";
 import path from "path";
 import { settings } from "../settings";
 import { UIRack } from "../../ui/rack";
+import { render } from "../../helper/markdown";
 
 function autoHeaderCover(item: Bangumi) {
   let base = path.join(settings.getDB(), 'images');
@@ -176,7 +177,7 @@ class page implements PageOptions {
     page.date = db.items[option]?.updated;
     if (typeof option === 'string' && db.items[option]) {
       let { headers, covers } = autoHeaderCover(db.items[option]);
-      return {item: db.items[option], headers, covers};
+      return {item: db.items[option], headers, covers, render};
     }
     return {};
   };
