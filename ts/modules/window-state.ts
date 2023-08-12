@@ -13,14 +13,18 @@ class WindowState{
     this.win.on('restore', ()=>this.save());
   }
   save(){
-    let rect = this.win.getBounds();
-    this.config.store = {
-      height: rect.height,
-      width: rect.width,
-      x: rect.x,
-      y: rect.y,
-      maxmized: this.win.isMaximized(),
-    };
+    if (this.win.isMaximized()) {
+      this.config.store.maxmized = true;
+    } else {
+      let rect = this.win.getBounds();
+      this.config.store = {
+        height: rect.height,
+        width: rect.width,
+        x: rect.x,
+        y: rect.y,
+        maxmized: false,
+      };
+    }
     this.config.save();
   }
   show(){
