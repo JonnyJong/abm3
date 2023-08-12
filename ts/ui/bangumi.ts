@@ -12,12 +12,6 @@ export class UIBangumi extends HTMLElement{
   private _title!: HTMLDivElement;
   private _eval!: HTMLDivElement;
   private _mark!: HTMLDivElement;
-  constructor(){
-    super();
-    this.addEventListener('click', ()=>{
-      if (this.id === '') return;
-    });
-  }
   connectedCallback(){
     if (this._inited) return;
     this._inited = true;
