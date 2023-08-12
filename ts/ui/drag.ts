@@ -20,6 +20,23 @@ export function initDrag() {
     ev.preventDefault();
     let target = findDropTarget(ev);
     if (!target) return;
-    (target as any).dropHandler(ev.dataTransfer);
+    let file = ev.dataTransfer?.files[0];
+    if (!file) return;
+    if (file.path !== '') {
+      (target as any).dropHandler({
+        path: file.path,
+        type: file.type,
+      });
+      return;
+    }
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.addEventListener('load', (ev)=>{
+      if (!ev.target?.result) return;
+      (target as any).dropHandler({
+        path: ev.target.result,
+        type: (file as any).type,
+      });
+    });
   });
 }
