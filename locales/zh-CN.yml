@@ -8,6 +8,17 @@ app:
 search:
   advanced_search: 高级搜索
   type_to_search: 键入以搜索...
+  filter: 筛选
+  clear: 清除
+  rate: 分级
+  categories: 分类
+  exclude_categories: 排除分类
+  tags: 标签
+  favorite: 喜爱
+  non_favorite: 非喜爱
+  found_before: '找到 '
+  found_after: ' 部番剧'
+
 
 user_menu:
   try_luck: 试试手气

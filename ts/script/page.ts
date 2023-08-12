@@ -3,6 +3,7 @@ import pageHome from "./page/home";
 import pageEdit from "./page/edit";
 import pageSettings from "./page/settings";
 import pageBangumi from "./page/bangumi";
+import pageSearch from "./page/search";
 import { layout } from "../helper/layout";
 import { timer } from "../helper/timer";
 
@@ -31,6 +32,7 @@ let pageTemplate: {
   edit: pageEdit,
   settings: pageSettings,
   bangumi: pageBangumi,
+  search: pageSearch,
 };
 export class Page{
   _options: PageOptions | SinglePageOptions;

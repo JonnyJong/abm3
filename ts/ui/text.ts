@@ -10,7 +10,7 @@ type ListAutoCompleteOption = {
 };
 type ListItemOption = {
   html: string,
-  action: Function,
+  action: (element: HTMLDivElement)=>void,
 };
 export class UIText extends HTMLElement{
   private _inited: boolean = false;
@@ -31,7 +31,7 @@ export class UIText extends HTMLElement{
       switch (key) {
         case 'Enter':
           if (typeof (current as any).action !== 'function') return;
-          return (current as any).action();
+          return (current as any).action(current);
         case 'ArrowUp':
           current.classList.remove('ui-text-item-current');
           current = (current.previousSibling as Element);
@@ -198,7 +198,7 @@ export class UIText extends HTMLElement{
       (div as any).action = (item as ListItemOption).action;
       div.addEventListener('pointerdown', (ev)=>{
         ev.preventDefault();
-        (div as any).action();
+        (div as any).action(div);
       });
       this._list.append(div);
     }

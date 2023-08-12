@@ -1,0 +1,36 @@
+ui-lang.search-filter-title search.rate
+
+.search-filter-block(type="rate")
+  .search-filter-item(value="true")
+    .icon.icon-HeartFill
+    ui-lang search.favorite
+    =' - ' + count.favorite
+  .search-filter-item(value="false")
+    .icon.icon-Heart
+    ui-lang search.non_favorite
+    =' - ' + (count.total - count.favorite)
+  - let i = 0
+  while i < 6
+    .search-filter-item(value=i)
+      .icon.icon-FavoriteStar
+      .search-filter-star=i
+      =' - ' + count.rate[i]
+    - i++
+
+ui-lang.search-filter-title search.categories
+
+.search-filter-block(type="categories")
+  each id in Object.keys(db.categories)
+    .search-filter-item(value=id)=id + ' - ' + db.categories[id].size
+
+ui-lang.search-filter-title search.exclude_categories
+
+.search-filter-block(type="exclude_categories")
+  each id in Object.keys(db.categories)
+    .search-filter-item(value=id)=id + ' - ' + (count.total - db.categories[id].size)
+
+ui-lang.search-filter-title search.tags
+
+.search-filter-block(type="tags")
+  each id in Object.keys(db.tags)
+    .search-filter-item(value=id)=id + ' - ' + db.tags[id].size

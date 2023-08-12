@@ -1,0 +1,91 @@
+.search
+  display flex
+  flex auto
+  app-region drag
+  transition .1s padding
+  ui-text
+    width 100%
+    display block
+.search-input
+  app-region no-drag
+  margin auto
+  flex 0 1 500px
+body.backable .search
+  padding-right 46px
+body.homeable .search
+  padding-right 46px * 2
+
+.search-quick-item
+  pointer-events none
+  width 100%
+  height 64px + 14px * 2
+  position relative
+  padding-left 14px + 48px + 12px
+  .ui-bangumi-cover
+    position absolute
+    height 64px
+    width 48px
+    left 14px
+    top 14px
+  .ui-bangumi-evaluation
+    color var(--color2)
+
+// .page-search
+//   padding-top 64px + 66px + 16px
+
+.search-rack
+  .rack-edit
+  .rack-expand
+    display none
+
+.search-filter-title
+  font-size 18px
+.search-filter-block
+  display flex
+  flex-wrap wrap
+  gap 8px
+.search-filter-item
+  display flex
+  align-items center
+  background var(--search-filter-bg)
+  gap 4px
+  padding 0 12px
+  height 34px
+  border-radius 32px
+  position relative
+  transition .1s background, .1s color
+  .icon
+    padding-right 8px
+  &:hover
+    background var(--search-filter-bg-hover)
+  &:active
+    background var(--search-filter-bg-active)
+.search-filter-item-active
+  background var(--theme)
+  color var(--select)
+  &:hover
+    background var(--theme-hover)
+  &:active
+    background var(--theme-active)
+.search-filter-star
+  position absolute
+  font-size 12px
+  top 2px
+  left 28px
+.search-filter-shell
+  position sticky
+  top 0
+  left 0
+  right 0
+  z-index 1
+  margin-bottom 16px
+  height 66px
+.search-filter
+  .ui-setting-item-body
+    display flex
+    flex-direction column
+    padding 16px
+    max-height calc(100vh - 150px)
+    overflow hidden auto
+    background var(--bg3-tsp)
+    backdrop-filter blur(20px)
