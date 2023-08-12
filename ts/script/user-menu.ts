@@ -8,6 +8,10 @@ const tryLuck: MenuItem = {
   type: 'item',
   name: '<ui-lang>user_menu.try_luck</ui-lang>',
   icon: 'EmojiTabSmilesAnimals',
+  action: ()=>{
+    let bangumis = Object.keys(db.items);
+    history.open('bangumi', bangumis[~~(Math.random() * bangumis.length)]);
+  },
 };
 const editBangumi: MenuItem = {
   type: 'item',
