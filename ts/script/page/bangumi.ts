@@ -4,6 +4,7 @@ import { Bangumi, db } from "../db";
 import { Page, PageOptions } from "../page";
 import path from "path";
 import { settings } from "../settings";
+import { UIRack } from "../../ui/rack";
 
 function autoHeaderCover(item: Bangumi) {
   let base = path.join(settings.getDB(), 'images');
@@ -74,6 +75,7 @@ function initSwitchSeason(element: HTMLElement) {
 
 function initFavoriteButton(element: HTMLElement, id: string, page: Page) {
   let icon = element.querySelector('.bangumi-favorite .icon') as HTMLDivElement;
+  if (!icon) return;
   element.querySelector('.bangumi-favorite')?.addEventListener('click',async ()=>{
     let before = db.items[id].favorite;
     await db.items[id].edit({favorite: !before, updated: Date.now()});
@@ -89,6 +91,7 @@ function initFavoriteButton(element: HTMLElement, id: string, page: Page) {
 }
 function initRateButton(element: HTMLElement, id: string, page: Page) {
   let rate = element.querySelector('.bangumi-rate') as HTMLDivElement;
+  if (!rate) return;
   rate.addEventListener('click',async (ev)=>{
     let level = Array.from(rate.children).indexOf(ev.target as Element) + 1 as 0 | 1 | 2 | 3 | 4 | 5;
     if (level === 0 || level > 5) return;
@@ -105,15 +108,60 @@ function initRateButton(element: HTMLElement, id: string, page: Page) {
   });
 }
 
+const shuffle = (arr: any[])=>{
+  let m = arr.length
+  let index
+  let tmp
+  while (m > 1) {
+    index = Math.floor(Math.random() * m--)
+    tmp = arr[m]
+    arr[m] = arr[index]
+    arr[index] = tmp
+  }
+  return arr;
+}
+
+async function initRelated(element: HTMLElement, id: string, page: Page) {
+  let rack = element.querySelector('ui-rack') as UIRack;
+  if (!rack) return;
+  rack.style.display = 'none';
+  rack.type = {type: 'custom', value: 'related'};
+  rack.title = '<ui-lang>相关推荐</ui-lang>';
+  rack.list = ['', '', '', '', '', '', '', ''];
+  await timer(200);
+  let pool: Map<string, number> = new Map();
+  for (const tag of db.items[id].tags) {
+    for (const item of db.tags[tag]) {
+      if (item === id) continue;
+      pool.set(item, (pool.get(item) || 0) + 1);
+    }
+  }
+  if (pool.size === 0) {
+    rack.remove();
+    return;
+  }
+  let list: string[] = [];
+  shuffle(Array.from(pool)).sort((a, b)=>b[1] - a[1]).forEach((item, index)=>{
+    if (index >= 24) return;
+    list.push(item[0]);
+  });
+  rack.style.display = 'block';
+  rack.list = list;
+}
+
 class page implements PageOptions {
   name = "bangumi";
-  onCreate (element: HTMLElement, option: any, page: Page) {
+  async onCreate (element: HTMLElement, option: any, page: Page) {
+    element.style.overflow = 'hidden';
     element.addEventListener('scroll',()=>{
       element.style.setProperty('--h', element.scrollTop + 'px');
     });
     initSwitchSeason(element);
     initFavoriteButton(element, option, page);
     initRateButton(element, option, page);
+    initRelated(element, option, page);
+    await timer(200);
+    element.style.overflow = '';
   };
   onBack (element: HTMLElement, option: any, page: Page) {
     if (db.items[option]?.updated === page.date) return;
@@ -121,6 +169,7 @@ class page implements PageOptions {
     initSwitchSeason(element);
     initFavoriteButton(element, option, page);
     initRateButton(element, option, page);
+    initRelated(element, option, page);
   };
   onClose(){};
   layoutHandler(option: any, page: Page) {
