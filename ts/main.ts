@@ -6,8 +6,9 @@ import { WindowEvent } from "./modules/window-event";
 import { initDialog } from "./modules/dialog";
 import { initConfig } from "./modules/config";
 
+Menu.setApplicationMenu(null);
+
 app.on('ready',()=>{
-  Menu.setApplicationMenu (null);
 
   initConfig();
 
