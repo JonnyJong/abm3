@@ -127,4 +127,9 @@ export function initPage() {
     if (button === 3) history.back();
   });
   history.init();
+  document.body.addEventListener('keydown', (ev)=>{
+    if (ev.code !== 'Space') return;
+    if (['TEXTAREA', 'INPUT'].includes((ev.target as Element)?.nodeName)) return;
+    ev.preventDefault();
+  });
 }
