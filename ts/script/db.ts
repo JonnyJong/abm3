@@ -279,7 +279,7 @@ export class DB{
       let data = JSON.parse(file, (key, value)=>{
         if (typeof value === 'string' && ['date', 'updated'].includes(key)) {
           return new Date(value);
-        } else if (Array.isArray(value) && typeof value[0] === 'string') {
+        } else if (Array.isArray(value)) {
           return new Set(value);
         }
         return value;
