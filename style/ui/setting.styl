@@ -17,7 +17,7 @@ ui-setting-item
     .ui-setting-item-expand
       display none
   &:has(.ui-setting-item-body>*:first-child)
-    .ui-setting-item-head-shell
+    .ui-setting-item-head-shell:not(:has(.ui-setting-item-head:hover))
       &:hover
         background var(--setting-bg-hover)
       &:active
