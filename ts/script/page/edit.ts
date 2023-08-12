@@ -28,11 +28,19 @@ let tabsElement: HTMLDivElement;
 let bodysElement: HTMLDivElement;
 let addBtnElement: HTMLDivElement;
 
+async function scrollToCurrent() {
+  await timer(100);
+  let tab = tabsElement.querySelector<HTMLDivElement>('.edit-tab-current');
+  if (!tab) return;
+  tabsElement.scrollTo({left: tab.offsetLeft - tabsElement.offsetWidth / 2, behavior: 'smooth'});
+}
+
 function switchTab(current: {tab: HTMLDivElement, body: HTMLDivElement}) {
   tabsElement.querySelectorAll('.edit-tab-current').forEach((el)=>el.classList.remove('edit-tab-current'));
   bodysElement.querySelectorAll('.edit-body-current').forEach((el)=>el.classList.remove('edit-body-current'));
   current.tab.classList.add('edit-tab-current');
   current.body.classList.add('edit-body-current');
+  scrollToCurrent();
 }
 
 async function closeTab(id: any) {
@@ -168,10 +176,9 @@ function createTab(id?: string | number) {
     closeTab(tabObject.id);
   });
 
-  tabsElement.querySelectorAll('.edit-tab-current').forEach((el)=>el.classList.remove('edit-tab-current'));
-  bodysElement.querySelectorAll('.edit-body-current').forEach((el)=>el.classList.remove('edit-body-current'));
   addBtnElement.before(tab);
   bodysElement.append(body);
+  switchTab(tabObject);
 }
 
 const page: SinglePageOptions = {
@@ -190,8 +197,10 @@ const page: SinglePageOptions = {
     });
   },
   onBack(element, option) {
+    scrollToCurrent();
   },
   onOpen(element, option) {
+    scrollToCurrent();
     if (option !== undefined) {
       let target = tabs.get(option);
       if (target) {
