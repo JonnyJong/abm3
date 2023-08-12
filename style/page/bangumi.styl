@@ -75,10 +75,41 @@
   gap 16px
 .bangumi-evaluation
   display flex
-  gap 16px
+  gap 14px
+.bangumi-favorite:hover
+  filter drop-shadow(0 0 4px red)
 .bangumi-rate
   display flex
-  gap 2px
+  &>*
+    padding 0 2px
+  // NOTE: hardcode
+  &:hover
+    opacity .8
+    .icon:before
+      content '\e734'
+  &:has(:nth-child(1):hover)
+    .icon:nth-child(1):before
+      content '\e735'
+  &:has(:nth-child(2):hover)
+    .icon:nth-child(1)
+    .icon:nth-child(2)
+      &:before
+        content '\e735'
+  &:has(:nth-child(3):hover)
+    .icon:nth-child(1)
+    .icon:nth-child(2)
+    .icon:nth-child(3)
+      &:before
+        content '\e735'
+  &:has(:nth-child(4):hover)
+    .icon:nth-child(1)
+    .icon:nth-child(2)
+    .icon:nth-child(3)
+    .icon:nth-child(4)
+      &:before
+        content '\e735'
+  &:has(:nth-child(5):hover) .icon:before
+      content '\e735'
 .bangumi-progresses
   width 300px
 .bangumi-progress
