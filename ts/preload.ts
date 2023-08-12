@@ -3,7 +3,7 @@ import { initConfig } from "./modules/config";
 import { initDB } from "./script/db";
 import { updateLocale } from "./script/locale";
 import { initPage } from "./script/page";
-import { initSearchbar } from "./script/searchbar";
+import { initSearchbar } from "./script/search";
 import { settings } from "./script/settings";
 import { initUserMenu } from "./script/user-menu";
 import { initWindowEvent } from "./script/window-event";
