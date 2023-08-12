@@ -27,6 +27,9 @@ export class UIBangumi extends HTMLElement{
     this._title = this.querySelector('.ui-bangumi-title') as HTMLDivElement;
     this._eval = this.querySelector('.ui-bangumi-evaluation') as HTMLDivElement;
     this._mark = this.querySelector('.ui-bangumi-mark') as HTMLDivElement;
+    if (this.hasAttribute('id')) {
+      this._id = this.getAttribute('id') as string;
+    }
     this.update();
     this.addEventListener('click',async ()=>{
       if (this._id === '') return;
