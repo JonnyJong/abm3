@@ -202,7 +202,15 @@ export class UIRack extends HTMLElement{
       this.title = [locale.rack.category_miss, locale.rack.tag_miss][['category', 'tag'].indexOf(this._type.type)].replace('%s', this._type.value);
       return this._resizeHandler();
     }
-    this._list.sort((a, b)=>db.items[b].date.getTime() - db.items[a].date.getTime());
+    if (this._type.type !== 'custom') {
+      this._list.sort((a, b)=>{
+        try {
+          return db.items[b].date.getTime() - db.items[a].date.getTime();
+        } catch {
+          return 0;
+        }
+      });
+    }
     for (const item of this._list) {
       let element = (document.createElement('ui-bangumi') as UIBangumi);
       element.id = item;
