@@ -19,7 +19,7 @@ export class UIText extends HTMLElement{
   private _rightBtn: HTMLDivElement;
   private _list: HTMLDivElement;
   private _userInput: string = '';
-  onconfirmed: ((this: UIText)=>void) | undefined;
+  onconfirmed?: (element: UIText)=>void;
   private _inputed(event?: boolean) {
     this.classList.toggle('ui-text-filled', this._input.value !== '');
     if (!event) return;
@@ -45,6 +45,11 @@ export class UIText extends HTMLElement{
       }
     } else {
       switch (key) {
+        case 'Enter':
+          if (typeof this.onconfirmed === 'function') {
+            this.onconfirmed(this);
+          }
+          break;
         case 'ArrowUp':
           if (this._list.lastChild) {
             current = (this._list.lastChild as Element);
