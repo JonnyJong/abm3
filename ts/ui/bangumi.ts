@@ -35,7 +35,7 @@ export class UIBangumi extends HTMLElement{
       img.style.height = rect.height + 'px';
       img.style.width = rect.width + 'px';
       document.body.append(img);
-      (document.querySelector('.page-current') as any)?.hide();
+      (document.querySelector('.page-current') as any)?.page.hide();
       await timer(100);
       img.style.top = window.innerHeight * 0.9 - 128 + 'px';
       img.style.left = (window.innerWidth - Math.min(window.innerWidth - 32, 1104)) / 2 + 'px';
