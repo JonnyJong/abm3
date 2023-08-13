@@ -7,19 +7,19 @@
     translate 0 0px
 .page
   &>*
+    display none
     position fixed
     top 0
     left 0
-    translate -100vw 0
     width 100vw
     height 100vh
     overflow hidden auto
-    opacity 0
-    pointer-events none
-    transition .1s opacity, 0s .1s translate
     padding 64px 0
 .page-current
-  translate 0 0
+  display block
   opacity 1
   pointer-events all
   animation page-in .2s ease-out
+.page-hidding
+  opacity 0
+  transition .1s opacity

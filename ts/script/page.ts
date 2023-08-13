@@ -45,15 +45,21 @@ export class Page{
     this._element.addEventListener('scroll', ()=>{
       this._element.querySelectorAll(VListElementTag.join(',')).forEach((el)=>(el as any).vListHandler(this._element.scrollTop));
     });
+    (this._element as any).page = this;
   };
   async show(container: HTMLDivElement){
-    container.querySelectorAll('.page-current').forEach((e)=>e.classList.remove('page-current'));
+    container.querySelectorAll('.page-current').forEach((e)=>(e as any).page.hide());
     await timer(100);
     this._element.classList.add('page-current');
   };
-  async remove(){
-    this._element.classList.remove('page-current');
+  async hide() {
+    this._element.classList.add('page-hidding');
     await timer(100);
+    this._element.classList.remove('page-current');
+    this._element.classList.remove('page-hidding');
+  }
+  async remove(){
+    await this.hide();
     this._element.remove();
   };
   [x: string]: any;
