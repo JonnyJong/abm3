@@ -3,6 +3,7 @@ import { element } from "../../helper/layout";
 import { UIRack, createSetRackTypeDialog } from "../../ui/rack";
 import { SinglePageOptions } from "../page";
 import { settings } from "../settings";
+import { timer } from "../../helper/timer";
 
 type RackObject = {element: UIRack, type: 'none' | 'all' | 'category' | 'tag' | 'custom', value: string, fold: boolean};
 
@@ -68,9 +69,8 @@ function createRackSorter() {
 const page: SinglePageOptions = {
   name: 'home',
   single: true,
-  onCreate(element, option) {
+  async onCreate(element, option) {
     container = element.querySelector('.display-rack') as HTMLDivElement;
-    loadRacks();
     let btnAdd = element.querySelector('.home-rack-add') as HTMLButtonElement;
     let btnSort = element.querySelector('.home-rack-sort') as HTMLButtonElement;
     btnAdd.addEventListener('click',async ()=>{
@@ -111,6 +111,8 @@ const page: SinglePageOptions = {
       });
       dialog.show();
     });
+    await timer(100);
+    loadRacks();
   },
   onBack(element, option) {
   },
