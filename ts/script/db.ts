@@ -276,23 +276,36 @@ export class DB{
     if (this.inited) return;
     try {
       let file = await readFile(path.join(settings.getDB(), 'db.json'), 'utf-8');
-      let data = JSON.parse(file, (key, value)=>{
-        if (typeof value === 'string' && ['date', 'updated'].includes(key)) {
-          return new Date(value);
-        } else if (Array.isArray(value)) {
-          return new Set(value);
-        }
-        return value;
-      });
-      for (const key in data) {
-        if (!Object.prototype.hasOwnProperty.call(data, key) || key === 'items') continue;
-        // @ts-ignore
-        this[key] = data[key];
+      let data = JSON.parse(file);
+      // id
+      this.id = data.id;
+      // categories
+      for (const name of Object.keys(data.categories)) {
+        this.categories[name] = new Set(data.categories[name]);
       }
-      for (const key in data.items) {
-        if (!Object.prototype.hasOwnProperty.call(data.items, key)) continue;
-        this.items[key] = new Bangumi(this, data.items[key]);
+      // tags
+      for (const name of Object.keys(data.tags)) {
+        this.tags[name] = new Set(data.tags[name]);
       }
+      // mark
+      this.mark = data.mark
+      // recommendation
+      this.recommendation = data.recommendation;
+      this.recommendation.exclude = new Set(this.recommendation.exclude);
+      // specialCategory
+      this.specialCategory = data.specialCategory;
+      // favorites
+      this.favorites = new Set(data.favorites)
+      // items
+      for (const id of Object.keys(data.items)) {
+        data.items[id].date = new Date(data.items[id].date);
+        data.items[id].updated = new Date(data.items[id].updated);
+        data.items[id].tags = new Set(data.items[id].tags);
+        data.items[id].categories = new Set(data.items[id].categories);
+        this.items[id] = new Bangumi(this, data.items[id]);
+      }
+      // ext
+      this.ext = data.ext;
     } catch {}
     this.inited = true;
     dispatchEvent(new Event('db'));
