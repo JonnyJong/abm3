@@ -33,7 +33,7 @@ export class UISelect extends HTMLElement{
       let w = rect.width;
       let index = Array.from(this._list.children).findIndex((el)=>(el as any).key === this._value);
       if (index === -1) {
-        index = Math.floor(this._values.length / 2);
+        index = Math.floor(Math.min(this._values.length / 2, (window.innerHeight - 62) / 72 - 2));
       }
       let o = 6 + 36 * index; // 偏移 offset
       let realH = Math.min(h, window.innerHeight - 100);
