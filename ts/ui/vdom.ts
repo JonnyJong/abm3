@@ -458,7 +458,7 @@ function cloneVDOM<T>(prototype: any, origin: VDOM): T {
 }
 
 export class VDOM{
-  static create(template: VDOMTemplate): VDOM {
+  /* static create(template: VDOMTemplate): VDOM {
     switch (template.type) {
       case "number":
       case "div":
@@ -485,7 +485,7 @@ export class VDOM{
       case "tags":
       case "text":
     }
-  }
+  } */
   _element!: HTMLElement;
   private _locale: VDOMLocaleObject = new VDOMLocaleObject(this);
   get locale() {
@@ -667,6 +667,150 @@ export class VDiv extends VDOM{
   clone(): VDiv {
     let clone = cloneVDOM<VDiv>(VDiv, this);
     clone.text = this.text;
+    return clone;
+  }
+}
+
+export class VSpan extends VDOM{
+  _element: HTMLSpanElement;
+  constructor() {
+    super();
+    this._element = document.createElement('span');
+  }
+  get text(): string {
+    return this._element.textContent || '';
+  }
+  set text(value: string) {
+    this._element.textContent = value;
+  }
+  clone(): VSpan {
+    let clone = cloneVDOM<VSpan>(VSpan, this);
+    clone.text = this.text;
+    return clone;
+  }
+}
+
+export class VB extends VDOM{
+  constructor() {
+    super();
+    this._element = document.createElement('b');
+  }
+  get text(): string {
+    return this._element.textContent || '';
+  }
+  set text(value: string) {
+    this._element.textContent = value;
+  }
+  clone(): VB {
+    let clone = cloneVDOM<VB>(VB, this);
+    clone.text = this.text;
+    return clone;
+  }
+}
+
+export class VI extends VDOM{
+  constructor() {
+    super();
+    this._element = document.createElement('i');
+  }
+  get text(): string {
+    return this._element.textContent || '';
+  }
+  set text(value: string) {
+    this._element.textContent = value;
+  }
+  clone(): VI {
+    let clone = cloneVDOM<VI>(VI, this);
+    clone.text = this.text;
+    return clone;
+  }
+}
+
+export class VU extends VDOM{
+  constructor() {
+    super();
+    this._element = document.createElement('u');
+  }
+  get text(): string {
+    return this._element.textContent || '';
+  }
+  set text(value: string) {
+    this._element.textContent = value;
+  }
+  clone(): VU {
+    let clone = cloneVDOM<VU>(VU, this);
+    clone.text = this.text;
+    return clone;
+  }
+}
+
+export class VDel extends VDOM{
+  _element: HTMLModElement;
+  constructor() {
+    super();
+    this._element = document.createElement('del');
+  }
+  get text(): string {
+    return this._element.textContent || '';
+  }
+  set text(value: string) {
+    this._element.textContent = value;
+  }
+  clone(): VDel {
+    let clone = cloneVDOM<VDel>(VDel, this);
+    clone.text = this.text;
+    return clone;
+  }
+}
+
+export class VBR extends VDOM{
+  _element: HTMLBRElement;
+  constructor() {
+    super();
+    this._element = document.createElement('br');
+  }
+  prepend(...vdoms: VDOM[]): void {}
+  append(...vdoms: VDOM[]): void {}
+  querySelectorAll(selector: string): VDOM[] {
+    return [];
+  }
+  get children(): VDOM[] {
+    return [];
+  }
+  contains(other: VDOM): boolean {
+    return false;
+  }
+  clone(): VBR {
+    return cloneVDOM<VBR>(VBR, this);
+  }
+}
+
+export class VImg extends VDOM{
+  _element: HTMLImageElement;
+  constructor() {
+    super();
+    this._element = document.createElement('img');
+  }
+  get src(): string {
+    return this._element.src;
+  }
+  set src(value: string) {
+    this._element.src = value;
+  }
+  prepend(...vdoms: VDOM[]): void {}
+  append(...vdoms: VDOM[]): void {}
+  querySelectorAll(selector: string): VDOM[] {
+    return [];
+  }
+  get children(): VDOM[] {
+    return [];
+  }
+  contains(other: VDOM): boolean {
+    return false;
+  }
+  clone(): VImg {
+    let clone = cloneVDOM<VImg>(VImg, this);
+    clone.src = this.src;
     return clone;
   }
 }
