@@ -89,14 +89,18 @@ body.homeable .history-home
     font-size 10px
     transition .1s background
     &:hover
-      background #8884
+      background var(--theme)
+      // background #8884
     &:active
-      background #8882
+      background var(--theme-active)
+      // background #8882
 .window-close
   &:hover
-    background #e11
+    background var(--danger)
+    // background #e11
   &:active
-    background #e11a
+    background var(--danger-active)
+    // background #e11a
 body:not(.maxmized) .window .icon-ChromeRestore
 body.maxmized .icon-ChromeMaximize
   display none
