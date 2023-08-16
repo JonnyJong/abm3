@@ -1,6 +1,6 @@
 import { UIColor } from "./color";
 import { UIImagePicker } from "./image";
-import { LangTemplateMap, UILang } from "./lang";
+import { LangTemplateMap, LocaleAuto, UILang } from "./lang";
 import { UIList } from "./list";
 import { UILoader } from "./loader";
 import { UINumber } from "./number";
@@ -127,10 +127,10 @@ type VDOMAttribute = { [qualifiedName: string]: string };
 
 type VDOMStyle = string | { [name: string]: string };
 
-type VDOMLang = {
+type VDOMLocale = {
   key: string,
   namespace?: string,
-  setter: (this: VDOM, str: string)=>any,
+  setter: (vdom: VDOM, str: string)=>any,
   templateMap?: LangTemplateMap,
 };
 
@@ -142,7 +142,7 @@ type VDivTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
-  lang?: VDOMLang,
+  locale?: VDOMLocale,
 };
 
 type VSpanTemplate = {
@@ -153,7 +153,7 @@ type VSpanTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
-  lang?: VDOMLang,
+  locale?: VDOMLocale,
 };
 
 type VBTemplate = {
@@ -164,7 +164,7 @@ type VBTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
-  lang?: VDOMLang,
+  locale?: VDOMLocale,
 };
 
 type VITemplate = {
@@ -175,7 +175,7 @@ type VITemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
-  lang?: VDOMLang,
+  locale?: VDOMLocale,
 };
 
 type VUTemplate = {
@@ -186,7 +186,7 @@ type VUTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
-  lang?: VDOMLang,
+  locale?: VDOMLocale,
 };
 
 type VDelTemplate = {
@@ -197,7 +197,7 @@ type VDelTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
-  lang?: VDOMLang,
+  locale?: VDOMLocale,
 };
 
 type VBRTemplate = {
@@ -215,7 +215,7 @@ type VImageTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
-  lang?: VDOMLang,
+  locale?: VDOMLocale,
 };
 
 type VButtonTemplate = {
@@ -226,7 +226,7 @@ type VButtonTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
-  lang?: VDOMLang,
+  locale?: VDOMLocale,
 };
 
 type VInputTemplate = {
@@ -237,7 +237,7 @@ type VInputTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
-  lang?: VDOMLang,
+  locale?: VDOMLocale,
   dataKey?: string,
 };
 
@@ -249,7 +249,7 @@ type VTextAreaTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
-  lang?: VDOMLang,
+  locale?: VDOMLocale,
   dataKey?: string,
 };
 
@@ -271,7 +271,7 @@ type VImagePickerTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
-  lang?: VDOMLang,
+  locale?: VDOMLocale,
   dataKey?: string,
 };
 
@@ -359,7 +359,7 @@ type VSelectTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
-  lang?: VDOMLang,
+  locale?: VDOMLocale,
   dataKey?: string,
 };
 
@@ -392,7 +392,7 @@ type VTextTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
-  lang?: VDOMLang,
+  locale?: VDOMLocale,
   dataKey?: string,
 };
 
@@ -400,12 +400,97 @@ type VDOMTemplate = VDivTemplate | VSpanTemplate | VITemplate | VBTemplate | VUT
 
 type VDOMOriginHTMLElements = HTMLElement | HTMLDivElement | HTMLSpanElement | HTMLBRElement | HTMLImageElement | HTMLButtonElement | HTMLInputElement | HTMLTextAreaElement | UIColor | UIImagePicker | UILang | UIList | UILoader | UINumber | UIRange | UISelect | UISwitch | UITags | UIText;
 type VDOMOriginHTMLElementTags = 'div' | 'span' | 'b' | 'i' | 'u' | 'del' | 'br' | 'button' | 'input' | 'textarea' | 'ui-color' | 'ui-image-picker' | 'ui-lang' | 'ui-list' | 'ui-loader' | 'ui-number' | 'ui-range' | 'ui-select' | 'ui-switch' | 'ui-tags' | 'ui-text';
-export class VDOM{
-  static create(template: VDOMTemplate): VDOM {}
-  private _element!: VDOMOriginHTMLElements;
-  constructor() {
-    throw new Error('Direct construction of VDOM is not allowed.');
+
+class VDOMLocaleObject{
+  private _vdom: VDOM;
+  private _localeAuto: LocaleAuto;
+  private _setter: (vdom: VDOM, str: string) => any = ()=>{};
+  constructor(vdom: VDOM, option?: VDOMLocale) {
+    this._vdom = vdom;
+    if (typeof option?.setter === 'function') {
+      this._setter = option?.setter;
+    }
+    this._localeAuto = new LocaleAuto({
+      key: option?.key || '',
+      namespace: option?.namespace,
+    }, (str: string)=>this._setter(this._vdom, str));
   }
+  get key(): string {
+    return this._localeAuto.key;
+  }
+  set key(value: string) {
+    this._localeAuto.key = value;
+  }
+  get namespace(): string {
+    return this._localeAuto.namespace;
+  }
+  set namespace(value: string | undefined) {
+    this._localeAuto.namespace = value;
+  }
+  get setter() {
+    return this._setter;
+  }
+  set setter(setter: (vdom: VDOM, str: string) => any) {
+    if (typeof setter !== 'function') throw new Error('LocaleAuto setter require a function');
+    this._setter = setter;
+  }
+  get getTemplate(): LocaleAuto["getTemplate"] {
+    return this._localeAuto.getTemplate
+  }
+  get setTemplate(): LocaleAuto["setTemplate"] {
+    return this._localeAuto.setTemplate
+  }
+  get removeTemplate(): LocaleAuto["removeTemplate"] {
+    return this._localeAuto.removeTemplate
+  }
+}
+
+function cloneVDOM<T>(prototype: any, origin: VDOM): T {
+  let clone = new prototype();
+  clone.attributes = origin.attributes;
+  clone.disabled = origin.disabled;
+  clone.inert = origin.inert;
+  clone.locale.key = origin.locale.key;
+  clone.locale.namespace = origin.locale.namespace;
+  clone.locale.setter = origin.locale.setter;
+  clone.locale.setTemplate(origin.locale.getTemplate());
+  return clone;
+}
+
+export class VDOM{
+  static create(template: VDOMTemplate): VDOM {
+    switch (template.type) {
+      case "number":
+      case "div":
+      case "span":
+      case "i":
+      case "b":
+      case "u":
+      case "del":
+      case "br":
+      case "img":
+      case "button":
+      case "input":
+      case "textarea":
+      case "color":
+      case "image-picker":
+      case "lang":
+      case "icon":
+      case "list":
+      case "loader":
+      case "progress":
+      case "range":
+      case "select":
+      case "switch":
+      case "tags":
+      case "text":
+    }
+  }
+  _element!: HTMLElement;
+  private _locale: VDOMLocaleObject = new VDOMLocaleObject(this);
+  get locale() {
+    return this._locale;
+  } 
   prepend(...vdoms: VDOM[]): void {
     let nodes = [];
     for (const vdom of vdoms) {
@@ -481,6 +566,18 @@ export class VDOM{
   get classList(): DOMTokenList {
     return this._element.classList;
   }
+  get attributes(): VDOMAttribute {
+    let result: VDOMAttribute = {};
+    for (const item of this._element.attributes) {
+      result[item.name] = item.value;
+    }
+    return result;
+  }
+  set attributes(values: VDOMAttribute) {
+    for (const name of Object.keys(values)) {
+      this._element.setAttribute(name, values[name]);
+    }
+  }
   get setAttribute(): HTMLElement['setAttribute'] {
     return this._element.setAttribute;
   }
@@ -498,6 +595,18 @@ export class VDOM{
   }
   get dataset(): HTMLOrSVGElement['dataset'] {
     return this._element.dataset;
+  }
+  get disabled(): boolean {
+    return !!(this._element as any).disabled;
+  }
+  set disabled(value: boolean) {
+    (this._element as any).disabled = !!value;
+  }
+  get inert(): boolean {
+    return this._element.inert;
+  }
+  set inert(value: boolean) {
+    this._element.inert = value;
   }
   get style(): CSSStyleDeclaration {
     return this._element.style;
@@ -540,5 +649,24 @@ export class VDOM{
   }
   get scrollTop(): Element['scrollTop'] {
     return this._element.scrollTop;
+  }
+}
+
+export class VDiv extends VDOM{
+  _element: HTMLDivElement;
+  constructor() {
+    super();
+    this._element = document.createElement('div');
+  }
+  get text(): string {
+    return this._element.textContent || '';
+  }
+  set text(value: string) {
+    this._element.textContent = value;
+  }
+  clone(): VDiv {
+    let clone = cloneVDOM<VDiv>(VDiv, this);
+    clone.text = this.text;
+    return clone;
   }
 }
