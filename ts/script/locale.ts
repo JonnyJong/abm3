@@ -75,3 +75,8 @@ export function getLangByKey(key: any) {
   }
   return target;
 }
+
+// TODO: namespace, locale
+export function lang(key: string, namespace?: string, locale?: string){
+  return`<ui-lang>${key}</ui-lang>`;
+}
