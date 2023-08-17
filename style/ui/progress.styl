@@ -1,0 +1,38 @@
+@keyframes ui-progress-width
+  0%, 65%
+    width 40%
+  65.001%, 100%
+    width 60%
+@keyframes ui-progress-left
+  0%
+    left -40%
+  65.001%
+    left -60%
+  65%, 100%
+    left 100%
+ui-progress
+  display block
+  height 3px
+  width 300px
+  position relative
+  border-radius 3px
+  overflow hidden
+  &:has(.ui-progress-loading)
+    .ui-progress-track
+      opacity 0
+.ui-progress-thumb
+  position absolute
+  left 0
+  top 0
+  height 3px
+  border-radius 3px
+  background var(--theme)
+  &.ui-progress-loading
+    animation ui-progress-width 2s linear infinite, ui-progress-left 2s linear infinite
+.ui-progress-track
+  position absolute
+  top 1px
+  background #888
+  height 1px
+  width 100%
+  transition .1s opacity

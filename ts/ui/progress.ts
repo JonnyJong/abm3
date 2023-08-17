@@ -1,16 +1,14 @@
 import { clamp } from "../helper/math";
 
-export class UILoader extends HTMLElement{
+export class UIProgress extends HTMLElement{
   private _inited: boolean = false;
-  private _svg!: SVGSVGElement;
-  private _path!: SVGPathElement;
   private _value: number = NaN;
+  private _thumb!: HTMLDivElement;
   connectedCallback(){
     if (this._inited) return;
     this._inited = true;
-    this.innerHTML = '<svg class="ui-loder-loading" viewBox="0 0 60 60" height="60" width="60"><g fill="none"><path d="M3 30a27 27 0 1 0 54 0a27 27 0 1 0 -54 0z"></path></g></svg>';
-    this._svg = this.querySelector('svg') as SVGSVGElement;
-    this._path = this.querySelector('path') as SVGPathElement;
+    this.innerHTML = '</div><div class="ui-progress-track"></div><div class="ui-progress-thumb ui-progress-loading">';
+    this._thumb = this.querySelector('.ui-progress-thumb') as HTMLDivElement;
     let attrValue = Number(this.getAttribute('value'));
     if (isNaN(this._value) && !isNaN(attrValue)) {
       this.value = attrValue;
@@ -25,12 +23,12 @@ export class UILoader extends HTMLElement{
     if (isNaN(value)) {
       this._value = NaN;
       if (!this._inited) return;
-      this._svg.classList.add('ui-loder-loading');
+      this._thumb.classList.add('ui-progress-loading');
       return;
     }
     this._value = clamp(0, value, 100);
-    this._svg.classList.remove('ui-loder-loading');
     if (!this._inited) return;
-    this._path.style.strokeDashoffset = String(this._value * 1.7 - 170);
+    this._thumb.classList.remove('ui-progress-loading');
+    this._thumb.style.width = this._value + '%';
   }
 }
