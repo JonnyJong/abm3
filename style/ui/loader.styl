@@ -18,11 +18,14 @@ ui-loader
   svg
     width 100%
     height 100%
-    animation ui-loader-rotate .6s linear infinite
+    rotate 90deg
+    &.ui-loder-loading
+      animation ui-loader-rotate .6s linear infinite
+      path
+        animation ui-loader-offset 2s linear infinite
   path
     stroke var(--theme)
     stroke-linecap round
     stroke-width 10%
     stroke-dashoffset 0
     stroke-dasharray 200
-    animation ui-loader-offset 2s linear infinite
