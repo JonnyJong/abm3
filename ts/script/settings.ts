@@ -4,6 +4,7 @@ import { download } from "../helper/image";
 import { access, constants, readdir, rename, unlink } from "fs/promises";
 import { ipcRenderer } from "electron";
 import stylus from "stylus";
+// import { SettingTemplate } from "../ui/template";
 
 const DEFAULT_AVATAR = '../assets/defaultAvatar.bmp';
 
@@ -165,3 +166,23 @@ class Settings{
 }
 
 export let settings = new Settings();
+
+export type SettingsPage = {
+  name: string,
+  // template: SettingTemplate,
+  icon?: string,
+  screenshot?: string,
+  description?: string,
+  shortcuts?: {
+    name: string,
+    link: string,
+  }[],
+};
+
+let settingsPages: SettingsPage[] = [];
+export function registerSettingsPage(page: SettingsPage) {
+  settingsPages.push(page);
+}
+export function getSettingsPages() {
+  return settingsPages;
+}

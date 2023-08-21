@@ -138,3 +138,89 @@ rack:
 settings:
   confirm: 确认
   reset: 重置
+
+  general: 常规
+
+  personalized: 个性化
+  nickname: 昵称
+  theme:
+    title: 主题
+    system: 使用系统设置
+    light: 亮色
+    dark: 暗色
+  theme_color: 主题色
+  use_system_color: 使用系统主题色
+
+  application: 应用程序
+  language: 语言
+  reset_settings:
+    title: 重置设置
+    description: 恢复所有设置为默认值，数据库不受影响
+    button: 重置
+    dialog: 
+      title: 确认要恢复设置吗？
+      content: 此操作不可恢复
+    before_relaunch: 即将重新启动番剧管理器
+  
+  database: 数据库
+
+  mark:
+    title: 标记
+    category: 分类
+    tag: 标签
+
+  rcmd_weights:
+    title: 每周推荐权重
+    category: 分类
+    tag: 标签
+    favorite: 喜爱
+
+  special_categories:
+    title: 特殊分类
+    watched: 看完
+    pay: 付费
+    serialized: 连载中
+
+  archive:
+    title: 归档
+    rename:
+      button: 重命名
+      category: 重命名分类
+      tag: 重命名标签
+    merge:
+      button: 合并
+      category: 合并分类
+      tag: 合并标签
+    delete:
+      button: 删除
+      category: 删除分类
+      tag: 删除标签
+
+  manage: 管理
+  open_db_dir: 打开数据库所在目录
+  move_db:
+    title: 移动数据库
+    button: 移动
+  backup:
+    title: 备份数据库
+    button: 创建备份
+  recover:
+    title: 恢复数据库
+    button: 加载备份
+
+  danger: 危险操作
+  reset_db:
+    title: 重置数据库
+    button: 重置
+
+  about: 关于
+  version:
+    title: 版本
+    check_update: 检查更新
+    auto_check_update: 自动检查更新
+  open_source:
+    title: 开放源代码
+    license: 许可证
+    third_party: 第三方源代码
+  
+  extensions: 扩展程序

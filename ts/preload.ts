@@ -11,13 +11,14 @@ import { initUI } from "./ui/main";
 
 document.addEventListener('DOMContentLoaded',async ()=>{
   initWindowEvent();
+  
+  initUI();
 
   await initConfig();
 
   await settings.init();
 
   await updateLocale(settings.getLocale());
-  initUI();
 
   initPage();
 

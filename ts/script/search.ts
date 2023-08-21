@@ -3,6 +3,7 @@ import { history } from "./page";
 import { fullSearch } from "./page/search";
 import { db } from "./db";
 import { UIBangumi } from "../ui/bangumi";
+import { LocaleAuto } from "../ui/lang";
 
 let searchbar: UIText;
 
@@ -63,5 +64,8 @@ export async function initSearchbar() {
       return;
     }
     quickSearch(keyword);
+  });
+  new LocaleAuto({key: 'search.type_to_search'}, (str: string)=>{
+    searchbar.placeholder = str;
   });
 }

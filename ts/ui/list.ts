@@ -1,9 +1,9 @@
-import { CompiledObject, SettingGroup, SettingTemplate } from "./template";
+import { VDOM } from "./vdom";
 
 export class UIList extends HTMLElement{
+  private _inited: boolean = false;
   private _inline: boolean = true;
-  private _compiled: CompiledObject[] = [];
-  private _template!: SettingGroup;
+  private _template!: VDOM;
   private _container: HTMLDivElement;
   private _adder: HTMLButtonElement;
   constructor(){
@@ -13,13 +13,11 @@ export class UIList extends HTMLElement{
     this._adder = document.createElement('button');
     this._adder.classList.add('ui-list-add');
     this._adder.innerHTML = '<div class="icon icon-Add"></div>';
-    this._adder.addEventListener('click',()=>this.add());
-  }
-  init(template: SettingGroup){
-    if (this._template !== undefined) return;
-    this._template = template;
+    this._adder.addEventListener('click',()=>this._add());
   }
   connectedCallback(){
+    if (this._inited) return;
+    this._inited = true;
     this.append(this._container, this._adder);
     this.classList.toggle('ui-list-inline', this._inline);
   }
@@ -32,22 +30,30 @@ export class UIList extends HTMLElement{
   }
   get value() {
     let value: any[] = [];
-    for (const item of this._compiled) {
-      let obj = {};
-      SettingTemplate._getValue(item, obj)
-      value.push(obj);
+    for (const item of this._container.children) {
+      value.push(((item as any).vdom as VDOM).data);
     }
     return value;
   }
   set value(value: any[]) {
-    this._compiled = [];
     this._container.innerHTML = '';
-    value.forEach((v)=>this.add(v));
+    if (!this._template) return;
+    value.forEach((v)=>this._add(v));
   }
-  add(v?: any){
-    if (this._template === undefined) return;
-    let compiled = (SettingTemplate.compile(this._template, v) as CompiledObject);
-    this._compiled.push(compiled);
+  get template(): VDOM {
+    return this._template;
+  }
+  set template(value: VDOM) {
+    if (!(value instanceof VDOM)) throw new Error(`List's template require a vdom`);
+    this._template = value;
+    this.value = this.value;
+  }
+  private _add(v?: any){
+    if (!this._template) return;
+    let vdom = this._template.clone(true);
+    if (v !== undefined) {
+      vdom.data = v;
+    }
     let item = document.createElement('div');
     item.classList.add('ui-list-item')
     let sorter = document.createElement('div');
@@ -59,29 +65,19 @@ export class UIList extends HTMLElement{
     down.classList.add('ui-list-item-sort-down');
     down.innerHTML = '<div class="icon icon-ChevronDown"></div>';
     sorter.append(up, down);
-    compiled.element.classList.add('ui-list-item-content');
+    vdom.classList.add('ui-list-item-content');
     let remover = document.createElement('button');
     remover.classList.add('ui-list-item-remove');
     remover.innerHTML = '<div class="icon icon-Remove"></div>';
-    item.append(sorter, compiled.element, remover);
+    item.append(sorter, vdom._element, remover);
     this._container.append(item);
     up.addEventListener('click',()=>{
-      let i = this._compiled.findIndex((i)=>i === compiled);
-      if (i === 0) return;
-      this._compiled[i] = this._compiled[i - 1];
-      this._compiled[i - 1] = compiled;
       (item.previousSibling as HTMLDivElement).before(item);
     });
     down.addEventListener('click',()=>{
-      let i = this._compiled.findIndex((i)=>i === compiled);
-      if (i + 1 === this._compiled.length) return;
-      this._compiled[i] = this._compiled[i + 1];
-      this._compiled[i + 1] = compiled;
       (item.nextSibling as HTMLDivElement).after(item);
     });
     remover.addEventListener('click',()=>{
-      let i = this._compiled.findIndex((i)=>i === compiled);
-      this._compiled = this._compiled.slice(0,i).concat(this._compiled.slice(i + 1));
       item.remove();
     });
   }

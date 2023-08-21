@@ -1,11 +1,15 @@
+import { wash } from "../helper/wash";
 import { UIColor } from "./color";
+import { UIIcon } from "./icon";
 import { UIImagePicker } from "./image";
 import { LangTemplateMap, LocaleAuto, UILang } from "./lang";
 import { UIList } from "./list";
 import { UILoader } from "./loader";
 import { UINumber } from "./number";
+import { UIProgress } from "./progress";
 import { UIRange } from "./range";
 import { UISelect } from "./select";
+import { UISettingItem, UISettingItemChild } from "./settings";
 import { UISwitch } from "./switch";
 import { UITags } from "./tags";
 import { UIText } from "./text";
@@ -18,109 +22,148 @@ type VTextButtons = {
   tooltipLocaleKey?: string,
 }[];
 
+export interface VDOMEvent{
+  /** This is not used in Node.js and is provided purely for completeness. */
+  readonly bubbles: boolean;
+  /** Alias for event.stopPropagation(). This is not used in Node.js and is provided purely for completeness. */
+  cancelBubble: () => void;
+  /** True if the event was created with the cancelable option */
+  readonly cancelable: boolean;
+  /** This is not used in Node.js and is provided purely for completeness. */
+  readonly composed: boolean;
+  /** Returns an array containing the current EventTarget as the only entry or empty if the event is not being dispatched. This is not used in Node.js and is provided purely for completeness. */
+  composedPath(): [VDOM?]
+  /** Alias for event.target. */
+  readonly currentTarget: VDOM | null;
+  /** Is true if cancelable is true and event.preventDefault() has been called. */
+  readonly defaultPrevented: boolean;
+  /** This is not used in Node.js and is provided purely for completeness. */
+  readonly eventPhase: 0 | 2;
+  /** The `AbortSignal` "abort" event is emitted with `isTrusted` set to `true`. The value is `false` in all other cases. */
+  readonly isTrusted: boolean;
+  /** Sets the `defaultPrevented` property to `true` if `cancelable` is `true`. */
+  preventDefault(): void;
+  /** This is not used in Node.js and is provided purely for completeness. */
+  returnValue: boolean;
+  /** Alias for event.target. */
+  readonly srcElement: VDOM | null;
+  /** Stops the invocation of event listeners after the current one completes. */
+  stopImmediatePropagation(): void;
+  /** This is not used in Node.js and is provided purely for completeness. */
+  stopPropagation(): void;
+  /** The `EventTarget` dispatching the event */
+  readonly target: VDOM | null;
+  /** The millisecond timestamp when the Event object was created. */
+  readonly timeStamp: number;
+  /** Returns the type of event, e.g. "click", "hashchange", or "submit". */
+  readonly type: string;
+}
+
+type VDOMEventHandler = (event: VDOMEvent)=>any;
+
 type VDOMEvents = {
-  "fullscreenchange"?: (this: VDOM, ev: Event)=>any,
-  "fullscreenerror"?: (this: VDOM, ev: Event)=>any,
-  "abort"?: (this: VDOM, ev: UIEvent)=>any,
-  "animationcancel"?: (this: VDOM, ev: AnimationEvent)=>any,
-  "animationend"?: (this: VDOM, ev: AnimationEvent)=>any,
-  "animationiteration"?: (this: VDOM, ev: AnimationEvent)=>any,
-  "animationstart"?: (this: VDOM, ev: AnimationEvent)=>any,
-  "auxclick"?: (this: VDOM, ev: MouseEvent)=>any,
-  "beforeinput"?: (this: VDOM, ev: InputEvent)=>any,
-  "blur"?: (this: VDOM, ev: FocusEvent)=>any,
-  "cancel"?: (this: VDOM, ev: Event)=>any,
-  "canplay"?: (this: VDOM, ev: Event)=>any,
-  "canplaythrough"?: (this: VDOM, ev: Event)=>any,
-  "change"?: (this: VDOM, ev: Event)=>any,
-  "click"?: (this: VDOM, ev: MouseEvent)=>any,
-  "close"?: (this: VDOM, ev: Event)=>any,
-  "compositionend"?: (this: VDOM, ev: CompositionEvent)=>any,
-  "compositionstart"?: (this: VDOM, ev: CompositionEvent)=>any,
-  "compositionupdate"?: (this: VDOM, ev: CompositionEvent)=>any,
-  "contextmenu"?: (this: VDOM, ev: MouseEvent)=>any,
-  "copy"?: (this: VDOM, ev: ClipboardEvent)=>any,
-  "cuechange"?: (this: VDOM, ev: Event)=>any,
-  "cut"?: (this: VDOM, ev: ClipboardEvent)=>any,
-  "dblclick"?: (this: VDOM, ev: MouseEvent)=>any,
-  "drag"?: (this: VDOM, ev: DragEvent)=>any,
-  "dragend"?: (this: VDOM, ev: DragEvent)=>any,
-  "dragenter"?: (this: VDOM, ev: DragEvent)=>any,
-  "dragleave"?: (this: VDOM, ev: DragEvent)=>any,
-  "dragover"?: (this: VDOM, ev: DragEvent)=>any,
-  "dragstart"?: (this: VDOM, ev: DragEvent)=>any,
-  "drop"?: (this: VDOM, ev: DragEvent)=>any,
-  "durationchange"?: (this: VDOM, ev: Event)=>any,
-  "emptied"?: (this: VDOM, ev: Event)=>any,
-  "ended"?: (this: VDOM, ev: Event)=>any,
-  "error"?: (this: VDOM, ev: ErrorEvent)=>any,
-  "focus"?: (this: VDOM, ev: FocusEvent)=>any,
-  "focusin"?: (this: VDOM, ev: FocusEvent)=>any,
-  "focusout"?: (this: VDOM, ev: FocusEvent)=>any,
-  "formdata"?: (this: VDOM, ev: FormDataEvent)=>any,
-  "gotpointercapture"?: (this: VDOM, ev: PointerEvent)=>any,
-  "input"?: (this: VDOM, ev: Event)=>any,
-  "invalid"?: (this: VDOM, ev: Event)=>any,
-  "keydown"?: (this: VDOM, ev: KeyboardEvent)=>any,
-  "keypress"?: (this: VDOM, ev: KeyboardEvent)=>any,
-  "keyup"?: (this: VDOM, ev: KeyboardEvent)=>any,
-  "load"?: (this: VDOM, ev: Event)=>any,
-  "loadeddata"?: (this: VDOM, ev: Event)=>any,
-  "loadedmetadata"?: (this: VDOM, ev: Event)=>any,
-  "loadstart"?: (this: VDOM, ev: Event)=>any,
-  "lostpointercapture"?: (this: VDOM, ev: PointerEvent)=>any,
-  "mousedown"?: (this: VDOM, ev: MouseEvent)=>any,
-  "mouseenter"?: (this: VDOM, ev: MouseEvent)=>any,
-  "mouseleave"?: (this: VDOM, ev: MouseEvent)=>any,
-  "mousemove"?: (this: VDOM, ev: MouseEvent)=>any,
-  "mouseout"?: (this: VDOM, ev: MouseEvent)=>any,
-  "mouseover"?: (this: VDOM, ev: MouseEvent)=>any,
-  "mouseup"?: (this: VDOM, ev: MouseEvent)=>any,
-  "paste"?: (this: VDOM, ev: ClipboardEvent)=>any,
-  "pause"?: (this: VDOM, ev: Event)=>any,
-  "play"?: (this: VDOM, ev: Event)=>any,
-  "playing"?: (this: VDOM, ev: Event)=>any,
-  "pointercancel"?: (this: VDOM, ev: PointerEvent)=>any,
-  "pointerdown"?: (this: VDOM, ev: PointerEvent)=>any,
-  "pointerenter"?: (this: VDOM, ev: PointerEvent)=>any,
-  "pointerleave"?: (this: VDOM, ev: PointerEvent)=>any,
-  "pointermove"?: (this: VDOM, ev: PointerEvent)=>any,
-  "pointerout"?: (this: VDOM, ev: PointerEvent)=>any,
-  "pointerover"?: (this: VDOM, ev: PointerEvent)=>any,
-  "pointerup"?: (this: VDOM, ev: PointerEvent)=>any,
-  "progress"?: (this: VDOM, ev: ProgressEvent)=>any,
-  "ratechange"?: (this: VDOM, ev: Event)=>any,
-  "reset"?: (this: VDOM, ev: Event)=>any,
-  "resize"?: (this: VDOM, ev: UIEvent)=>any,
-  "scroll"?: (this: VDOM, ev: Event)=>any,
-  "securitypolicyviolation"?: (this: VDOM, ev: SecurityPolicyViolationEvent)=>any,
-  "seeked"?: (this: VDOM, ev: Event)=>any,
-  "seeking"?: (this: VDOM, ev: Event)=>any,
-  "select"?: (this: VDOM, ev: Event)=>any,
-  "selectionchange"?: (this: VDOM, ev: Event)=>any,
-  "selectstart"?: (this: VDOM, ev: Event)=>any,
-  "slotchange"?: (this: VDOM, ev: Event)=>any,
-  "stalled"?: (this: VDOM, ev: Event)=>any,
-  "submit"?: (this: VDOM, ev: SubmitEvent)=>any,
-  "suspend"?: (this: VDOM, ev: Event)=>any,
-  "timeupdate"?: (this: VDOM, ev: Event)=>any,
-  "toggle"?: (this: VDOM, ev: Event)=>any,
-  "touchcancel"?: (this: VDOM, ev: TouchEvent)=>any,
-  "touchend"?: (this: VDOM, ev: TouchEvent)=>any,
-  "touchmove"?: (this: VDOM, ev: TouchEvent)=>any,
-  "touchstart"?: (this: VDOM, ev: TouchEvent)=>any,
-  "transitioncancel"?: (this: VDOM, ev: TransitionEvent)=>any,
-  "transitionend"?: (this: VDOM, ev: TransitionEvent)=>any,
-  "transitionrun"?: (this: VDOM, ev: TransitionEvent)=>any,
-  "transitionstart"?: (this: VDOM, ev: TransitionEvent)=>any,
-  "volumechange"?: (this: VDOM, ev: Event)=>any,
-  "waiting"?: (this: VDOM, ev: Event)=>any,
-  "webkitanimationend"?: (this: VDOM, ev: Event)=>any,
-  "webkitanimationiteration"?: (this: VDOM, ev: Event)=>any,
-  "webkitanimationstart"?: (this: VDOM, ev: Event)=>any,
-  "webkittransitionend"?: (this: VDOM, ev: Event)=>any,
-  "wheel"?: (this: VDOM, ev: WheelEvent)=>any,
-  [type: string]: ((this: VDOM, ev: Event | any)=>any) | undefined,
+  "fullscreenchange"?: VDOMEventHandler,
+  "fullscreenerror"?: VDOMEventHandler,
+  "abort"?: VDOMEventHandler,
+  "animationcancel"?: VDOMEventHandler,
+  "animationend"?: VDOMEventHandler,
+  "animationiteration"?: VDOMEventHandler,
+  "animationstart"?: VDOMEventHandler,
+  "auxclick"?: VDOMEventHandler,
+  "beforeinput"?: VDOMEventHandler,
+  "blur"?: VDOMEventHandler,
+  "cancel"?: VDOMEventHandler,
+  "canplay"?: VDOMEventHandler,
+  "canplaythrough"?: VDOMEventHandler,
+  "change"?: VDOMEventHandler,
+  "click"?: VDOMEventHandler,
+  "close"?: VDOMEventHandler,
+  "compositionend"?: VDOMEventHandler,
+  "compositionstart"?: VDOMEventHandler,
+  "compositionupdate"?: VDOMEventHandler,
+  "contextmenu"?: VDOMEventHandler,
+  "copy"?: VDOMEventHandler,
+  "cuechange"?: VDOMEventHandler,
+  "cut"?: VDOMEventHandler,
+  "dblclick"?: VDOMEventHandler,
+  "drag"?: VDOMEventHandler,
+  "dragend"?: VDOMEventHandler,
+  "dragenter"?: VDOMEventHandler,
+  "dragleave"?: VDOMEventHandler,
+  "dragover"?: VDOMEventHandler,
+  "dragstart"?: VDOMEventHandler,
+  "drop"?: VDOMEventHandler,
+  "durationchange"?: VDOMEventHandler,
+  "emptied"?: VDOMEventHandler,
+  "ended"?: VDOMEventHandler,
+  "error"?: VDOMEventHandler,
+  "focus"?: VDOMEventHandler,
+  "focusin"?: VDOMEventHandler,
+  "focusout"?: VDOMEventHandler,
+  "formdata"?: VDOMEventHandler,
+  "gotpointercapture"?: VDOMEventHandler,
+  "input"?: VDOMEventHandler,
+  "invalid"?: VDOMEventHandler,
+  "keydown"?: VDOMEventHandler,
+  "keypress"?: VDOMEventHandler,
+  "keyup"?: VDOMEventHandler,
+  "load"?: VDOMEventHandler,
+  "loadeddata"?: VDOMEventHandler,
+  "loadedmetadata"?: VDOMEventHandler,
+  "loadstart"?: VDOMEventHandler,
+  "lostpointercapture"?: VDOMEventHandler,
+  "mousedown"?: VDOMEventHandler,
+  "mouseenter"?: VDOMEventHandler,
+  "mouseleave"?: VDOMEventHandler,
+  "mousemove"?: VDOMEventHandler,
+  "mouseout"?: VDOMEventHandler,
+  "mouseover"?: VDOMEventHandler,
+  "mouseup"?: VDOMEventHandler,
+  "paste"?: VDOMEventHandler,
+  "pause"?: VDOMEventHandler,
+  "play"?: VDOMEventHandler,
+  "playing"?: VDOMEventHandler,
+  "pointercancel"?: VDOMEventHandler,
+  "pointerdown"?: VDOMEventHandler,
+  "pointerenter"?: VDOMEventHandler,
+  "pointerleave"?: VDOMEventHandler,
+  "pointermove"?: VDOMEventHandler,
+  "pointerout"?: VDOMEventHandler,
+  "pointerover"?: VDOMEventHandler,
+  "pointerup"?: VDOMEventHandler,
+  "progress"?: VDOMEventHandler,
+  "ratechange"?: VDOMEventHandler,
+  "reset"?: VDOMEventHandler,
+  "resize"?: VDOMEventHandler,
+  "scroll"?: VDOMEventHandler,
+  "securitypolicyviolation"?: VDOMEventHandler,
+  "seeked"?: VDOMEventHandler,
+  "seeking"?: VDOMEventHandler,
+  "select"?: VDOMEventHandler,
+  "selectionchange"?: VDOMEventHandler,
+  "selectstart"?: VDOMEventHandler,
+  "slotchange"?: VDOMEventHandler,
+  "stalled"?: VDOMEventHandler,
+  "submit"?: VDOMEventHandler,
+  "suspend"?: VDOMEventHandler,
+  "timeupdate"?: VDOMEventHandler,
+  "toggle"?: VDOMEventHandler,
+  "touchcancel"?: VDOMEventHandler,
+  "touchend"?: VDOMEventHandler,
+  "touchmove"?: VDOMEventHandler,
+  "touchstart"?: VDOMEventHandler,
+  "transitioncancel"?: VDOMEventHandler,
+  "transitionend"?: VDOMEventHandler,
+  "transitionrun"?: VDOMEventHandler,
+  "transitionstart"?: VDOMEventHandler,
+  "volumechange"?: VDOMEventHandler,
+  "waiting"?: VDOMEventHandler,
+  "webkitanimationend"?: VDOMEventHandler,
+  "webkitanimationiteration"?: VDOMEventHandler,
+  "webkitanimationstart"?: VDOMEventHandler,
+  "webkittransitionend"?: VDOMEventHandler,
+  "wheel"?: VDOMEventHandler,
+  [type: string]: VDOMEventHandler | undefined,
 };
 
 type VDOMAttribute = { [qualifiedName: string]: string };
@@ -283,15 +326,15 @@ type VLangTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
-  setter?: (this: VDOM, str: string) => any,
   templateMap?: LangTemplateMap,
 };
 
 type VIconTemplate = {
   type: 'icon',
   events?: VDOMEvents,
-  key: string,
+  key?: string,
   namespace?: string,
+  image?: boolean,
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
@@ -300,7 +343,7 @@ type VIconTemplate = {
 type VListTemplate = {
   type: 'list',
   events?: VDOMEvents,
-  value?: string,
+  value?: any[],
   template: VDOMTemplate[],
   classList?: string[],
   attribute?: VDOMAttribute,
@@ -335,6 +378,7 @@ type VNumberTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
+  dataKey?: string,
 };
 
 type VRangeTemplate = {
@@ -347,6 +391,7 @@ type VRangeTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
+  dataKey?: string,
 };
 
 type VSelectTemplate = {
@@ -370,6 +415,7 @@ type VSwitchTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
+  dataKey?: string,
 };
 
 type VTagsTemplate = {
@@ -379,6 +425,7 @@ type VTagsTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
+  dataKey?: string,
 };
 
 type VTextTemplate = {
@@ -396,10 +443,38 @@ type VTextTemplate = {
   dataKey?: string,
 };
 
-type VDOMTemplate = VDivTemplate | VSpanTemplate | VITemplate | VBTemplate | VUTemplate | VDelTemplate | VBRTemplate | VImageTemplate | VButtonTemplate | VInputTemplate | VTextAreaTemplate | VColorTemplate | VImagePickerTemplate | VLangTemplate | VIconTemplate | VListTemplate | VLoaderTemplate | VProgressTemplate | VNumberTemplate | VRangeTemplate | VSelectTemplate | VSwitchTemplate | VTagsTemplate | VTextTemplate;
+type VSettingItemTemplate = {
+  type: 'setting',
+  icon?: VIconTemplate,
+  name?: VDivTemplate,
+  description?: VDivTemplate,
+  head?: VDivTemplate,
+  body?: VDivTemplate,
+  events?: VDOMEvents,
+  classList?: string[],
+  attribute?: VDOMAttribute,
+  style?: VDOMStyle,
+  locale?: VDOMLocale,
+  dataKey?: string,
+};
 
-type VDOMOriginHTMLElements = HTMLElement | HTMLDivElement | HTMLSpanElement | HTMLBRElement | HTMLImageElement | HTMLButtonElement | HTMLInputElement | HTMLTextAreaElement | UIColor | UIImagePicker | UILang | UIList | UILoader | UINumber | UIRange | UISelect | UISwitch | UITags | UIText;
-type VDOMOriginHTMLElementTags = 'div' | 'span' | 'b' | 'i' | 'u' | 'del' | 'br' | 'button' | 'input' | 'textarea' | 'ui-color' | 'ui-image-picker' | 'ui-lang' | 'ui-list' | 'ui-loader' | 'ui-number' | 'ui-range' | 'ui-select' | 'ui-switch' | 'ui-tags' | 'ui-text';
+type VSettingItemChildTemplate = {
+  type: 'setting-child',
+  icon?: VIconTemplate,
+  name?: VDivTemplate,
+  description?: VDivTemplate,
+  head?: VDivTemplate,
+  events?: VDOMEvents,
+  classList?: string[],
+  attribute?: VDOMAttribute,
+  style?: VDOMStyle,
+  locale?: VDOMLocale,
+  dataKey?: string,
+};
+
+export type VDOMTemplate = VDivTemplate | VSpanTemplate | VITemplate | VBTemplate | VUTemplate | VDelTemplate | VBRTemplate | VImageTemplate | VButtonTemplate | VInputTemplate | VTextAreaTemplate | VColorTemplate | VImagePickerTemplate | VLangTemplate | VIconTemplate | VListTemplate | VLoaderTemplate | VProgressTemplate | VNumberTemplate | VRangeTemplate | VSelectTemplate | VSwitchTemplate | VTagsTemplate | VTextTemplate | VSettingItemTemplate | VSettingItemChildTemplate;
+
+type VDOMObject = VDiv | VSpan | VI | VB | VU | VDel | VBR | VImg | VButton | VInput | VTextArea | VColor | VImagePicker | VLang | VIcon | VList | VLoader | VProgress | VNumber | VRange | VSelect | VSwitch | VTags | VText | VSettingItem | VSettingItemChild;
 
 class VDOMLocaleObject{
   private _vdom: VDOM;
@@ -445,8 +520,57 @@ class VDOMLocaleObject{
   }
 }
 
-function cloneVDOM<T>(prototype: any, origin: VDOM): T {
-  let clone = new prototype();
+class VDOMEventObject{
+  private _vdom: VDOM;
+  private _handlers: { [type: string]: Set<VDOMEventHandler> } = {};
+  constructor(vdom: VDOM) {
+    this._vdom = vdom;
+  }
+  composedPath = (target: VDOM)=>{
+    return ()=>{
+      if (!target) return [];
+      let path: VDOM[] = [target];
+      let current = target;
+      while (current.parent) {
+        current = current.parent;
+        path.push(current);
+      }
+      return path;
+    }
+  }
+  on(type: string, handler: VDOMEventHandler) {
+    if (!(this._handlers[type] instanceof Set)) {
+      this._handlers[type] = new Set();
+      this._vdom._element.addEventListener(type, this.eventHandler);
+    }
+    this._handlers[type].add(handler);
+  }
+  off(type: string, handler: VDOMEventHandler) {
+    if (!(this._handlers[type] instanceof Set)) return;
+    this._handlers[type].delete(handler);
+  }
+  static getVDOM(element: Node | null): VDOM | null {
+    let current: Node | null = element;
+    if (!current) return null;
+    do {
+      if ((current as any).vdom) {
+        return (current as any).vdom;
+      }
+      current = current.parentNode;
+    } while (current && current.parentNode);
+    return null;
+  }
+  eventHandler = (event: Event)=>{
+    let newEvent = wash<any>(event);
+    newEvent.target = VDOMEventObject.getVDOM(event.target as Node);
+    newEvent.currentTarget = VDOMEventObject.getVDOM(event.currentTarget as Node);
+    newEvent.srcElement = VDOMEventObject.getVDOM(event.srcElement as Node);
+    newEvent.composedPath = this.composedPath(newEvent.target);
+    this._handlers[event.type].forEach(async (handler)=>handler(newEvent));
+  }
+}
+
+function copyVDOMToVDOM(clone: VDOM, origin: VDOM, deep?: boolean) {
   clone.attributes = origin.attributes;
   clone.disabled = origin.disabled;
   clone.inert = origin.inert;
@@ -454,40 +578,367 @@ function cloneVDOM<T>(prototype: any, origin: VDOM): T {
   clone.locale.namespace = origin.locale.namespace;
   clone.locale.setter = origin.locale.setter;
   clone.locale.setTemplate(origin.locale.getTemplate());
-  return clone;
+  clone.data = origin.data;
+  if (deep) {
+    for (const child of origin.children) {
+      clone.append(child.clone(true));
+    }
+  }
+}
+
+function cloneVDOM<T>(prototype: any, origin: VDOM, deep?: boolean): T {
+  let clone = new prototype() as VDOM;
+  copyVDOMToVDOM(clone, origin, deep);
+  return clone as T;
+}
+
+function getData(value: any, keys: string) {
+  let target = value;
+  for (const key of keys.split('.')) {
+    target = target?.[key];
+  }
+  return target;
+}
+function setData(value: any, key: string) {
+  let result: any = {};
+  let target: any = result;
+  let keys = key.split('.');
+  for (let i = 0; i < keys.length; i++) {
+    if (i >= keys.length - 1) {
+      target[keys[i]] = value;
+      return result;
+    }
+    target[keys[i]] = {};
+    target = target[keys[i]];
+  }
+}
+
+function initVDOMLocale(vdom: VDOM, locale?: VDOMLocale) {
+  if (!locale) return;
+  vdom.locale.key = locale.key;
+  vdom.locale.namespace = locale.namespace;
+  vdom.locale.setter = locale.setter;
+  if (locale.templateMap) {
+    vdom.locale.setTemplate(locale.templateMap);
+  }
+}
+
+function initVIcon(vdom: VIcon, template: VIconTemplate) {
+  if (typeof template.key === 'string') {
+    vdom.key = template.key;
+  }
+  if (typeof template.namespace === 'string') {
+    vdom.namespace = template.namespace;
+  }
+  if (typeof template.image === 'boolean') {
+    vdom.image = template.image;
+  }
+}
+
+function initVDOMWithChildren(vdom: VDiv | VSpan | VI | VB | VU | VDel | VButton, template: VDivTemplate | VSpanTemplate | VITemplate | VBTemplate | VUTemplate | VDelTemplate | VButtonTemplate) {
+  if (typeof template.text === 'string') {
+    vdom.text = template.text;
+  }
+  if (Array.isArray(template.children)) {
+    for (const child of template.children) {
+      vdom.append(VDOM.create(child));
+    }
+  }
+}
+
+function initVDOM(vdom: VDOM, template: VDOMTemplate) {
+  if (template.attribute) {
+    vdom.attributes = template.attribute;
+  }
+  if (template.classList) {
+    vdom.classList.add(...template.classList);
+  }
+  if (template.events) {
+    for (const type of Object.keys(template.events)) {
+      if (typeof template.events[type] !== 'function') continue;
+      vdom.event.on(type, template.events[type] as VDOMEventHandler);
+    }
+  }
+  switch (typeof template.style) {
+    case "string":
+      vdom.style.cssText = template.style;
+      break;
+    case "object":
+      for (const key of Object.keys(template.style)) {
+        if (typeof (vdom.style as unknown as {[name: string]: string})[key] !== 'string') continue;
+        (vdom.style as unknown as {[name: string]: string})[key] = template.style[key];
+      }
+      break;
+  }
+  initVDOMLocale(vdom, (template as any).locale);
 }
 
 export class VDOM{
-  /* static create(template: VDOMTemplate): VDOM {
+  static create<T extends VDOMObject>(template: VDOMTemplate): T {
+    let vdom;
     switch (template.type) {
       case "number":
+        vdom = new VNumber();
+        if (typeof template.value === 'number') {
+          vdom.value = template.value;
+        }
+        if (typeof template.max === 'number') {
+          vdom.max = template.max;
+        }
+        if (typeof template.min === 'number') {
+          vdom.min = template.min;
+        }
+        if (typeof template.step === 'number') {
+          vdom.step = template.step;
+        }
+        if (typeof template.dataKey === 'string') {
+          vdom.dataKey = template.dataKey;
+        }
+        break;
       case "div":
+        vdom = new VDiv();
+        initVDOMWithChildren(vdom, template);
+        break;
       case "span":
+        vdom = new VSpan();
+        initVDOMWithChildren(vdom, template);
+        break;
       case "i":
+        vdom = new VI();
+        initVDOMWithChildren(vdom, template);
+        break;
       case "b":
+        vdom = new VB();
+        initVDOMWithChildren(vdom, template);
+        break;
       case "u":
+        vdom = new VU();
+        initVDOMWithChildren(vdom, template);
+        break;
       case "del":
+        vdom = new VDel();
+        initVDOMWithChildren(vdom, template);
+        break;
       case "br":
+        vdom = new VBR();
+        break;
       case "img":
+        vdom = new VImg();
+        if (typeof template.src === 'string') {
+          vdom.src = template.src;
+        }
+        break;
       case "button":
+        vdom = new VButton();
+        initVDOMWithChildren(vdom, template);
+        break;
       case "input":
+        vdom = new VInput();
+        if (typeof template.value === 'string') {
+          vdom.value = template.value;
+        }
+        if (typeof template.placeholder === 'string') {
+          vdom.placeholder = template.placeholder;
+        }
+        if (typeof template.dataKey === 'string') {
+          vdom.dataKey = template.dataKey;
+        }
+        break;
       case "textarea":
+        vdom = new VTextArea();
+        if (typeof template.value === 'string') {
+          vdom.value = template.value;
+        }
+        if (typeof template.placeholder === 'string') {
+          vdom.placeholder = template.placeholder;
+        }
+        if (typeof template.dataKey === 'string') {
+          vdom.dataKey = template.dataKey;
+        }
+        break;
       case "color":
+        vdom = new VColor();
+        if (typeof template.value === 'string') {
+          vdom.value = template.value;
+        }
+        if (typeof template.dataKey === 'string') {
+          vdom.dataKey = template.dataKey;
+        }
+        break;
       case "image-picker":
+        vdom = new VImagePicker();
+        if (typeof template.value === 'string') {
+          vdom.value = template.value;
+        }
+        if (typeof template.default === 'string') {
+          vdom.default = template.default;
+        }
+        if (typeof template.dataKey === 'string') {
+          vdom.dataKey = template.dataKey;
+        }
+        break;
       case "lang":
+        vdom = new VLang();
+        if (typeof template.key === 'string') {
+          vdom.key = template.key;
+        }
+        if (typeof template.namespace === 'string') {
+          vdom.namespace = template.namespace;
+        }
+        if (template.templateMap) {
+          vdom.setTemplate(template.templateMap);
+        }
+        break;
       case "icon":
+        vdom = new VIcon();
+        initVIcon(vdom, template);
+        break;
       case "list":
+        vdom = new VList();
+        if (Array.isArray(template.value)) {
+          vdom.value = template.value;
+        }
+        break;
       case "loader":
+        vdom = new VLoader();
+        if (typeof template.value === 'number') {
+          vdom.value = template.value;
+        }
+        break;
       case "progress":
+        vdom = new VProgress();
+        if (typeof template.value === 'number') {
+          vdom.value = template.value;
+        }
+        break;
       case "range":
+        vdom = new VRange();
+        if (typeof template.value === 'number') {
+          vdom.value = template.value;
+        }
+        if (typeof template.max === 'number') {
+          vdom.max = template.max;
+        }
+        if (typeof template.min === 'number') {
+          vdom.min = template.min;
+        }
+        if (typeof template.step === 'number') {
+          vdom.step = template.step;
+        }
+        if (typeof template.dataKey === 'string') {
+          vdom.dataKey = template.dataKey;
+        }
+        break;
       case "select":
+        vdom = new VSelect();
+        vdom.value = template.value;
+        if (Array.isArray(template.values)) {
+          vdom.values = template.values;
+        }
+        if (typeof template.placeholder === 'string') {
+          vdom.placeholder = template.placeholder;
+        }
+        if (typeof template.group === 'string') {
+          vdom.group = template.group;
+        }
+        if (typeof template.dataKey === 'string') {
+          vdom.dataKey = template.dataKey;
+        }
+        break;
       case "switch":
+        vdom = new VSwitch();
+        if (typeof template.value === 'boolean') {
+          vdom.value = template.value;
+        }
+        if (typeof template.dataKey === 'string') {
+          vdom.dataKey = template.dataKey;
+        }
+        break;
       case "tags":
+        vdom = new VTags();
+        if (Array.isArray(template.value)) {
+          vdom.value = template.value;
+        }
+        if (typeof template.dataKey === 'string') {
+          vdom.dataKey = template.dataKey;
+        }
+        break;
       case "text":
+        vdom = new VText();
+        if (typeof template.value === 'string') {
+          vdom.value = template.value;
+        }
+        if (typeof template.placeholder === 'string') {
+          vdom.placeholder = template.placeholder;
+        }
+        if (template.buttonsLeft) {
+          vdom.buttonsLeft = template.buttonsLeft;
+        }
+        if (template.buttonsRight) {
+          vdom.buttonsRight = template.buttonsRight;
+        }
+        if (Array.isArray(template.list)) {
+          vdom.list = template.list;
+        }
+        if (typeof template.dataKey === 'string') {
+          vdom.dataKey = template.dataKey;
+        }
+        break;
+      case "setting":
+        vdom = new VSettingItem();
+        if (template.icon) {
+          initVIcon(vdom.icon, template.icon);
+          initVDOM(vdom.icon, template.icon);
+        }
+        if (template.name) {
+          initVDOMWithChildren(vdom.name, template.name);
+          initVDOM(vdom.name, template.name);
+        }
+        if (template.description) {
+          initVDOMWithChildren(vdom.description, template.description);
+          initVDOM(vdom.description, template.description);
+        }
+        if (template.head) {
+          initVDOMWithChildren(vdom.head, template.head);
+          initVDOM(vdom.head, template.head);
+        }
+        if (template.body) {
+          initVDOMWithChildren(vdom.body, template.body);
+          initVDOM(vdom.body, template.body);
+        }
+        if (typeof template.dataKey === 'string') {
+          vdom.dataKey = template.dataKey;
+        }
+        break;
+      case "setting-child":
+        vdom = new VSettingItemChild();
+        if (template.icon) {
+          initVIcon(vdom.icon, template.icon);
+          initVDOM(vdom.icon, template.icon);
+        }
+        if (template.name) {
+          initVDOMWithChildren(vdom.name, template.name);
+          initVDOM(vdom.name, template.name);
+        }
+        if (template.description) {
+          initVDOMWithChildren(vdom.description, template.description);
+          initVDOM(vdom.description, template.description);
+        }
+        if (template.head) {
+          initVDOMWithChildren(vdom.head, template.head);
+          initVDOM(vdom.head, template.head);
+        }
+        if (typeof template.dataKey === 'string') {
+          vdom.dataKey = template.dataKey;
+        }
+        break;
     }
-  } */
+    initVDOM(vdom, template);
+    return vdom as T;
+  }
   _element!: HTMLElement;
   private _locale: VDOMLocaleObject = new VDOMLocaleObject(this);
+  private _event: VDOMEventObject = new VDOMEventObject(this);
   get locale() {
     return this._locale;
   } 
@@ -519,8 +970,8 @@ export class VDOM{
     }
     return this._element.after(...nodes);
   }
-  get remove(): HTMLElement['remove'] {
-    return this._element.remove;
+  remove(): void {
+    return this._element.remove();
   }
   get nextSibling(): VDOM | null {
     if (!(this._element.nextSibling as any)?.vdom) return null;
@@ -542,7 +993,7 @@ export class VDOM{
     }
     return result;
   }
-  clone(): VDOM {
+  clone(deep?: boolean): VDOM {
     return new VDOM();
   }
   contains(other: VDOM): boolean {
@@ -557,14 +1008,17 @@ export class VDOM{
     });
     return result;
   }
-  get addEventListener(): HTMLElement['addEventListener'] {
-    return this._element.addEventListener;
-  }
-  get removeEventListener(): HTMLElement['removeEventListener'] {
-    return this._element.removeEventListener;
+  get event(): VDOMEventObject {
+    return this._event;
   }
   get classList(): DOMTokenList {
     return this._element.classList;
+  }
+  get className(): string {
+    return this._element.className;
+  }
+  set className(value: string) {
+    this._element.className = value;
   }
   get attributes(): VDOMAttribute {
     let result: VDOMAttribute = {};
@@ -575,25 +1029,28 @@ export class VDOM{
   }
   set attributes(values: VDOMAttribute) {
     for (const name of Object.keys(values)) {
-      this._element.setAttribute(name, values[name]);
+      this.setAttribute(name, values[name]);
     }
   }
-  get setAttribute(): HTMLElement['setAttribute'] {
-    return this._element.setAttribute;
+  setAttribute(qualifiedName: string, value: string): void {
+    if (qualifiedName.indexOf('on') === 0) return;
+    this._element.setAttribute(qualifiedName, value);
   }
-  get getAttribute(): HTMLElement['getAttribute'] {
-    return this._element.getAttribute;
+  getAttribute(qualifiedName: string): string | null {
+    return this._element.getAttribute(qualifiedName);
   }
-  get hasAttribute(): HTMLElement['hasAttribute'] {
-    return this._element.hasAttribute;
+  hasAttribute(qualifiedName: string): boolean {
+    return this._element.hasAttribute(qualifiedName);
   }
-  get toggleAttribute(): HTMLElement['toggleAttribute'] {
-    return this._element.toggleAttribute;
+  toggleAttribute(qualifiedName: string, force?: boolean | undefined) {
+    if (qualifiedName.indexOf('on') === 0) return;
+    this._element.toggleAttribute(qualifiedName, force);
   }
-  get removeAttribute(): HTMLElement['removeAttribute'] {
-    return this._element.removeAttribute;
+  removeAttribute(qualifiedName: string) {
+    if (qualifiedName.indexOf('on') === 0) return;
+    this._element.removeAttribute(qualifiedName);
   }
-  get dataset(): HTMLOrSVGElement['dataset'] {
+  get dataset(): DOMStringMap {
     return this._element.dataset;
   }
   get disabled(): boolean {
@@ -611,44 +1068,103 @@ export class VDOM{
   get style(): CSSStyleDeclaration {
     return this._element.style;
   }
-  get blur(): HTMLElement['blur'] {
-    return this._element.blur;
+  blur(): void {
+    return this._element.blur();
   }
-  get focus(): HTMLElement['focus'] {
-    return this._element.focus;
+  focus(): void {
+    return this._element.focus();
   }
-  get click(): HTMLElement['click'] {
-    return this._element.click;
+  click(): void {
+    return this._element.click();
   }
-  get getClientRects(): HTMLElement['getClientRects'] {
-    return this._element.getClientRects;
+  getClientRects(): DOMRectList {
+    return this._element.getClientRects();
   }
-  get getBoundingClientRect(): HTMLElement['getBoundingClientRect'] {
-    return this._element.getBoundingClientRect;
+  getBoundingClientRect(): DOMRect {
+    return this._element.getBoundingClientRect();
   }
-  get scroll(): Element['scroll'] {
-    return this._element.scroll;
+  scroll(...options: [option: ScrollToOptions] | [x: number, y: number]): void {
+    // NOTICE: Better to use function overload
+    // @ts-ignore
+    return this._element.scroll(...options);
   }
-  get scrollBy(): Element['scrollBy'] {
-    return this._element.scrollBy;
+  scrollBy(...options: [option: ScrollToOptions] | [x: number, y: number]): void {
+    // NOTICE: Better to use function overload
+    // @ts-ignore
+    return this._element.scrollBy(...options);
   }
-  get scrollIntoView(): Element['scrollIntoView'] {
-    return this._element.scrollIntoView;
+  scrollTo(...options: [option: ScrollToOptions] | [x: number, y: number]): void {
+    // NOTICE: Better to use function overload
+    // @ts-ignore
+    return this._element.scrollTo(...options);
   }
-  get scrollTo(): Element['scrollTo'] {
-    return this._element.scrollTo;
+  scrollIntoView(arg?: boolean | ScrollIntoViewOptions | undefined): void {
+    return this._element.scrollIntoView(arg);
   }
-  get scrollWidth(): Element['scrollWidth'] {
+  get scrollWidth(): number {
     return this._element.scrollWidth;
   }
-  get scrollHeight(): Element['scrollHeight'] {
+  get scrollHeight(): number {
     return this._element.scrollHeight;
   }
-  get scrollLeft(): Element['scrollLeft'] {
+  get scrollLeft(): number {
     return this._element.scrollLeft;
   }
-  get scrollTop(): Element['scrollTop'] {
+  get scrollTop(): number {
     return this._element.scrollTop;
+  }
+  get data(): any {
+    let data = {};
+    this.children.forEach((child)=>{
+      data = Object.assign(data, child.data);
+    });
+    return data;
+  }
+  set data(value: any) {
+    this.children.forEach((child)=>{
+      child.data = value;
+    });
+  }
+}
+
+class VDOMWithoutChild extends VDOM{
+  prepend(...vdoms: VDOM[]): void {}
+  append(...vdoms: VDOM[]): void {}
+  querySelectorAll(selector: string): VDOM[] {
+    return [];
+  }
+  get children(): VDOM[] {
+    return [];
+  }
+  contains(other: VDOM): boolean {
+    return false;
+  }
+  get data(): any {
+    return {};
+  }
+  set data(value: any) {}
+}
+
+class VDOMWithData extends VDOMWithoutChild{
+  private _dataKey: string = '';
+  get value(): any {
+    return;
+  }
+  set value(value: any) {}
+  get dataKey(): string {
+    return this._dataKey;
+  }
+  set dataKey(value: string) {
+    if (typeof value !== 'string') return;
+    this._dataKey = value;
+  }
+  get data(): any{
+    if (this._dataKey === '') return{};
+    return setData(this.value, this._dataKey);
+  }
+  set data(value: any){
+    if (this._dataKey === '') return;
+    this.value = getData(value, this._dataKey);
   }
 }
 
@@ -664,9 +1180,8 @@ export class VDiv extends VDOM{
   set text(value: string) {
     this._element.textContent = value;
   }
-  clone(): VDiv {
-    let clone = cloneVDOM<VDiv>(VDiv, this);
-    clone.text = this.text;
+  clone(deep?: boolean): VDiv {
+    let clone = cloneVDOM<VDiv>(VDiv, this, deep);
     return clone;
   }
 }
@@ -683,9 +1198,8 @@ export class VSpan extends VDOM{
   set text(value: string) {
     this._element.textContent = value;
   }
-  clone(): VSpan {
-    let clone = cloneVDOM<VSpan>(VSpan, this);
-    clone.text = this.text;
+  clone(deep?: boolean): VSpan {
+    let clone = cloneVDOM<VSpan>(VSpan, this, deep);
     return clone;
   }
 }
@@ -701,9 +1215,8 @@ export class VB extends VDOM{
   set text(value: string) {
     this._element.textContent = value;
   }
-  clone(): VB {
-    let clone = cloneVDOM<VB>(VB, this);
-    clone.text = this.text;
+  clone(deep?: boolean): VB {
+    let clone = cloneVDOM<VB>(VB, this, deep);
     return clone;
   }
 }
@@ -719,9 +1232,8 @@ export class VI extends VDOM{
   set text(value: string) {
     this._element.textContent = value;
   }
-  clone(): VI {
-    let clone = cloneVDOM<VI>(VI, this);
-    clone.text = this.text;
+  clone(deep?: boolean): VI {
+    let clone = cloneVDOM<VI>(VI, this, deep);
     return clone;
   }
 }
@@ -737,9 +1249,8 @@ export class VU extends VDOM{
   set text(value: string) {
     this._element.textContent = value;
   }
-  clone(): VU {
-    let clone = cloneVDOM<VU>(VU, this);
-    clone.text = this.text;
+  clone(deep?: boolean): VU {
+    let clone = cloneVDOM<VU>(VU, this, deep);
     return clone;
   }
 }
@@ -756,36 +1267,24 @@ export class VDel extends VDOM{
   set text(value: string) {
     this._element.textContent = value;
   }
-  clone(): VDel {
-    let clone = cloneVDOM<VDel>(VDel, this);
-    clone.text = this.text;
+  clone(deep?: boolean): VDel {
+    let clone = cloneVDOM<VDel>(VDel, this, deep);
     return clone;
   }
 }
 
-export class VBR extends VDOM{
+export class VBR extends VDOMWithoutChild{
   _element: HTMLBRElement;
   constructor() {
     super();
     this._element = document.createElement('br');
-  }
-  prepend(...vdoms: VDOM[]): void {}
-  append(...vdoms: VDOM[]): void {}
-  querySelectorAll(selector: string): VDOM[] {
-    return [];
-  }
-  get children(): VDOM[] {
-    return [];
-  }
-  contains(other: VDOM): boolean {
-    return false;
   }
   clone(): VBR {
     return cloneVDOM<VBR>(VBR, this);
   }
 }
 
-export class VImg extends VDOM{
+export class VImg extends VDOMWithoutChild{
   _element: HTMLImageElement;
   constructor() {
     super();
@@ -797,20 +1296,577 @@ export class VImg extends VDOM{
   set src(value: string) {
     this._element.src = value;
   }
-  prepend(...vdoms: VDOM[]): void {}
-  append(...vdoms: VDOM[]): void {}
-  querySelectorAll(selector: string): VDOM[] {
-    return [];
-  }
-  get children(): VDOM[] {
-    return [];
-  }
-  contains(other: VDOM): boolean {
-    return false;
-  }
   clone(): VImg {
     let clone = cloneVDOM<VImg>(VImg, this);
     clone.src = this.src;
     return clone;
+  }
+}
+
+export class VButton extends VDOM{
+  _element: HTMLButtonElement;
+  constructor() {
+    super();
+    this._element = document.createElement('button');
+  }
+  get text(): string {
+    return this._element.textContent || '';
+  }
+  set text(value: string) {
+    this._element.textContent = value;
+  }
+  clone(deep?: boolean): VButton {
+    let clone = cloneVDOM<VButton>(VButton, this, deep);
+    return clone;
+  }
+}
+
+export class VInput extends VDOMWithData{
+  _element: HTMLInputElement;
+  constructor() {
+    super();
+    this._element = document.createElement('input');
+  }
+  get value(): string {
+    return this._element.value;
+  }
+  set value(value: string) {
+    this._element.value = value;
+  }
+  get placeholder(): string {
+    return this._element.placeholder;
+  }
+  set placeholder(value: string) {
+    this._element.placeholder = value;
+  }
+  clone(): VInput {
+    let clone = cloneVDOM<VInput>(VInput, this);
+    clone.value = this.value;
+    clone.placeholder = this.placeholder;
+    clone.dataKey = this.dataKey;
+    return clone;
+  }
+}
+
+export class VTextArea extends VDOMWithData{
+  _element: HTMLTextAreaElement;
+  constructor() {
+    super();
+    this._element = document.createElement('textarea');
+  }
+  get value(): string {
+    return this._element.value;
+  }
+  set value(value: string) {
+    this._element.value = value;
+  }
+  get placeholder(): string {
+    return this._element.placeholder;
+  }
+  set placeholder(value: string) {
+    this._element.placeholder = value;
+  }
+  clone(): VTextArea {
+    let clone = cloneVDOM<VTextArea>(VTextArea, this);
+    clone.value = this.value;
+    clone.placeholder = this.placeholder;
+    clone.dataKey = this.dataKey;
+    return clone;
+  }
+}
+
+export class VColor extends VDOMWithData{
+  _element: UIColor;
+  constructor() {
+    super();
+    this._element = document.createElement('ui-color') as UIColor;
+  }
+  get value(): string {
+    return this._element.value;
+  }
+  set value(value: string) {
+    this._element.value = value;
+  }
+  clone(): VColor {
+    let clone = cloneVDOM<VColor>(VColor, this);
+    clone.value = this.value;
+    clone.dataKey = this.dataKey;
+    return clone;
+  }
+}
+
+export class VImagePicker extends VDOMWithData{
+  _element: UIImagePicker;
+  constructor() {
+    super();
+    this._element = document.createElement('ui-image-picker') as UIImagePicker;
+  }
+  get value(): string {
+    return this._element.value;
+  }
+  set value(value: string) {
+    this._element.value = value;
+  }
+  get default(): string {
+    return this._element.default;
+  }
+  set default(value: string) {
+    this._element.default = value;
+  }
+  reset(): void {
+    return this._element.reset();
+  }
+  clone(): VImagePicker {
+    let clone = cloneVDOM<VImagePicker>(VImagePicker, this);
+    clone.value = this.value;
+    clone.default = this.default;
+    clone.dataKey = this.dataKey;
+    return clone;
+  }
+}
+
+export class VLang extends VDOMWithoutChild{
+  _element: UILang;
+  constructor() {
+    super();
+    this._element = document.createElement('ui-lang') as UILang;
+  }
+  get key(): string {
+    return this._element.key;
+  }
+  set key(value: string) {
+    this._element.key = value;
+  }
+  get namespace(): string {
+    return this._element.namespace;
+  }
+  set namespace(value: string) {
+    this._element.namespace = value;
+  }
+  get getTemplate(): UILang['getTemplate'] {
+    return this._element.getTemplate;
+  }
+  get setTemplate(): UILang['setTemplate'] {
+    return this._element.setTemplate;
+  }
+  get removeTemplate(): UILang['removeTemplate'] {
+    return this._element.removeTemplate;
+  }
+  clone(): VLang {
+    let clone = cloneVDOM<VLang>(VLang, this);
+    clone.key = this.key;
+    clone.namespace = this.namespace;
+    clone.setTemplate(this.getTemplate());
+    return clone;
+  }
+}
+
+export class VIcon extends VDOMWithoutChild{
+  _element: UIIcon;
+  constructor() {
+    super();
+    this._element = document.createElement('ui-icon') as UIIcon;
+  }
+  get key(): string {
+    return this._element.key;
+  }
+  set key(value: string) {
+    this._element.key = value;
+  }
+  get namespace(): string {
+    return this._element.namespace;
+  }
+  set namespace(value: string) {
+    this._element.namespace = value;
+  }
+  get image(): boolean {
+    return this._element.image;
+  }
+  set image(value: boolean) {
+    this._element.image = value;
+  }
+  clone(): VIcon {
+    let clone = cloneVDOM<VIcon>(VIcon, this);
+    clone.key = this.key;
+    clone.namespace = this.namespace;
+    clone.image = this.image;
+    return clone;
+  }
+}
+
+export class VList extends VDOMWithData{
+  _element: UIList;
+  constructor() {
+    super();
+    this._element = document.createElement('ui-list') as UIList;
+  }
+  get value(): any[] {
+    return this._element.value;
+  }
+  set value(value: any[]) {
+    this._element.value = value;
+  }
+  get template(): VDOM {
+    return this._element.template;
+  }
+  set template(value: VDOM) {
+    this._element.template = value;
+  }
+  get inline(): boolean {
+    return this._element.inline;
+  }
+  set inline(value: boolean) {
+    this._element.inline = value;
+  }
+  clone(): VList {
+    let clone = cloneVDOM<VList>(VList, this);
+    clone.value = this.value;
+    clone.template = this.template;
+    clone.inline = this.inline;
+    return clone;
+  }
+}
+
+export class VLoader extends VDOMWithoutChild{
+  _element: UILoader;
+  constructor() {
+    super();
+    this._element = document.createElement('ui-loader') as UILoader;
+  }
+  get value(): number {
+    return this._element.value;
+  }
+  set value(value: number) {
+    this._element.value = value;
+  }
+  clone(): VLoader {
+    let clone = cloneVDOM<VLoader>(VLoader, this);
+    clone.value = this.value;
+    return clone;
+  }
+}
+
+export class VProgress extends VDOMWithoutChild{
+  _element: UIProgress;
+  constructor() {
+    super();
+    this._element = document.createElement('ui-progress') as UIProgress;
+  }
+  get value(): number {
+    return this._element.value;
+  }
+  set value(value: number) {
+    this._element.value = value;
+  }
+  clone(): VProgress {
+    let clone = cloneVDOM<VProgress>(VProgress, this);
+    clone.value = this.value;
+    return clone;
+  }
+}
+
+export class VNumber extends VDOMWithData{
+  _element: UINumber;
+  constructor() {
+    super();
+    this._element = document.createElement('ui-number') as UINumber;
+  }
+  get value(): number {
+    return this._element.value;
+  }
+  set value(value: number) {
+    this._element.value = value;
+  }
+  get max(): number {
+    return this._element.max;
+  }
+  set max(value: number) {
+    this._element.max = value;
+  }
+  get min(): number {
+    return this._element.min;
+  }
+  set min(value: number) {
+    this._element.min = value;
+  }
+  get step(): number {
+    return this._element.step;
+  }
+  set step(value: number) {
+    this._element.step = value;
+  }
+  clone(): VNumber {
+    let clone = cloneVDOM<VNumber>(VNumber, this);
+    clone.value = this.value;
+    clone.max = this.max;
+    clone.min = this.min;
+    clone.step = this.step;
+    return clone;
+  }
+}
+
+export class VRange extends VDOMWithData{
+  _element: UIRange;
+  constructor() {
+    super();
+    this._element = document.createElement('ui-range') as UIRange;
+  }
+  get value(): number {
+    return this._element.value;
+  }
+  set value(value: number) {
+    this._element.value = value;
+  }
+  get max(): number {
+    return this._element.max;
+  }
+  set max(value: number) {
+    this._element.max = value;
+  }
+  get min(): number {
+    return this._element.min;
+  }
+  set min(value: number) {
+    this._element.min = value;
+  }
+  get step(): number {
+    return this._element.step;
+  }
+  set step(value: number) {
+    this._element.step = value;
+  }
+  clone(): VRange {
+    let clone = cloneVDOM<VRange>(VRange, this);
+    clone.value = this.value;
+    clone.max = this.max;
+    clone.min = this.min;
+    clone.step = this.step;
+    return clone;
+  }
+}
+
+export class VSelect extends VDOMWithData{
+  _element: UISelect;
+  constructor() {
+    super();
+    this._element = document.createElement('ui-select') as UISelect;
+  }
+  get value(): any {
+    return this._element.value;
+  }
+  set value(value: any) {
+    this._element.value = value;
+  }
+  get values(): {name: string, value: any}[] {
+    return this._element.values;
+  }
+  set values(value: {name: string, value: any}[]) {
+    this._element.values = value;
+  }
+  get placeholder(): string {
+    return this._element.placeholder;
+  }
+  set placeholder(value: string) {
+    this._element.placeholder = value;
+  }
+  get group(): string {
+    return this._element.group;
+  }
+  set group(value: string) {
+    this._element.group = value;
+  }
+  clone(): VSelect {
+    let clone = cloneVDOM<VSelect>(VSelect, this);
+    clone.value = this.value;
+    clone.values = this.values;
+    clone.placeholder = this.placeholder;
+    clone.group = this.group;
+    return clone;
+  }
+}
+
+export class VSwitch extends VDOMWithData{
+  _element: UISwitch;
+  constructor() {
+    super();
+    this._element = document.createElement('ui-switch') as UISwitch;
+  }
+  get value(): boolean {
+    return this._element.value;
+  }
+  set value(value: boolean) {
+    this._element.value = value;
+  }
+  clone(): VSwitch {
+    let clone = cloneVDOM<VSwitch>(VSwitch, this);
+    clone.value = this.value;
+    return clone;
+  }
+}
+
+export class VTags extends VDOMWithData{
+  _element: UITags;
+  constructor() {
+    super();
+    this._element = document.createElement('ui-tags') as UITags;
+  }
+  get value(): string[] {
+    return this._element.value;
+  }
+  set value(value: string[]) {
+    this._element.value = value;
+  }
+  clone(): VTags {
+    let clone = cloneVDOM<VTags>(VTags, this);
+    clone.value = this.value;
+    return clone;
+  }
+}
+
+export class VText extends VDOMWithData{
+  _element: UIText;
+  constructor() {
+    super();
+    this._element = document.createElement('ui-text') as UIText;
+  }
+  get value(): string {
+    return this._element.value;
+  }
+  set value(value: string) {
+    this._element.value = value;
+  }
+  get placeholder(): string {
+    return this._element.placeholder;
+  }
+  set placeholder(value: string) {
+    this._element.placeholder = value;
+  }
+  get buttonsLeft(): VTextButtons {
+    return this._element.buttonsLeft;
+  }
+  set buttonsLeft(value: VTextButtons) {
+    this._element.buttonsLeft = value;
+  }
+  get buttonsRight(): VTextButtons {
+    return this._element.buttonsRight;
+  }
+  set buttonsRight(value: VTextButtons) {
+    this._element.buttonsRight = value;
+  }
+  get list(): {autoComplete: string}[] {
+    return this._element.list as {autoComplete: string}[];
+  }
+  set list(value: {autoComplete: string}[]) {
+    this._element.list = value;
+  }
+  clone(): VText {
+    let clone = cloneVDOM<VText>(VText, this);
+    clone.value = this.value;
+    clone.placeholder = this.placeholder;
+    clone.buttonsLeft = this.buttonsLeft;
+    clone.buttonsRight = this.buttonsRight;
+    return clone;
+  }
+}
+
+export class VSettingItem extends VDOMWithData{
+  _element: UISettingItem;
+  constructor() {
+    super();
+    this._element = document.createElement('ui-setting-item') as UISettingItem;
+  }
+  get value(): string {
+    return this._element.value;
+  }
+  set value(value: string) {
+    this._element.value = value;
+  }
+  get dataKey(): string {
+    return '';
+  }
+  set dataKey(value: string) {
+    return;
+  }
+  get icon(): VIcon {
+    return this._element.icon;
+  }
+  get name(): VDiv {
+    return this._element.name;
+  }
+  get description(): VDiv {
+    return this._element.description;
+  }
+  get head(): VDiv {
+    return this._element.head;
+  }
+  get body(): VDiv {
+    return this._element.body;
+  }
+  clone(): VSettingItem {
+    let clone = cloneVDOM<VSettingItem>(VSettingItem, this);
+    copyVDOMToVDOM(clone.icon, this.icon);
+    clone.icon.key = this.icon.key;
+    clone.icon.namespace = this.icon.namespace;
+    clone.icon.image = this.icon.image;
+    copyVDOMToVDOM(clone.name, this.name, true);
+    copyVDOMToVDOM(clone.description, this.description, true);
+    copyVDOMToVDOM(clone.head, this.head, true);
+    copyVDOMToVDOM(clone.body, this.body, true);
+    return clone;
+  }
+  get data(): any{
+    return this.value;
+  }
+  set data(value: any){
+    this.value = value;
+  }
+}
+
+export class VSettingItemChild extends VDOMWithData{
+  _element: UISettingItemChild;
+  constructor() {
+    super();
+    this._element = document.createElement('ui-setting-item-child') as UISettingItemChild;
+  }
+  get value(): string {
+    return this._element.head.data;
+  }
+  set value(value: string) {
+    this._element.head.data = value;
+  }
+  get dataKey(): string {
+    return '';
+  }
+  set dataKey(value: string) {
+    return;
+  }
+  get icon(): VIcon {
+    return this._element.icon;
+  }
+  get name(): VDiv {
+    return this._element.name;
+  }
+  get description(): VDiv {
+    return this._element.description;
+  }
+  get head(): VDiv {
+    return this._element.head;
+  }
+  clone(): VSettingItemChild {
+    let clone = cloneVDOM<VSettingItemChild>(VSettingItemChild, this);
+    copyVDOMToVDOM(clone.icon, this.icon);
+    clone.icon.key = this.icon.key;
+    clone.icon.namespace = this.icon.namespace;
+    clone.icon.image = this.icon.image;
+    copyVDOMToVDOM(clone.name, this.name, true);
+    copyVDOMToVDOM(clone.description, this.description, true);
+    copyVDOMToVDOM(clone.head, this.head, true);
+    return clone;
+  }
+  get data(): any{
+    return this.value;
+  }
+  set data(value: any){
+    this.value = value;
   }
 }

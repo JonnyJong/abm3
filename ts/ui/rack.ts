@@ -44,6 +44,7 @@ export function createSetRackTypeDialog(current: RackType = {type: 'none', value
     selecter.values = getRackTypeList(current);
     selecter.placeholder = '<ui-lang>rack.select_type</ui-lang>';
     selecter.value = current;
+    selecter.group = 'rack';
     
     let dialog = new Dialog({
       title,

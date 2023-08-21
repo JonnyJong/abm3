@@ -1,11 +1,13 @@
 import { UIBangumi } from "./bangumi";
 import { UIColor, UIColorPicker } from "./color";
 import { initDrag } from "./drag";
+import { UIIcon } from "./icon";
 import { UIImagePicker } from "./image";
 import { UILang } from "./lang";
 import { UIList } from "./list";
 import { UILoader } from "./loader";
 import { UINumber } from "./number";
+import { UIProgress } from "./progress";
 import { UIRack } from "./rack";
 import { UIRange } from "./range";
 import { UISelect } from "./select";
@@ -33,6 +35,8 @@ export function initUI() {
   customElements.define('ui-loader', UILoader);
   customElements.define('ui-bangumi', UIBangumi);
   customElements.define('ui-rack', UIRack);
+  customElements.define('ui-progress', UIProgress);
+  customElements.define('ui-icon', UIIcon);
   // customElements.define('ui-markdown', UIMarkdown);
   initTooltip();
 

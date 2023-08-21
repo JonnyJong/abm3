@@ -1,28 +1,28 @@
 import { UISettingItem } from "../../ui/settings";
 import { UIRack } from "../../ui/rack";
 import { Page, SinglePageOptions } from "../page";
-import { layout } from "../../helper/layout";
 import { db } from "../db";
+import { VButton, VDOM, VDOMEvent, VDOMTemplate, VDiv, VLang } from "../../ui/vdom";
 
 let rack: UIRack;
 let filter: UISettingItem;
 
 async function setFilter(value?: Filter) {
-  let rate = [0,0,0,0,0,0];
-  for (const id of Object.keys(db.items)) {
-    rate[db.items[id].stars]++;
-  }
-  filter.body.innerHTML = layout('page/search/filter', {db, count: {
-    total: Object.keys(db.items).length,
-    favorite: db.favorites.size,
-    rate,
-  }});
-  if (!value) return;
-  if (typeof value.favorite === 'boolean') {
-  }
+  // let rate = [0,0,0,0,0,0];
+  // for (const id of Object.keys(db.items)) {
+  //   rate[db.items[id].stars]++;
+  // }
+  // filter.body.innerHTML = layout('page/search/filter', {db, count: {
+  //   total: Object.keys(db.items).length,
+  //   favorite: db.favorites.size,
+  //   rate,
+  // }});
+  // if (!value) return;
+  // if (typeof value.favorite === 'boolean') {
+  // }
 }
 
-function filterClickHandler(ev: MouseEvent) {
+function filterClickHandler(ev: VDOMEvent) {
   let path = ev.composedPath();
   let target: HTMLDivElement | undefined = undefined;
   for (const item of path) {
@@ -83,29 +83,29 @@ function getFilter() {
     tags: [],
     filter: true,
   };
-  let filterCount = filter.querySelectorAll('.search-filter-item-active').length;
-  filter.name = '<ui-lang>筛选</ui-lang>' + (filterCount === 0 ? '' : ' - ' + filterCount);
-  let blocks = filter.body.querySelectorAll('.search-filter-block:has(.search-filter-item-active)');
-  if (blocks.length === 0) {
-    result.filter = false;
-    return result;
-  }
-  blocks.forEach((block)=>{
-    switch (block.getAttribute('type')) {
-      case 'rate':
-        getRateFilter(block, result);
-        break;
-      case 'categories':
-        getLabelFilter(block, result, 'categories');
-        break;
-      case 'exclude_categories':
-        getLabelFilter(block, result, 'excludeCategories');
-        break;
-      case 'tags':
-        getLabelFilter(block, result, 'tags');
-        break;
-    }
-  });
+  // let filterCount = filter.querySelectorAll('.search-filter-item-active').length;
+  // filter.name = '<ui-lang>筛选</ui-lang>' + (filterCount === 0 ? '' : ' - ' + filterCount);
+  // let blocks = filter.body.querySelectorAll('.search-filter-block:has(.search-filter-item-active)');
+  // if (blocks.length === 0) {
+  //   result.filter = false;
+  //   return result;
+  // }
+  // blocks.forEach((block)=>{
+  //   switch (block.getAttribute('type')) {
+  //     case 'rate':
+  //       getRateFilter(block, result);
+  //       break;
+  //     case 'categories':
+  //       getLabelFilter(block, result, 'categories');
+  //       break;
+  //     case 'exclude_categories':
+  //       getLabelFilter(block, result, 'excludeCategories');
+  //       break;
+  //     case 'tags':
+  //       getLabelFilter(block, result, 'tags');
+  //       break;
+  //   }
+  // });
   return result;
 }
 
@@ -170,7 +170,7 @@ function displaySearchResult({list, searched}: {list: string[], searched: boolea
     rack.list = [];
     return;
   }
-  rack.title = `<ui-lang>search.found_before</ui-lang>${list.length}<ui-lang>search.found_after</ui-lang>`
+  rack.title = `<ui-lang>search.found_before</ui-lang>${list.length}<ui-lang>search.found_after</ui-lang>`;
   rack.list = list;
 }
 
@@ -181,16 +181,268 @@ const page: SinglePageOptions = {
     rack = element.querySelector('.search-rack') as UIRack;
     filter = element.querySelector('.search-filter') as UISettingItem;
     rack.type = {type: 'custom', value: 'searched'};
-    filter.icon = 'Filter';
-    filter.name = '<ui-lang>search.filter</ui-lang>';
-    let clear = document.createElement('button');
-    clear.innerHTML = '<i class="icon icon-Clear"></i><ui-lang>search.clear</ui-lang>';
-    clear.addEventListener('click',()=>{
-      filter.querySelectorAll('.search-filter-item-active').forEach((e)=>e.classList.remove('search-filter-item-active'));
-      fullSearch();
+    filter.icon.key = 'Filter';
+    filter.name.append(VDOM.create<VLang>({type: 'lang', key: 'search.filter'}));
+    let clear = VDOM.create<VButton>({
+      type: 'button',
+      children: [
+        {
+          type: 'icon',
+          key: 'Clear',
+        },
+        {
+          type: 'lang',
+          key: 'search.clear',
+        },
+      ],
+      events: {
+        click: ()=>{
+          filter.querySelectorAll('.search-filter-item-active').forEach((e)=>{
+            e.classList.remove('search-filter-item-active');
+          });
+          fullSearch();
+        },
+      },
     });
     filter.head.append(clear);
-    filter.body.addEventListener('click', filterClickHandler);
+    let bodyTemplate: VDOMTemplate[] = [
+      {
+        type: 'lang',
+        key: 'search.rate',
+        classList: ['search-filter-title'],
+      },
+      {
+        type: 'div',
+        classList: ['search-filter-block'],
+        attribute: {type: 'rate'},
+        children: [
+          {
+            type: 'div',
+            classList: ['search-filter-item'],
+            attribute: {value:'true'},
+            children: [
+              {
+                type: 'icon',
+                key: 'HeartFill',
+              },
+              {
+                type: 'lang',
+                key: 'search.favorite',
+              },
+              {
+                type: 'span',
+                text: ' - ',
+              },
+              {
+                type: 'span',
+                text: '0',
+              },
+            ],
+          },
+          {
+            type: 'div',
+            classList: ['search-filter-item'],
+            attribute: {value:'false'},
+            children: [
+              {
+                type: 'icon',
+                key: 'Heart',
+              },
+              {
+                type: 'lang',
+                key: 'search.non_favorite',
+              },
+              {
+                type: 'span',
+                text: ' - ',
+              },
+              {
+                type: 'span',
+                text: '0',
+              },
+            ],
+          },
+          {
+            type: 'div',
+            classList: ['search-filter-item'],
+            attribute: {value: '0'},
+            children: [
+              {
+                type: 'icon',
+                key: 'FavoriteStar',
+              },
+              {
+                type: 'div',
+                classList: ['search-filter-star'],
+                text: '0',
+              },
+              {
+                type: 'span',
+                text: ' - ',
+              },
+              {
+                type: 'span',
+                text: '0',
+              },
+            ],
+          },
+          {
+            type: 'div',
+            classList: ['search-filter-item'],
+            attribute: {value: '1'},
+            children: [
+              {
+                type: 'icon',
+                key: 'FavoriteStar',
+              },
+              {
+                type: 'div',
+                classList: ['search-filter-star'],
+                text: '1',
+              },
+              {
+                type: 'span',
+                text: ' - ',
+              },
+              {
+                type: 'span',
+                text: '0',
+              },
+            ],
+          },
+          {
+            type: 'div',
+            classList: ['search-filter-item'],
+            attribute: {value: '2'},
+            children: [
+              {
+                type: 'icon',
+                key: 'FavoriteStar',
+              },
+              {
+                type: 'div',
+                classList: ['search-filter-star'],
+                text: '2',
+              },
+              {
+                type: 'span',
+                text: ' - ',
+              },
+              {
+                type: 'span',
+                text: '0',
+              },
+            ],
+          },
+          {
+            type: 'div',
+            classList: ['search-filter-item'],
+            attribute: {value: '3'},
+            children: [
+              {
+                type: 'icon',
+                key: 'FavoriteStar',
+              },
+              {
+                type: 'div',
+                classList: ['search-filter-star'],
+                text: '3',
+              },
+              {
+                type: 'span',
+                text: ' - ',
+              },
+              {
+                type: 'span',
+                text: '0',
+              },
+            ],
+          },
+          {
+            type: 'div',
+            classList: ['search-filter-item'],
+            attribute: {value: '4'},
+            children: [
+              {
+                type: 'icon',
+                key: 'FavoriteStar',
+              },
+              {
+                type: 'div',
+                classList: ['search-filter-star'],
+                text: '4',
+              },
+              {
+                type: 'span',
+                text: ' - ',
+              },
+              {
+                type: 'span',
+                text: '0',
+              },
+            ],
+          },
+          {
+            type: 'div',
+            classList: ['search-filter-item'],
+            attribute: {value: '5'},
+            children: [
+              {
+                type: 'icon',
+                key: 'FavoriteStar',
+              },
+              {
+                type: 'div',
+                classList: ['search-filter-star'],
+                text: '5',
+              },
+              {
+                type: 'span',
+                text: ' - ',
+              },
+              {
+                type: 'span',
+                text: '0',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: 'lang',
+        key: 'search.categories',
+        classList: ['search-filter-title'],
+      },
+      {
+        type: 'div',
+        classList: ['search-filter-block'],
+        attribute: {type: 'categories'},
+      },
+      {
+        type: 'lang',
+        key: 'search.exclude_categories',
+        classList: ['search-filter-title'],
+      },
+      {
+        type: 'div',
+        classList: ['search-filter-block'],
+        attribute: {type: 'exclude_categories'},
+      },
+      {
+        type: 'lang',
+        key: 'search.tags',
+        classList: ['search-filter-title'],
+      },
+      {
+        type: 'div',
+        classList: ['search-filter-block'],
+        attribute: {type: 'tags'},
+      },
+    ];
+    for (const template of bodyTemplate) {
+      filter.body.append(VDOM.create(template));
+    }
+    filter.body.event.on('click', filterClickHandler);
     setFilter();
     window.addEventListener('db', async ()=>{
       await setFilter(getFilter());

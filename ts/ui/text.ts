@@ -1,3 +1,5 @@
+import { wash } from "../helper/wash";
+
 type ButtonOption = {
   icon: string,
   action?: Function,
@@ -20,6 +22,8 @@ export class UIText extends HTMLElement{
   private _list: HTMLDivElement;
   private _userInput: string = '';
   onconfirmed?: (element: UIText)=>void;
+  private _buttonsLeft: ButtonOption[] = [];
+  private _buttonsRight: ButtonOption[] = [];
   private _inputed(event?: boolean) {
     this.classList.toggle('ui-text-filled', this._input.value !== '');
     if (!event) return;
@@ -167,11 +171,19 @@ export class UIText extends HTMLElement{
     }
     return container.getBoundingClientRect().width;
   }
+  get buttonsLeft(): ButtonOption[] {
+    return wash<ButtonOption[]>(this._buttonsLeft);
+  }
   set buttonsLeft(buttons: ButtonOption[]) {
+    this._buttonsLeft = wash<ButtonOption[]>(buttons);
     let width = this._setButtons(this._leftBtn, buttons);
     this._input.style.paddingLeft = 12 + width + 'px'; 
   }
+  get buttonsRight(): ButtonOption[] {
+    return wash<ButtonOption[]>(this._buttonsRight);
+  }
   set buttonsRight(buttons: ButtonOption[]) {
+    this._buttonsRight = wash<ButtonOption[]>(buttons);
     let width = this._setButtons(this._rightBtn, buttons);
     this._input.style.paddingRight = 12 + width + 'px'; 
   }

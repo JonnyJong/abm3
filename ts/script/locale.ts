@@ -1,8 +1,10 @@
-import { readFile, readdir } from "fs/promises";
+import { readFile } from "fs/promises";
 import path from "path";
+import { UILang } from "../ui/lang";
 import yaml from "yaml";
 const locales: string[] = require('../../locales/manifest.json');
 
+// TODO: fallback function
 export let locale: any = {};
 
 async function loadLocale(id: string) {
@@ -45,38 +47,28 @@ async function loadLocale(id: string) {
 } */
 
 function updateUILang() {
-  document.querySelectorAll('ui-lang').forEach((el)=>{
-    if (typeof (el as any).key !== 'string') return;
-    el.textContent = getLangByKey((el as any).key);
-  });
-}
-
-function updateLangAttribute(){
-  document.querySelectorAll('[lang][lang-key]').forEach((el)=>{
-    // @ts-ignore
-    el[el.getAttribute('lang')] = getLangByKey(el.getAttribute('lang-key'));
-  });
+  document.querySelectorAll('ui-lang').forEach((el)=>(el as UILang).update());
 }
 
 export async function updateLocale(id: string) {
   locale = await loadLocale(id);
   updateUILang();
-  updateLangAttribute();
   return;
 }
 
-export function getLangByKey(key: any) {
+// TODO: namespace, localeName
+export function getLang(key: string, namespace?: string, localeName?: string) {
   if (typeof key !== 'string') return undefined;
   let keys = key.split('.');
   let target = locale;
   for (const k of keys) {
     target = target[k];
-    if (target === undefined) return key;
+    if (target === undefined) return undefined;
   }
+  if (typeof target !== 'string') return undefined;
   return target;
 }
 
-// TODO: namespace, locale
 export function lang(key: string, namespace?: string, locale?: string){
-  return`<ui-lang>${key}</ui-lang>`;
+  return`<ui-lang${locale ? ` locale="${locale}"` : ''}>${key}${namespace ? `@${namespace}` : ''}</ui-lang>`;
 }

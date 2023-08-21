@@ -1,4 +1,7 @@
+import { equal } from "../helper/equal";
 import { layout } from "../helper/layout";
+
+let groups: {[key: string]: Set<UISelect>} = {};
 
 export class UISelect extends HTMLElement{
   private _inited: boolean = false;
@@ -9,6 +12,7 @@ export class UISelect extends HTMLElement{
   private _list: HTMLDivElement = document.createElement('div');
   private _container: HTMLDivElement = document.createElement('div');
   private _hider: HTMLDivElement = document.createElement('div');
+  private _group: string = '';
   constructor() {
     super();
     this._container.classList.add('ui-select-container');
@@ -18,6 +22,12 @@ export class UISelect extends HTMLElement{
   }
   connectedCallback() {
     document.body.append(this._hider, this._container);
+    if (this._group !== '') {
+      if (!groups[this._group]) {
+        groups[this._group] = new Set();
+      }
+      groups[this._group].add(this);
+    }
     if (this._inited) return;
     this._inited = true;
     this.innerHTML = layout('ui/select');
@@ -75,8 +85,27 @@ export class UISelect extends HTMLElement{
   disconnectedCallback() {
     this._container.remove();
     this._hider.remove();
+    if (this._group !== '') {
+      groups[this._group].delete(this);
+    }
+  }
+  private _setList() {
+    this._list.innerHTML = '';
+    this._values.forEach(({name, value})=>{
+      if (this._group !== '' && !equal(value, this._value) && groups[this._group] && Array.from(groups[this._group]).find((item)=>equal(item._value, value))) return;
+      let item = document.createElement('div');
+      item.classList.add('ui-select-item');
+      item.innerHTML = name;
+      (item as any).key = value;
+      item.addEventListener('click', ()=>{
+        this.value = value;
+        this._show(false);
+      });
+      this._list.append(item);
+    });
   }
   private _show(show: boolean) {
+    this._setList();
     this._container.classList.toggle('ui-select-show', show);
     this._hider.classList.toggle('ui-select-show', show);
   }
@@ -84,7 +113,7 @@ export class UISelect extends HTMLElement{
     return this._value;
   }
   set value(value: any) {
-    let index = this._values.findIndex((item)=>item.value === value);
+    let index = this._values.findIndex((item)=>equal(item.value, value));
     if (index === -1) {
       this._value = undefined;
       if (!this._inited) return;
@@ -110,18 +139,6 @@ export class UISelect extends HTMLElement{
     if (!Array.isArray(value)) return;
     this._values = value;
     if (!this._inited) return;
-    this._list.innerHTML = '';
-    this._values.forEach(({name, value})=>{
-      let item = document.createElement('div');
-      item.classList.add('ui-select-item');
-      item.innerHTML = name;
-      (item as any).key = value;
-      item.addEventListener('click', ()=>{
-        this.value = value;
-        this._show(false);
-      });
-      this._list.append(item);
-    });
     this.value = this._value;
   }
   get placeholder() {
@@ -131,5 +148,20 @@ export class UISelect extends HTMLElement{
     if (typeof value !== 'string') return;
     this._placeholder = value;
     this.value = this._value;
+  }
+  get group(): string {
+    return this._group;
+  }
+  set group(value: string) {
+    if (typeof value !== 'string') return;
+    if (this._group !== '') {
+      groups[this._group].delete(this);
+    }
+    this._group = value;
+    if (this._group === '') return;
+    if (!groups[this._group]) {
+      groups[this._group] = new Set();
+    }
+    groups[this._group].add(this);
   }
 }
