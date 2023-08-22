@@ -574,10 +574,12 @@ function copyVDOMToVDOM(clone: VDOM, origin: VDOM, deep?: boolean) {
   clone.attributes = origin.attributes;
   clone.disabled = origin.disabled;
   clone.inert = origin.inert;
-  clone.locale.key = origin.locale.key;
-  clone.locale.namespace = origin.locale.namespace;
-  clone.locale.setter = origin.locale.setter;
-  clone.locale.setTemplate(origin.locale.getTemplate());
+  if ((origin as any).locale instanceof VDOMLocaleObject) {
+    (clone as any).locale.key = (origin as any).locale.key;
+    (clone as any).locale.namespace = (origin as any).locale.namespace;
+    (clone as any).locale.setter = (origin as any).locale.setter;
+    (clone as any).locale.setTemplate((origin as any).locale.getTemplate());
+  }
   clone.data = origin.data;
   if (deep) {
     for (const child of origin.children) {
@@ -614,12 +616,12 @@ function setData(value: any, key: string) {
 }
 
 function initVDOMLocale(vdom: VDOM, locale?: VDOMLocale) {
-  if (!locale) return;
-  vdom.locale.key = locale.key;
-  vdom.locale.namespace = locale.namespace;
-  vdom.locale.setter = locale.setter;
+  if (!((vdom as any).locale instanceof VDOMLocaleObject) || !locale) return;
+  (vdom as any).locale.key = locale.key;
+  (vdom as any).locale.namespace = locale.namespace;
+  (vdom as any).locale.setter = locale.setter;
   if (locale.templateMap) {
-    vdom.locale.setTemplate(locale.templateMap);
+    (vdom as any).locale.setTemplate(locale.templateMap);
   }
 }
 
@@ -934,11 +936,7 @@ export class VDOM{
     return vdom as T;
   }
   _element!: HTMLElement;
-  private _locale: VDOMLocaleObject = new VDOMLocaleObject(this);
   private _event: VDOMEventObject = new VDOMEventObject(this);
-  get locale() {
-    return this._locale;
-  } 
   prepend(...vdoms: VDOM[]): void {
     let nodes = [];
     for (const vdom of vdoms) {
@@ -1166,6 +1164,10 @@ class VDOMWithData extends VDOMWithoutChild{
 }
 
 export class VDiv extends VDOM{
+  private _locale: VDOMLocaleObject = new VDOMLocaleObject(this);
+  get locale() {
+    return this._locale;
+  }
   _element: HTMLDivElement;
   constructor() {
     super();
@@ -1184,6 +1186,10 @@ export class VDiv extends VDOM{
 }
 
 export class VSpan extends VDOM{
+  private _locale: VDOMLocaleObject = new VDOMLocaleObject(this);
+  get locale() {
+    return this._locale;
+  }
   _element: HTMLSpanElement;
   constructor() {
     super();
@@ -1202,6 +1208,10 @@ export class VSpan extends VDOM{
 }
 
 export class VB extends VDOM{
+  private _locale: VDOMLocaleObject = new VDOMLocaleObject(this);
+  get locale() {
+    return this._locale;
+  }
   constructor() {
     super();
     this._element = document.createElement('b');
@@ -1219,6 +1229,10 @@ export class VB extends VDOM{
 }
 
 export class VI extends VDOM{
+  private _locale: VDOMLocaleObject = new VDOMLocaleObject(this);
+  get locale() {
+    return this._locale;
+  }
   constructor() {
     super();
     this._element = document.createElement('i');
@@ -1236,6 +1250,10 @@ export class VI extends VDOM{
 }
 
 export class VU extends VDOM{
+  private _locale: VDOMLocaleObject = new VDOMLocaleObject(this);
+  get locale() {
+    return this._locale;
+  }
   constructor() {
     super();
     this._element = document.createElement('u');
@@ -1253,6 +1271,10 @@ export class VU extends VDOM{
 }
 
 export class VDel extends VDOM{
+  private _locale: VDOMLocaleObject = new VDOMLocaleObject(this);
+  get locale() {
+    return this._locale;
+  }
   _element: HTMLModElement;
   constructor() {
     super();
@@ -1282,6 +1304,10 @@ export class VBR extends VDOMWithoutChild{
 }
 
 export class VImg extends VDOMWithoutChild{
+  private _locale: VDOMLocaleObject = new VDOMLocaleObject(this);
+  get locale() {
+    return this._locale;
+  }
   _element: HTMLImageElement;
   constructor() {
     super();
@@ -1301,6 +1327,10 @@ export class VImg extends VDOMWithoutChild{
 }
 
 export class VButton extends VDOM{
+  private _locale: VDOMLocaleObject = new VDOMLocaleObject(this);
+  get locale() {
+    return this._locale;
+  }
   _element: HTMLButtonElement;
   constructor() {
     super();
@@ -1319,6 +1349,10 @@ export class VButton extends VDOM{
 }
 
 export class VInput extends VDOMWithData{
+  private _locale: VDOMLocaleObject = new VDOMLocaleObject(this);
+  get locale() {
+    return this._locale;
+  }
   _element: HTMLInputElement;
   constructor() {
     super();
@@ -1346,6 +1380,10 @@ export class VInput extends VDOMWithData{
 }
 
 export class VTextArea extends VDOMWithData{
+  private _locale: VDOMLocaleObject = new VDOMLocaleObject(this);
+  get locale() {
+    return this._locale;
+  }
   _element: HTMLTextAreaElement;
   constructor() {
     super();
@@ -1393,6 +1431,10 @@ export class VColor extends VDOMWithData{
 }
 
 export class VImagePicker extends VDOMWithData{
+  private _locale: VDOMLocaleObject = new VDOMLocaleObject(this);
+  get locale() {
+    return this._locale;
+  }
   _element: UIImagePicker;
   constructor() {
     super();
@@ -1643,6 +1685,10 @@ export class VRange extends VDOMWithData{
 }
 
 export class VSelect extends VDOMWithData{
+  private _locale: VDOMLocaleObject = new VDOMLocaleObject(this);
+  get locale() {
+    return this._locale;
+  }
   _element: UISelect;
   constructor() {
     super();
@@ -1721,6 +1767,10 @@ export class VTags extends VDOMWithData{
 }
 
 export class VText extends VDOMWithData{
+  private _locale: VDOMLocaleObject = new VDOMLocaleObject(this);
+  get locale() {
+    return this._locale;
+  }
   _element: UIText;
   constructor() {
     super();
@@ -1767,6 +1817,10 @@ export class VText extends VDOMWithData{
 }
 
 export class VSettingItem extends VDOMWithData{
+  private _locale: VDOMLocaleObject = new VDOMLocaleObject(this);
+  get locale() {
+    return this._locale;
+  }
   _element: UISettingItem;
   constructor() {
     super();
@@ -1820,6 +1874,10 @@ export class VSettingItem extends VDOMWithData{
 }
 
 export class VSettingItemChild extends VDOMWithData{
+  private _locale: VDOMLocaleObject = new VDOMLocaleObject(this);
+  get locale() {
+    return this._locale;
+  }
   _element: UISettingItemChild;
   constructor() {
     super();
