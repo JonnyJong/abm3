@@ -1916,7 +1916,6 @@ export class VSettingItem extends VDOMWithData{
     copyVDOMToVDOM(clone.description, this.description, true);
     copyVDOMToVDOM(clone.head, this.head, true);
     copyVDOMToVDOM(clone.body, this.body, true);
-    clone.dataKey = this.dataKey;
     return clone;
   }
   get data(): any{
@@ -1971,7 +1970,6 @@ export class VSettingItemChild extends VDOMWithData{
     copyVDOMToVDOM(clone.name, this.name, true);
     copyVDOMToVDOM(clone.description, this.description, true);
     copyVDOMToVDOM(clone.head, this.head, true);
-    clone.dataKey = this.dataKey;
     return clone;
   }
   get data(): any{
