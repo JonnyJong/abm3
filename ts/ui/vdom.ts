@@ -616,7 +616,7 @@ function setData(value: any, key: string) {
 }
 
 function initVDOMLocale(vdom: VDOM, locale?: VDOMLocale) {
-  if (!((vdom as any).locale instanceof VDOMLocaleObject) || !locale) return;
+  if (!((vdom as any).locale instanceof VDOMLocaleObject && locale)) return;
   (vdom as any).locale.key = locale.key;
   (vdom as any).locale.namespace = locale.namespace;
   (vdom as any).locale.setter = locale.setter;
