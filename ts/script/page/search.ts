@@ -2,36 +2,104 @@ import { UISettingItem } from "../../ui/settings";
 import { UIRack } from "../../ui/rack";
 import { Page, SinglePageOptions } from "../page";
 import { db } from "../db";
-import { VButton, VDOM, VDOMEvent, VDOMTemplate, VDiv, VLang } from "../../ui/vdom";
+import { VButton, VDOM, VDOMEvent, VDOMTemplate, VDiv, VLang, VSpan } from "../../ui/vdom";
+import template from "./search.json"
 
 let rack: UIRack;
 let filter: UISettingItem;
 
-async function setFilter(value?: Filter) {
-  // let rate = [0,0,0,0,0,0];
-  // for (const id of Object.keys(db.items)) {
-  //   rate[db.items[id].stars]++;
-  // }
-  // filter.body.innerHTML = layout('page/search/filter', {db, count: {
-  //   total: Object.keys(db.items).length,
-  //   favorite: db.favorites.size,
-  //   rate,
-  // }});
-  // if (!value) return;
-  // if (typeof value.favorite === 'boolean') {
-  // }
+async function setFilter() {
+  let total = Object.keys(db.items).length;
+  let rate = [0,0,0,0,0,0];
+  for (const id of Object.keys(db.items)) {
+    rate[db.items[id].stars]++;
+  }
+  filter.body.querySelectorAll('.search-filter-block[type="rate"] .search-filter-item').forEach((vdom)=>{
+    let value = vdom.getAttribute('value');
+    let count: number = NaN;
+    switch (value) {
+      case 'true':
+        count = db.favorites.size;
+        break;
+      case 'false':
+        count = Object.keys(db.items).length - db.favorites.size;
+        break;
+      case '0':
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+        count = rate[value as unknown as number];
+        break;
+    }
+    if (isNaN(count)) return;
+    vdom.querySelectorAll('.search-filter-item-count').forEach((e)=>(e as VSpan).text = String(count));
+  });
+
+  let categoriesContainer = filter.body.querySelectorAll('.search-filter-block[type="categories"]')[0] as VDiv;
+  let categoriesVDOM = new Set(categoriesContainer.children);
+  let excludeCategoriesContainer = filter.body.querySelectorAll('.search-filter-block[type="exclude_categories"]')[0] as VDiv;
+  let excludeCategoriesVDOM = new Set(excludeCategoriesContainer.children);
+  for (const id of Object.keys(db.categories)) {
+    let target = categoriesContainer.querySelectorAll(`.search-filter-item[value="${id}"]`)[0] as VDiv;
+    let excludeTarget = excludeCategoriesContainer.querySelectorAll(`.search-filter-item[value="${id}"]`)[0] as VDiv;
+    if (!target) {
+      target = new VDiv();
+      target.className = 'search-filter-item';
+      target.setAttribute('value', id);
+      categoriesContainer.append(target);
+    }
+    if (!excludeTarget) {
+      excludeTarget = new VDiv();
+      excludeTarget.className = 'search-filter-item';
+      excludeTarget.setAttribute('value', id);
+      excludeCategoriesContainer.append(excludeTarget);
+    }
+    target.text = id + ' - ' + db.categories[id].size;
+    excludeTarget.text = id + ' - ' + (total - db.categories[id].size);
+    categoriesVDOM.delete(target);
+    excludeCategoriesVDOM.delete(excludeTarget);
+  }
+  for (const item of categoriesVDOM) {
+    item.remove();
+  }
+  for (const item of excludeCategoriesVDOM) {
+    item.remove();
+  }
+
+  let tagsContainer = filter.body.querySelectorAll('.search-filter-block[type="tags"]')[0] as VDiv;
+  let tagsVDOM = new Set(tagsContainer.children);
+  for (const id of Object.keys(db.tags)) {
+    let target = tagsContainer.querySelectorAll(`.search-filter-item[value="${id}"]`)[0] as VDiv;
+    if (!target) {
+      target = new VDiv();
+      target.className = 'search-filter-item';
+      target.setAttribute('value', id);
+      tagsContainer.append(target);
+    }
+    target.text = id + ' - ' + db.tags[id].size;
+    tagsVDOM.delete(target);
+  }
+  for (const item of tagsVDOM) {
+    item.remove();
+  }
 }
 
 function filterClickHandler(ev: VDOMEvent) {
   let path = ev.composedPath();
-  let target: HTMLDivElement | undefined = undefined;
+  let target: VDOM | undefined = undefined;
   for (const item of path) {
-    if (!(item instanceof HTMLDivElement) || !(item as HTMLDivElement)?.classList.contains('search-filter-item')) continue;
-    target = item as HTMLDivElement;
+    if (!item || !(item?.classList.contains('search-filter-item'))) continue;
+    target = item;
     break;
   }
   if (!target) return;
   target.classList.toggle('search-filter-item-active');
+
+  let filterCount = filter.querySelectorAll('.search-filter-item-active').length;
+  (filter.querySelector('.search-filter-count') as HTMLSpanElement).textContent = filterCount === 0 ? '' : ' - ' + filterCount;
+
   fullSearch();
 }
 
@@ -43,7 +111,7 @@ type Filter = {
   tags: string[],
   filter: boolean,
 };
-function getRateFilter(block: Element, result: Filter) {
+function getRateFilter(block: VDiv, result: Filter) {
   block.querySelectorAll('.search-filter-item-active').forEach((item)=>{
     let value = item.getAttribute('value');
     switch (value) {
@@ -69,7 +137,7 @@ function getRateFilter(block: Element, result: Filter) {
     }
   });
 }
-function getLabelFilter(block: Element, result: Filter, type: 'categories' | 'excludeCategories' | 'tags') {
+function getLabelFilter(block: VDiv, result: Filter, type: 'categories' | 'excludeCategories' | 'tags') {
   block.querySelectorAll('.search-filter-item-active').forEach((item)=>{
     let value = item.getAttribute('value');
     if (!value) return;
@@ -83,29 +151,27 @@ function getFilter() {
     tags: [],
     filter: true,
   };
-  // let filterCount = filter.querySelectorAll('.search-filter-item-active').length;
-  // filter.name = '<ui-lang>筛选</ui-lang>' + (filterCount === 0 ? '' : ' - ' + filterCount);
-  // let blocks = filter.body.querySelectorAll('.search-filter-block:has(.search-filter-item-active)');
-  // if (blocks.length === 0) {
-  //   result.filter = false;
-  //   return result;
-  // }
-  // blocks.forEach((block)=>{
-  //   switch (block.getAttribute('type')) {
-  //     case 'rate':
-  //       getRateFilter(block, result);
-  //       break;
-  //     case 'categories':
-  //       getLabelFilter(block, result, 'categories');
-  //       break;
-  //     case 'exclude_categories':
-  //       getLabelFilter(block, result, 'excludeCategories');
-  //       break;
-  //     case 'tags':
-  //       getLabelFilter(block, result, 'tags');
-  //       break;
-  //   }
-  // });
+  let blocks = filter.body.querySelectorAll('.search-filter-block:has(.search-filter-item-active)') as VDiv[];
+  if (blocks.length === 0) {
+    result.filter = false;
+    return result;
+  }
+  blocks.forEach((block)=>{
+    switch (block.getAttribute('type')) {
+      case 'rate':
+        getRateFilter(block, result);
+        break;
+      case 'categories':
+        getLabelFilter(block, result, 'categories');
+        break;
+      case 'exclude_categories':
+        getLabelFilter(block, result, 'excludeCategories');
+        break;
+      case 'tags':
+        getLabelFilter(block, result, 'tags');
+        break;
+    }
+  });
   return result;
 }
 
@@ -183,6 +249,7 @@ const page: SinglePageOptions = {
     rack.type = {type: 'custom', value: 'searched'};
     filter.icon.key = 'Filter';
     filter.name.append(VDOM.create<VLang>({type: 'lang', key: 'search.filter'}));
+    filter.name.append(VDOM.create<VSpan>({type: 'span', classList: ['search-filter-count']}));
     let clear = VDOM.create<VButton>({
       type: 'button',
       children: [
@@ -199,253 +266,21 @@ const page: SinglePageOptions = {
         click: ()=>{
           filter.querySelectorAll('.search-filter-item-active').forEach((e)=>{
             e.classList.remove('search-filter-item-active');
+            (filter.querySelector('.search-filter-count') as HTMLSpanElement).textContent = '';
           });
           fullSearch();
         },
       },
     });
     filter.head.append(clear);
-    let bodyTemplate: VDOMTemplate[] = [
-      {
-        type: 'lang',
-        key: 'search.rate',
-        classList: ['search-filter-title'],
-      },
-      {
-        type: 'div',
-        classList: ['search-filter-block'],
-        attribute: {type: 'rate'},
-        children: [
-          {
-            type: 'div',
-            classList: ['search-filter-item'],
-            attribute: {value:'true'},
-            children: [
-              {
-                type: 'icon',
-                key: 'HeartFill',
-              },
-              {
-                type: 'lang',
-                key: 'search.favorite',
-              },
-              {
-                type: 'span',
-                text: ' - ',
-              },
-              {
-                type: 'span',
-                text: '0',
-              },
-            ],
-          },
-          {
-            type: 'div',
-            classList: ['search-filter-item'],
-            attribute: {value:'false'},
-            children: [
-              {
-                type: 'icon',
-                key: 'Heart',
-              },
-              {
-                type: 'lang',
-                key: 'search.non_favorite',
-              },
-              {
-                type: 'span',
-                text: ' - ',
-              },
-              {
-                type: 'span',
-                text: '0',
-              },
-            ],
-          },
-          {
-            type: 'div',
-            classList: ['search-filter-item'],
-            attribute: {value: '0'},
-            children: [
-              {
-                type: 'icon',
-                key: 'FavoriteStar',
-              },
-              {
-                type: 'div',
-                classList: ['search-filter-star'],
-                text: '0',
-              },
-              {
-                type: 'span',
-                text: ' - ',
-              },
-              {
-                type: 'span',
-                text: '0',
-              },
-            ],
-          },
-          {
-            type: 'div',
-            classList: ['search-filter-item'],
-            attribute: {value: '1'},
-            children: [
-              {
-                type: 'icon',
-                key: 'FavoriteStar',
-              },
-              {
-                type: 'div',
-                classList: ['search-filter-star'],
-                text: '1',
-              },
-              {
-                type: 'span',
-                text: ' - ',
-              },
-              {
-                type: 'span',
-                text: '0',
-              },
-            ],
-          },
-          {
-            type: 'div',
-            classList: ['search-filter-item'],
-            attribute: {value: '2'},
-            children: [
-              {
-                type: 'icon',
-                key: 'FavoriteStar',
-              },
-              {
-                type: 'div',
-                classList: ['search-filter-star'],
-                text: '2',
-              },
-              {
-                type: 'span',
-                text: ' - ',
-              },
-              {
-                type: 'span',
-                text: '0',
-              },
-            ],
-          },
-          {
-            type: 'div',
-            classList: ['search-filter-item'],
-            attribute: {value: '3'},
-            children: [
-              {
-                type: 'icon',
-                key: 'FavoriteStar',
-              },
-              {
-                type: 'div',
-                classList: ['search-filter-star'],
-                text: '3',
-              },
-              {
-                type: 'span',
-                text: ' - ',
-              },
-              {
-                type: 'span',
-                text: '0',
-              },
-            ],
-          },
-          {
-            type: 'div',
-            classList: ['search-filter-item'],
-            attribute: {value: '4'},
-            children: [
-              {
-                type: 'icon',
-                key: 'FavoriteStar',
-              },
-              {
-                type: 'div',
-                classList: ['search-filter-star'],
-                text: '4',
-              },
-              {
-                type: 'span',
-                text: ' - ',
-              },
-              {
-                type: 'span',
-                text: '0',
-              },
-            ],
-          },
-          {
-            type: 'div',
-            classList: ['search-filter-item'],
-            attribute: {value: '5'},
-            children: [
-              {
-                type: 'icon',
-                key: 'FavoriteStar',
-              },
-              {
-                type: 'div',
-                classList: ['search-filter-star'],
-                text: '5',
-              },
-              {
-                type: 'span',
-                text: ' - ',
-              },
-              {
-                type: 'span',
-                text: '0',
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: 'lang',
-        key: 'search.categories',
-        classList: ['search-filter-title'],
-      },
-      {
-        type: 'div',
-        classList: ['search-filter-block'],
-        attribute: {type: 'categories'},
-      },
-      {
-        type: 'lang',
-        key: 'search.exclude_categories',
-        classList: ['search-filter-title'],
-      },
-      {
-        type: 'div',
-        classList: ['search-filter-block'],
-        attribute: {type: 'exclude_categories'},
-      },
-      {
-        type: 'lang',
-        key: 'search.tags',
-        classList: ['search-filter-title'],
-      },
-      {
-        type: 'div',
-        classList: ['search-filter-block'],
-        attribute: {type: 'tags'},
-      },
-    ];
+    let bodyTemplate: VDOMTemplate[] = template as VDOMTemplate[];
     for (const template of bodyTemplate) {
       filter.body.append(VDOM.create(template));
     }
     filter.body.event.on('click', filterClickHandler);
     setFilter();
     window.addEventListener('db', async ()=>{
-      await setFilter(getFilter());
+      await setFilter();
       fullSearch();
     });
   },
