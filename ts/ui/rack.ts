@@ -5,8 +5,11 @@ import { Dialog } from "./dialog";
 import { UIBangumi } from "./bangumi";
 import { locale } from "../script/locale";
 import { encode } from "../helper/html";
+import { equal } from "../helper/equal";
 
 export type RackType = {type: 'none' | 'all' | 'category' | 'tag' | 'custom', value: string};
+
+let racks: Set<UIRack> = new Set();
 
 const ITEM_WIDTH = 276;
 const ITEM_HEIGHT = 428;
@@ -33,6 +36,13 @@ function getRackTypeList(current: RackType): {name: string, value: RackType}[] {
       if (!target) break;
       target.value = current;
   }
+  list = list.filter((item)=>{
+    if (item.value === current) return true;
+    for (const rack of racks) {
+      if (equal(item.value, rack.type)) return false;
+    }
+    return true;
+  });
   return list;
 }
 
@@ -82,6 +92,7 @@ export class UIRack extends HTMLElement{
   connectedCallback() {
     window.addEventListener('resize', this._resizeHandler);
     window.addEventListener('db', this.update);
+    racks.add(this);
     if (this._inited) return;
     this._inited = true;
     this.innerHTML = layout('ui/rack');
@@ -104,6 +115,7 @@ export class UIRack extends HTMLElement{
   disconnectedCallback() {
     window.removeEventListener('resize', this._resizeHandler);
     window.removeEventListener('db', this.update);
+    racks.delete(this);
   }
   updateVList() {
     this._resizeHandler();
