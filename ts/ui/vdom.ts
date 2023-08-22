@@ -1592,6 +1592,7 @@ export class VList extends VDOMWithData{
     clone.value = this.value;
     clone.template = this.template;
     clone.inline = this.inline;
+    clone.dataKey = this.dataKey;
     return clone;
   }
 }
@@ -1673,6 +1674,7 @@ export class VNumber extends VDOMWithData{
     clone.max = this.max;
     clone.min = this.min;
     clone.step = this.step;
+    clone.dataKey = this.dataKey;
     return clone;
   }
 }
@@ -1714,6 +1716,7 @@ export class VRange extends VDOMWithData{
     clone.max = this.max;
     clone.min = this.min;
     clone.step = this.step;
+    clone.dataKey = this.dataKey;
     return clone;
   }
 }
@@ -1759,6 +1762,7 @@ export class VSelect extends VDOMWithData{
     clone.values = this.values;
     clone.placeholder = this.placeholder;
     clone.group = this.group;
+    clone.dataKey = this.dataKey;
     return clone;
   }
 }
@@ -1779,6 +1783,7 @@ export class VSwitch extends VDOMWithData{
   clone(): VSwitch {
     let clone = cloneVDOM<VSwitch>(VSwitch, this);
     clone.value = this.value;
+    clone.dataKey = this.dataKey;
     return clone;
   }
 }
@@ -1806,6 +1811,7 @@ export class VTags extends VDOMWithData{
   clone(): VTags {
     let clone = cloneVDOM<VTags>(VTags, this);
     clone.value = this.value;
+    clone.dataKey = this.dataKey;
     return clone;
   }
 }
@@ -1857,6 +1863,7 @@ export class VText extends VDOMWithData{
     clone.placeholder = this.placeholder;
     clone.buttonsLeft = this.buttonsLeft;
     clone.buttonsRight = this.buttonsRight;
+    clone.dataKey = this.dataKey;
     return clone;
   }
 }
@@ -1909,6 +1916,7 @@ export class VSettingItem extends VDOMWithData{
     copyVDOMToVDOM(clone.description, this.description, true);
     copyVDOMToVDOM(clone.head, this.head, true);
     copyVDOMToVDOM(clone.body, this.body, true);
+    clone.dataKey = this.dataKey;
     return clone;
   }
   get data(): any{
@@ -1963,6 +1971,7 @@ export class VSettingItemChild extends VDOMWithData{
     copyVDOMToVDOM(clone.name, this.name, true);
     copyVDOMToVDOM(clone.description, this.description, true);
     copyVDOMToVDOM(clone.head, this.head, true);
+    clone.dataKey = this.dataKey;
     return clone;
   }
   get data(): any{

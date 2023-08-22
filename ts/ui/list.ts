@@ -31,7 +31,7 @@ export class UIList extends HTMLElement{
   get value() {
     let value: any[] = [];
     for (const item of this._container.children) {
-      value.push(((item as any).vdom as VDOM).data);
+      value.push((item as any).children[1].children[0].vdom.data);
     }
     return value;
   }
