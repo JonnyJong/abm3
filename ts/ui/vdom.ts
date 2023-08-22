@@ -1125,6 +1125,7 @@ export class VDOM{
     return data;
   }
   set data(value: any) {
+    if (value === undefined) return;
     this.children.forEach((child)=>{
       child.data = value;
     });

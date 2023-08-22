@@ -36,6 +36,7 @@ export class UIList extends HTMLElement{
     return value;
   }
   set value(value: any[]) {
+    if (!Array.isArray(value)) return;
     this._container.innerHTML = '';
     if (!this._template) return;
     value.forEach((v)=>this._add(v));
