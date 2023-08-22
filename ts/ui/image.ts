@@ -117,7 +117,12 @@ export class UIImagePicker extends HTMLElement{
     return this._value;
   }
   set value(value: string) {
+    if (typeof value !== 'string') return;
     this._value = value;
+    if (value.match(/[0-9_]+\.[a-zA-Z]+/)?.[0] === value) {
+      this._img.src = path.join(settings.getDB(), 'images', this._value);
+      return;
+    }
     this._img.src = this._value;
   }
   get default(): string {
