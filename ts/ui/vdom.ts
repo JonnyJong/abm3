@@ -348,6 +348,7 @@ type VListTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
+  dataKey?: string,
 };
 
 type VLoaderTemplate = {
@@ -803,6 +804,9 @@ export class VDOM{
         vdom = new VList();
         if (Array.isArray(template.value)) {
           vdom.value = template.value;
+        }
+        if (typeof template.dataKey === 'string') {
+          vdom.dataKey = template.dataKey;
         }
         break;
       case "loader":
