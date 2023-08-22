@@ -1,5 +1,6 @@
 import { equal } from "../helper/equal";
 import { layout } from "../helper/layout";
+import { filterHTML } from "../helper/html";
 
 let groups: {[key: string]: Set<UISelect>} = {};
 
@@ -96,7 +97,7 @@ export class UISelect extends HTMLElement{
       if (this._group !== '' && !equal(value, this._value) && groups[this._group] && Array.from(groups[this._group]).find((item)=>equal(item._value, value))) return;
       let item = document.createElement('div');
       item.classList.add('ui-select-item');
-      item.innerHTML = name;
+      item.innerHTML = filterHTML(name);
       (item as any).key = value;
       item.addEventListener('click', ()=>{
         this.value = value;
