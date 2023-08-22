@@ -424,6 +424,7 @@ type VTagsTemplate = {
   type: 'tags',
   events?: VDOMEvents,
   value?: string[],
+  autoComplete?: (value: string)=>string[] | void,
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
@@ -873,6 +874,9 @@ export class VDOM{
         vdom = new VTags();
         if (Array.isArray(template.value)) {
           vdom.value = template.value;
+        }
+        if (typeof template.autoComplete === 'function') {
+          vdom.autoComplete = template.autoComplete;
         }
         if (typeof template.dataKey === 'string') {
           vdom.dataKey = template.dataKey;
@@ -1791,6 +1795,13 @@ export class VTags extends VDOMWithData{
   }
   set value(value: string[]) {
     this._element.value = value;
+  }
+  get autoComplete(): ((value: string)=>string[] | void) | undefined {
+    return this._element.autoComplete;
+  }
+  set autoComplete(value: (value: string)=>string[] | void) {
+    if (typeof value !== 'function') return;
+    this._element.autoComplete = value;
   }
   clone(): VTags {
     let clone = cloneVDOM<VTags>(VTags, this);
