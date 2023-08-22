@@ -3,7 +3,6 @@ import { element } from "../../helper/layout";
 import { UIRack, createSetRackTypeDialog } from "../../ui/rack";
 import { SinglePageOptions } from "../page";
 import { settings } from "../settings";
-import { timer } from "../../helper/timer";
 
 type RackObject = {element: UIRack, type: 'none' | 'all' | 'category' | 'tag' | 'custom', value: string, fold: boolean};
 
@@ -66,6 +65,7 @@ function createRackSorter() {
   };
 }
 
+
 const page: SinglePageOptions = {
   name: 'home',
   single: true,
@@ -111,8 +111,13 @@ const page: SinglePageOptions = {
       });
       dialog.show();
     });
-    await timer(100);
     loadRacks();
+    element.addEventListener('animationstart', (ev)=>{
+      if (ev.animationName !== 'page-in') return;
+      for (const rack of container.children) {
+        (rack as UIRack).updateVList();
+      }
+    });
   },
   onBack(element, option) {
   },

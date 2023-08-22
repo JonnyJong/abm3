@@ -91,11 +91,6 @@ export class UIImagePicker extends HTMLElement{
       this._error = true;
       this._info.innerHTML = '<i class="icon icon-Warning"></i><ui-lang>image.error</ui-lang>';
     });
-    this._img.addEventListener('loadstart', ()=>{
-      this._img.classList.add('ui-image-img-hide');
-      this._error = true;
-      this._info.innerHTML = '<i class="icon icon-Info"></i><ui-lang>image.loading</ui-lang>';
-    });
     this._img.addEventListener('load',()=>{
       this._img.classList.remove('ui-image-img-hide');
       this._error = false;
@@ -119,6 +114,9 @@ export class UIImagePicker extends HTMLElement{
   set value(value: string) {
     if (typeof value !== 'string') return;
     this._value = value;
+    this._img.classList.add('ui-image-img-hide');
+    this._error = true;
+    this._info.innerHTML = '<i class="icon icon-Info"></i><ui-lang>image.loading</ui-lang>';
     if (value.match(/[0-9_]+\.[a-zA-Z]+/)?.[0] === value) {
       this._img.src = path.join(settings.getDB(), 'images', this._value);
       return;
@@ -132,9 +130,7 @@ export class UIImagePicker extends HTMLElement{
     this._defaultValue = value;
   }
   reset() {
-    this._value = this._defaultValue;
-    if (this._defaultValue === '') return;
-    this._img.src = path.join(settings.getDB(), 'images', this._defaultValue);
+    this.value = this._defaultValue;
   }
   get error(): boolean {
     return this._error;

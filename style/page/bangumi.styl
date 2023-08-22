@@ -135,7 +135,9 @@
   display flex
   flex-wrap wrap
   gap 8px
+  counter-reset season
 .bangumi-season
+  counter-increment season
   padding 6px 8px
   border-radius 6px
   height 36px
@@ -148,6 +150,8 @@
       color var(--btn-color-active)
   &:empty:first-child:last-child
     display none
+  &:empty:before
+    content counter(season)
 .bangumi-season-current
   background var(--theme)
 

@@ -283,6 +283,10 @@ const page: SinglePageOptions = {
       await setFilter();
       fullSearch();
     });
+    element.addEventListener('animationstart', (ev)=>{
+      if (ev.animationName !== 'page-in') return;
+      rack.updateVList();
+    });
   },
   onOpen: function (element: HTMLElement, option: any, page: Page) {
     fullSearch(option);

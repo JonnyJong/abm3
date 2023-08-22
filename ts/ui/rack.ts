@@ -4,7 +4,6 @@ import { UISelect } from "./select";
 import { Dialog } from "./dialog";
 import { UIBangumi } from "./bangumi";
 import { locale } from "../script/locale";
-import { timer } from "../helper/timer";
 import { encode } from "../helper/html";
 
 export type RackType = {type: 'none' | 'all' | 'category' | 'tag' | 'custom', value: string};
@@ -197,7 +196,6 @@ export class UIRack extends HTMLElement{
     this._renderList();
   }
   private async _renderList() {
-    await timer(1);
     this._body.innerHTML = '';
     if (this._list === undefined) {
       this.title = [locale.rack.category_miss, locale.rack.tag_miss][['category', 'tag'].indexOf(this._type.type)].replace('%s', this._type.value);

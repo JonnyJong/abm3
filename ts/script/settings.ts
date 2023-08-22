@@ -71,8 +71,8 @@ class Settings{
     let css = stylus.render(`$theme = ${theme}
 :root
   --theme $theme
-  --theme-hover lighten($theme, 15%)
-  --theme-active lighten($theme, 30%)
+  --theme-hover lighten($theme, 5%)
+  --theme-active lighten($theme, 10%)
   --select isDark($theme) ? #fff : #000
   @media (prefers-color-scheme: dark)
     --theme-hover lighten($theme, -15%)

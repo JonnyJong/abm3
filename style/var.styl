@@ -14,11 +14,17 @@ $danger = #F44336
   --bg2-tsp #fbfbfbb0
   --bg3-tsp #fdfdfdb0
   --theme $theme
-  --theme-hover lighten($theme, 15%)
-  --theme-active lighten($theme, 30%)
+  --theme-hover lighten($theme, 5%)
+  --theme-active lighten($theme, 10%)
+  --theme-color isDark($theme) ? #fff : #000
+  --theme-color-active isDark($theme) ? #cecece : #5d5d5d
+  --theme-color-disabled isDark($theme) ? #787878 : #9d9d9d
   --danger $danger
   --danger-hover lighten($danger, 15%)
   --danger-active lighten($danger, 30%)
+  --danger-color #fff
+  --danger-color-active #cecece
+  --danger-color-disabled #787878
   --select isDark($theme) ? #fff : #000
   --weight-factor 1
   --loading-bg loading-bg 1s infinite alternate
