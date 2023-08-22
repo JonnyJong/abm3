@@ -344,6 +344,7 @@ type VListTemplate = {
   type: 'list',
   events?: VDOMEvents,
   value?: any[],
+  inline?: boolean,
   template: VDOMTemplate[],
   classList?: string[],
   attribute?: VDOMAttribute,
@@ -804,6 +805,9 @@ export class VDOM{
         vdom = new VList();
         if (Array.isArray(template.value)) {
           vdom.value = template.value;
+        }
+        if (typeof template.inline === 'boolean') {
+          vdom.inline = template.inline;
         }
         if (typeof template.dataKey === 'string') {
           vdom.dataKey = template.dataKey;
