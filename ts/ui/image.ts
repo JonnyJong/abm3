@@ -83,6 +83,11 @@ export class UIImagePicker extends HTMLElement{
     });
     this._img.addEventListener('error',()=>{
       this._img.classList.add('ui-image-img-hide');
+      if (this._value === '') {
+        this._error = false;
+        this._info.innerHTML = '<i class="icon icon-Info"></i><ui-lang>image.empty</ui-lang>';
+        return;
+      }
       this._error = true;
       this._info.innerHTML = '<i class="icon icon-Warning"></i><ui-lang>image.error</ui-lang>';
     });

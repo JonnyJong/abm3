@@ -803,6 +803,7 @@ export class VDOM{
         break;
       case "list":
         vdom = new VList();
+        vdom.template = VDOM.create({type: 'div', children: template.template});
         if (Array.isArray(template.value)) {
           vdom.value = template.value;
         }
