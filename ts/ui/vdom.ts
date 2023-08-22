@@ -1172,6 +1172,7 @@ export class VDiv extends VDOM{
   constructor() {
     super();
     this._element = document.createElement('div');
+    (this._element as any).vdom = this;
   }
   get text(): string {
     return this._element.textContent || '';
@@ -1194,6 +1195,7 @@ export class VSpan extends VDOM{
   constructor() {
     super();
     this._element = document.createElement('span');
+    (this._element as any).vdom = this;
   }
   get text(): string {
     return this._element.textContent || '';
@@ -1215,6 +1217,7 @@ export class VB extends VDOM{
   constructor() {
     super();
     this._element = document.createElement('b');
+    (this._element as any).vdom = this;
   }
   get text(): string {
     return this._element.textContent || '';
@@ -1236,6 +1239,7 @@ export class VI extends VDOM{
   constructor() {
     super();
     this._element = document.createElement('i');
+    (this._element as any).vdom = this;
   }
   get text(): string {
     return this._element.textContent || '';
@@ -1257,6 +1261,7 @@ export class VU extends VDOM{
   constructor() {
     super();
     this._element = document.createElement('u');
+    (this._element as any).vdom = this;
   }
   get text(): string {
     return this._element.textContent || '';
@@ -1279,6 +1284,7 @@ export class VDel extends VDOM{
   constructor() {
     super();
     this._element = document.createElement('del');
+    (this._element as any).vdom = this;
   }
   get text(): string {
     return this._element.textContent || '';
@@ -1297,6 +1303,7 @@ export class VBR extends VDOMWithoutChild{
   constructor() {
     super();
     this._element = document.createElement('br');
+    (this._element as any).vdom = this;
   }
   clone(): VBR {
     return cloneVDOM<VBR>(VBR, this);
@@ -1312,6 +1319,7 @@ export class VImg extends VDOMWithoutChild{
   constructor() {
     super();
     this._element = document.createElement('img');
+    (this._element as any).vdom = this;
   }
   get src(): string {
     return this._element.src;
@@ -1335,6 +1343,7 @@ export class VButton extends VDOM{
   constructor() {
     super();
     this._element = document.createElement('button');
+    (this._element as any).vdom = this;
   }
   get text(): string {
     return this._element.textContent || '';
@@ -1357,6 +1366,7 @@ export class VInput extends VDOMWithData{
   constructor() {
     super();
     this._element = document.createElement('input');
+    (this._element as any).vdom = this;
   }
   get value(): string {
     return this._element.value;
@@ -1388,6 +1398,7 @@ export class VTextArea extends VDOMWithData{
   constructor() {
     super();
     this._element = document.createElement('textarea');
+    (this._element as any).vdom = this;
   }
   get value(): string {
     return this._element.value;
@@ -1415,6 +1426,7 @@ export class VColor extends VDOMWithData{
   constructor() {
     super();
     this._element = document.createElement('ui-color') as UIColor;
+    (this._element as any).vdom = this;
   }
   get value(): string {
     return this._element.value;
@@ -1439,6 +1451,7 @@ export class VImagePicker extends VDOMWithData{
   constructor() {
     super();
     this._element = document.createElement('ui-image-picker') as UIImagePicker;
+    (this._element as any).vdom = this;
   }
   get value(): string {
     return this._element.value;
@@ -1469,6 +1482,7 @@ export class VLang extends VDOMWithoutChild{
   constructor() {
     super();
     this._element = document.createElement('ui-lang') as UILang;
+    (this._element as any).vdom = this;
   }
   get key(): string {
     return this._element.key;
@@ -1505,6 +1519,7 @@ export class VIcon extends VDOMWithoutChild{
   constructor() {
     super();
     this._element = document.createElement('ui-icon') as UIIcon;
+    (this._element as any).vdom = this;
   }
   get key(): string {
     return this._element.key;
@@ -1538,6 +1553,7 @@ export class VList extends VDOMWithData{
   constructor() {
     super();
     this._element = document.createElement('ui-list') as UIList;
+    (this._element as any).vdom = this;
   }
   get value(): any[] {
     return this._element.value;
@@ -1571,6 +1587,7 @@ export class VLoader extends VDOMWithoutChild{
   constructor() {
     super();
     this._element = document.createElement('ui-loader') as UILoader;
+    (this._element as any).vdom = this;
   }
   get value(): number {
     return this._element.value;
@@ -1590,6 +1607,7 @@ export class VProgress extends VDOMWithoutChild{
   constructor() {
     super();
     this._element = document.createElement('ui-progress') as UIProgress;
+    (this._element as any).vdom = this;
   }
   get value(): number {
     return this._element.value;
@@ -1609,6 +1627,7 @@ export class VNumber extends VDOMWithData{
   constructor() {
     super();
     this._element = document.createElement('ui-number') as UINumber;
+    (this._element as any).vdom = this;
   }
   get value(): number {
     return this._element.value;
@@ -1649,6 +1668,7 @@ export class VRange extends VDOMWithData{
   constructor() {
     super();
     this._element = document.createElement('ui-range') as UIRange;
+    (this._element as any).vdom = this;
   }
   get value(): number {
     return this._element.value;
@@ -1693,6 +1713,7 @@ export class VSelect extends VDOMWithData{
   constructor() {
     super();
     this._element = document.createElement('ui-select') as UISelect;
+    (this._element as any).vdom = this;
   }
   get value(): any {
     return this._element.value;
@@ -1733,6 +1754,7 @@ export class VSwitch extends VDOMWithData{
   constructor() {
     super();
     this._element = document.createElement('ui-switch') as UISwitch;
+    (this._element as any).vdom = this;
   }
   get value(): boolean {
     return this._element.value;
@@ -1752,6 +1774,7 @@ export class VTags extends VDOMWithData{
   constructor() {
     super();
     this._element = document.createElement('ui-tags') as UITags;
+    (this._element as any).vdom = this;
   }
   get value(): string[] {
     return this._element.value;
@@ -1775,6 +1798,7 @@ export class VText extends VDOMWithData{
   constructor() {
     super();
     this._element = document.createElement('ui-text') as UIText;
+    (this._element as any).vdom = this;
   }
   get value(): string {
     return this._element.value;
@@ -1825,6 +1849,7 @@ export class VSettingItem extends VDOMWithData{
   constructor() {
     super();
     this._element = document.createElement('ui-setting-item') as UISettingItem;
+    (this._element as any).vdom = this;
   }
   get value(): string {
     return this._element.value;
@@ -1882,6 +1907,7 @@ export class VSettingItemChild extends VDOMWithData{
   constructor() {
     super();
     this._element = document.createElement('ui-setting-item-child') as UISettingItemChild;
+    (this._element as any).vdom = this;
   }
   get value(): string {
     return this._element.head.data;
