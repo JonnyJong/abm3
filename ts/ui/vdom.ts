@@ -3,6 +3,7 @@ import { UIColor } from "./color";
 import { UIIcon } from "./icon";
 import { UIImagePicker } from "./image";
 import { LangTemplateMap, LocaleAuto, UILang } from "./lang";
+import { UILink } from "./link";
 import { UIList } from "./list";
 import { UILoader } from "./loader";
 import { UINumber } from "./number";
@@ -177,7 +178,7 @@ type VDOMLocale = {
   templateMap?: LangTemplateMap,
 };
 
-type VDivTemplate = {
+export type VDivTemplate = {
   type: 'div',
   events?: VDOMEvents,
   text?: string,
@@ -188,7 +189,7 @@ type VDivTemplate = {
   locale?: VDOMLocale,
 };
 
-type VSpanTemplate = {
+export type VSpanTemplate = {
   type: 'span',
   events?: VDOMEvents,
   text?: string,
@@ -199,7 +200,7 @@ type VSpanTemplate = {
   locale?: VDOMLocale,
 };
 
-type VBTemplate = {
+export type VBTemplate = {
   type: 'b',
   events?: VDOMEvents,
   text?: string,
@@ -210,7 +211,7 @@ type VBTemplate = {
   locale?: VDOMLocale,
 };
 
-type VITemplate = {
+export type VITemplate = {
   type: 'i',
   events?: VDOMEvents,
   text?: string,
@@ -221,7 +222,7 @@ type VITemplate = {
   locale?: VDOMLocale,
 };
 
-type VUTemplate = {
+export type VUTemplate = {
   type: 'u',
   events?: VDOMEvents,
   text?: string,
@@ -232,7 +233,7 @@ type VUTemplate = {
   locale?: VDOMLocale,
 };
 
-type VDelTemplate = {
+export type VDelTemplate = {
   type: 'del',
   events?: VDOMEvents,
   text?: string,
@@ -243,7 +244,7 @@ type VDelTemplate = {
   locale?: VDOMLocale,
 };
 
-type VBRTemplate = {
+export type VBRTemplate = {
   type: 'br',
   events?: VDOMEvents,
   classList?: string[],
@@ -251,7 +252,7 @@ type VBRTemplate = {
   style?: VDOMStyle,
 };
 
-type VImageTemplate = {
+export type VImageTemplate = {
   type: 'img',
   events?: VDOMEvents,
   src?: string,
@@ -261,7 +262,7 @@ type VImageTemplate = {
   locale?: VDOMLocale,
 };
 
-type VButtonTemplate = {
+export type VButtonTemplate = {
   type: 'button',
   events?: VDOMEvents,
   text?: string,
@@ -272,7 +273,7 @@ type VButtonTemplate = {
   locale?: VDOMLocale,
 };
 
-type VInputTemplate = {
+export type VInputTemplate = {
   type: 'input',
   events?: VDOMEvents,
   value?: string,
@@ -284,7 +285,7 @@ type VInputTemplate = {
   dataKey?: string,
 };
 
-type VTextAreaTemplate = {
+export type VTextAreaTemplate = {
   type: 'textarea',
   events?: VDOMEvents,
   value?: string,
@@ -296,7 +297,7 @@ type VTextAreaTemplate = {
   dataKey?: string,
 };
 
-type VColorTemplate = {
+export type VColorTemplate = {
   type: 'color',
   events?: VDOMEvents,
   value?: string,
@@ -306,7 +307,7 @@ type VColorTemplate = {
   dataKey?: string,
 };
 
-type VImagePickerTemplate = {
+export type VImagePickerTemplate = {
   type: 'image-picker',
   events?: VDOMEvents,
   value?: string,
@@ -318,7 +319,7 @@ type VImagePickerTemplate = {
   dataKey?: string,
 };
 
-type VLangTemplate = {
+export type VLangTemplate = {
   type: 'lang',
   events?: VDOMEvents,
   key: string,
@@ -329,7 +330,7 @@ type VLangTemplate = {
   templateMap?: LangTemplateMap,
 };
 
-type VIconTemplate = {
+export type VIconTemplate = {
   type: 'icon',
   events?: VDOMEvents,
   key?: string,
@@ -340,7 +341,7 @@ type VIconTemplate = {
   style?: VDOMStyle,
 };
 
-type VListTemplate = {
+export type VListTemplate = {
   type: 'list',
   events?: VDOMEvents,
   value?: any[],
@@ -352,7 +353,7 @@ type VListTemplate = {
   dataKey?: string,
 };
 
-type VLoaderTemplate = {
+export type VLoaderTemplate = {
   type: 'loader',
   events?: VDOMEvents,
   value?: number,
@@ -361,7 +362,7 @@ type VLoaderTemplate = {
   style?: VDOMStyle,
 };
 
-type VProgressTemplate = {
+export type VProgressTemplate = {
   type: 'progress',
   events?: VDOMEvents,
   value?: number,
@@ -370,7 +371,7 @@ type VProgressTemplate = {
   style?: VDOMStyle,
 };
 
-type VNumberTemplate = {
+export type VNumberTemplate = {
   type: 'number',
   events?: VDOMEvents,
   value?: number,
@@ -383,7 +384,7 @@ type VNumberTemplate = {
   dataKey?: string,
 };
 
-type VRangeTemplate = {
+export type VRangeTemplate = {
   type: 'range',
   events?: VDOMEvents,
   value?: number,
@@ -396,7 +397,7 @@ type VRangeTemplate = {
   dataKey?: string,
 };
 
-type VSelectTemplate = {
+export type VSelectTemplate = {
   type: 'select',
   events?: VDOMEvents,
   value?: any,
@@ -410,7 +411,7 @@ type VSelectTemplate = {
   dataKey?: string,
 };
 
-type VSwitchTemplate = {
+export type VSwitchTemplate = {
   type: 'switch',
   events?: VDOMEvents,
   value?: boolean,
@@ -420,7 +421,7 @@ type VSwitchTemplate = {
   dataKey?: string,
 };
 
-type VTagsTemplate = {
+export type VTagsTemplate = {
   type: 'tags',
   events?: VDOMEvents,
   value?: string[],
@@ -431,7 +432,7 @@ type VTagsTemplate = {
   dataKey?: string,
 };
 
-type VTextTemplate = {
+export type VTextTemplate = {
   type: 'text',
   events?: VDOMEvents,
   value?: string,
@@ -446,7 +447,7 @@ type VTextTemplate = {
   dataKey?: string,
 };
 
-type VSettingItemTemplate = {
+export type VSettingItemTemplate = {
   type: 'setting',
   icon?: VIconTemplate,
   name?: VDOMTemplate[],
@@ -461,7 +462,7 @@ type VSettingItemTemplate = {
   dataKey?: string,
 };
 
-type VSettingItemChildTemplate = {
+export type VSettingItemChildTemplate = {
   type: 'setting-child',
   icon?: VIconTemplate,
   name?: VDOMTemplate[],
@@ -475,9 +476,20 @@ type VSettingItemChildTemplate = {
   dataKey?: string,
 };
 
-export type VDOMTemplate = VDivTemplate | VSpanTemplate | VITemplate | VBTemplate | VUTemplate | VDelTemplate | VBRTemplate | VImageTemplate | VButtonTemplate | VInputTemplate | VTextAreaTemplate | VColorTemplate | VImagePickerTemplate | VLangTemplate | VIconTemplate | VListTemplate | VLoaderTemplate | VProgressTemplate | VNumberTemplate | VRangeTemplate | VSelectTemplate | VSwitchTemplate | VTagsTemplate | VTextTemplate | VSettingItemTemplate | VSettingItemChildTemplate;
+export type VLinkTemplate = {
+  type: 'link',
+  text: string,
+  link: string,
+  events?: VDOMEvents,
+  classList?: string[],
+  attribute?: VDOMAttribute,
+  style?: VDOMStyle,
+  locale?: VDOMLocale,
+}
 
-type VDOMObject = VDiv | VSpan | VI | VB | VU | VDel | VBR | VImg | VButton | VInput | VTextArea | VColor | VImagePicker | VLang | VIcon | VList | VLoader | VProgress | VNumber | VRange | VSelect | VSwitch | VTags | VText | VSettingItem | VSettingItemChild;
+export type VDOMTemplate = VDivTemplate | VSpanTemplate | VITemplate | VBTemplate | VUTemplate | VDelTemplate | VBRTemplate | VImageTemplate | VButtonTemplate | VInputTemplate | VTextAreaTemplate | VColorTemplate | VImagePickerTemplate | VLangTemplate | VIconTemplate | VListTemplate | VLoaderTemplate | VProgressTemplate | VNumberTemplate | VRangeTemplate | VSelectTemplate | VSwitchTemplate | VTagsTemplate | VTextTemplate | VSettingItemTemplate | VSettingItemChildTemplate | VLinkTemplate;
+
+export type VDOMObject = VDiv | VSpan | VI | VB | VU | VDel | VBR | VImg | VButton | VInput | VTextArea | VColor | VImagePicker | VLang | VIcon | VList | VLoader | VProgress | VNumber | VRange | VSelect | VSwitch | VTags | VText | VSettingItem | VSettingItemChild | VLink;
 
 class VDOMLocaleObject{
   private _vdom: VDOM;
@@ -943,6 +955,11 @@ export class VDOM{
         if (typeof template.dataKey === 'string') {
           vdom.dataKey = template.dataKey;
         }
+        break;
+      case 'link':
+        vdom = new VLink();
+        vdom.text = template.text;
+        vdom.link = template.link;
         break;
     }
     initVDOM(vdom, template);
@@ -1977,5 +1994,32 @@ export class VSettingItemChild extends VDOMWithData{
   }
   set data(value: any){
     this.value = value;
+  }
+}
+
+export class VLink extends VDOMWithoutChild{
+  _element: UILink;
+  constructor() {
+    super();
+    this._element = document.createElement('ui-link') as UILink;
+    (this._element as any).vdom = this;
+  }
+  get text(): string {
+    return this._element.text;
+  }
+  set text(value: string) {
+    this._element.text = value;
+  }
+  get link(): string {
+    return this._element.link;
+  }
+  set link(value: string) {
+    this._element.link = value;
+  }
+  clone(): VLink {
+    let clone = cloneVDOM<VLink>(VLink, this);
+    clone.text = this.text;
+    clone.link = this.link;
+    return clone;
   }
 }

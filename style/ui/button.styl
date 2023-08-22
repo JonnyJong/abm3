@@ -56,5 +56,9 @@ button
     color var(--danger-color)
     &[disabled]
       --btn-color-disabled var(--danger-color-disabled)
+  &.btn-link
+    color var(--theme)
+    --btn-color-active var(--theme-hover)
+    font-weight calc(800 * var(--weight-factor))
   ui-loader
     --ui-loader-size 16px

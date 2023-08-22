@@ -4,6 +4,7 @@ import { initDrag } from "./drag";
 import { UIIcon } from "./icon";
 import { UIImagePicker } from "./image";
 import { UILang } from "./lang";
+import { UILink } from "./link";
 import { UIList } from "./list";
 import { UILoader } from "./loader";
 import { UINumber } from "./number";
@@ -37,6 +38,7 @@ export function initUI() {
   customElements.define('ui-rack', UIRack);
   customElements.define('ui-progress', UIProgress);
   customElements.define('ui-icon', UIIcon);
+  customElements.define('ui-link', UILink);
   // customElements.define('ui-markdown', UIMarkdown);
   initTooltip();
 
