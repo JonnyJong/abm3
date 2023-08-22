@@ -34,6 +34,7 @@ export class UISelect extends HTMLElement{
     this._current = this.querySelector('.ui-select-name') as HTMLDivElement;
     (this.querySelector('.ui-select') as HTMLDivElement).addEventListener('click',()=>{
       if (this._values.length === 0) return;
+      this._setList();
       // 确定简单位置
       // Determine the simple location
       let rect = this.getBoundingClientRect();
@@ -105,7 +106,6 @@ export class UISelect extends HTMLElement{
     });
   }
   private _show(show: boolean) {
-    this._setList();
     this._container.classList.toggle('ui-select-show', show);
     this._hider.classList.toggle('ui-select-show', show);
   }
