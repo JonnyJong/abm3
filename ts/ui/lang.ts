@@ -96,7 +96,7 @@ export class UILang extends HTMLElement{
     if (!this._inited) return;
     let str = getLang(this.key, this._namespace) as string;
     if (str === undefined) {
-      this.textContent = this._key;
+      this.textContent = this._key + (this._namespace !== '' ? '@' + this._namespace : '');
       return;
     }
     for (const key of Object.keys(this._templates)) {
