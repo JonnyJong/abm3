@@ -446,10 +446,10 @@ type VTextTemplate = {
 type VSettingItemTemplate = {
   type: 'setting',
   icon?: VIconTemplate,
-  name?: VDivTemplate,
-  description?: VDivTemplate,
-  head?: VDivTemplate,
-  body?: VDivTemplate,
+  name?: VDOMTemplate[],
+  description?: VDOMTemplate[],
+  head?: VDOMTemplate[],
+  body?: VDOMTemplate[],
   events?: VDOMEvents,
   classList?: string[],
   attribute?: VDOMAttribute,
@@ -461,9 +461,9 @@ type VSettingItemTemplate = {
 type VSettingItemChildTemplate = {
   type: 'setting-child',
   icon?: VIconTemplate,
-  name?: VDivTemplate,
-  description?: VDivTemplate,
-  head?: VDivTemplate,
+  name?: VDOMTemplate[],
+  description?: VDOMTemplate[],
+  head?: VDOMTemplate[],
   events?: VDOMEvents,
   classList?: string[],
   attribute?: VDOMAttribute,
@@ -635,14 +635,18 @@ function initVIcon(vdom: VIcon, template: VIconTemplate) {
   }
 }
 
+function initVDOMChildren(vdom: VDiv | VSpan | VI | VB | VU | VDel | VButton, templates: VDOMTemplate[]) {
+  for (const child of templates) {
+    vdom.append(VDOM.create(child));
+  }
+}
+
 function initVDOMWithChildren(vdom: VDiv | VSpan | VI | VB | VU | VDel | VButton, template: VDivTemplate | VSpanTemplate | VITemplate | VBTemplate | VUTemplate | VDelTemplate | VButtonTemplate) {
   if (typeof template.text === 'string') {
     vdom.text = template.text;
   }
   if (Array.isArray(template.children)) {
-    for (const child of template.children) {
-      vdom.append(VDOM.create(child));
-    }
+    initVDOMChildren(vdom, template.children)
   }
 }
 
@@ -891,20 +895,16 @@ export class VDOM{
           initVDOM(vdom.icon, template.icon);
         }
         if (template.name) {
-          initVDOMWithChildren(vdom.name, template.name);
-          initVDOM(vdom.name, template.name);
+          initVDOMChildren(vdom.name, template.name);
         }
         if (template.description) {
-          initVDOMWithChildren(vdom.description, template.description);
-          initVDOM(vdom.description, template.description);
+          initVDOMChildren(vdom.description, template.description);
         }
         if (template.head) {
-          initVDOMWithChildren(vdom.head, template.head);
-          initVDOM(vdom.head, template.head);
+          initVDOMChildren(vdom.head, template.head);
         }
         if (template.body) {
-          initVDOMWithChildren(vdom.body, template.body);
-          initVDOM(vdom.body, template.body);
+          initVDOMChildren(vdom.body, template.body);
         }
         if (typeof template.dataKey === 'string') {
           vdom.dataKey = template.dataKey;
@@ -917,16 +917,13 @@ export class VDOM{
           initVDOM(vdom.icon, template.icon);
         }
         if (template.name) {
-          initVDOMWithChildren(vdom.name, template.name);
-          initVDOM(vdom.name, template.name);
+          initVDOMChildren(vdom.name, template.name);
         }
         if (template.description) {
-          initVDOMWithChildren(vdom.description, template.description);
-          initVDOM(vdom.description, template.description);
+          initVDOMChildren(vdom.description, template.description);
         }
         if (template.head) {
-          initVDOMWithChildren(vdom.head, template.head);
-          initVDOM(vdom.head, template.head);
+          initVDOMChildren(vdom.head, template.head);
         }
         if (typeof template.dataKey === 'string') {
           vdom.dataKey = template.dataKey;
