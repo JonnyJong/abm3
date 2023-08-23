@@ -174,6 +174,7 @@ export class Bangumi{
     return this.id;
   }
   remove(){
+    let imgaesDir = path.join(settings.getDB(), 'images');
     if (this.favorite) {
       this.db.favorites.delete(this.id);
     }
@@ -188,14 +189,15 @@ export class Bangumi{
     }
     for (const season of this.seasons) {
       if (season.cover !== '') {
-        try {unlink(season.cover)}catch{}
+        try {unlink(path.join(imgaesDir, season.cover))}catch{}
       }
       if (season.header !== '') {
-        try {unlink(season.header)}catch{}
+        try {unlink(path.join(imgaesDir, season.header))}catch{}
       }
     }
     delete this.db.items[this.id];
     this.db.save();
+    dispatchEvent(new Event('db'));
   }
   toJSON() {
     return{
