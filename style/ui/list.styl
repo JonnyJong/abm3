@@ -18,9 +18,15 @@ ui-list
   gap 8px
 .ui-list-item-content
   flex 1
+  display flex
+  flex-direction column
+  gap 8px
 .ui-list-item-remove
   height 38px
 .ui-list-add
   width max-content
-.ui-list-inline>.ui-list-container>.ui-list-item>.ui-list-item-sort
-  flex-direction row
+.ui-list-inline>.ui-list-container>.ui-list-item
+  &>.ui-list-item-sort
+  &>.ui-list-item-content
+    flex-direction row
+    align-items center

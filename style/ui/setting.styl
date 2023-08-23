@@ -43,6 +43,7 @@ ui-setting-item
   font-size 12px
 .ui-setting-item-head
   display flex
+  align-items center
   gap 16px
 .ui-setting-item-body-shell
   position relative
@@ -56,9 +57,11 @@ ui-setting-item
   background var(--bg3)
   border 1px solid #0000
   border-top-color var(--setting-border)
-  &>*
+  &>*:not(ui-setting-item-child)
     margin 8px 64px
     width calc(100% - 128px)
+  &:empty
+    display none
 .ui-setting-item-expand .icon
   transition .2s rotate
 .ui-setting-item-expanded
@@ -75,6 +78,14 @@ ui-setting-item
   .ui-setting-item-body
     position absolute
 
+ui-setting-item-child
+  display block
+  border-top 1px solid var(--setting-border)
+  &:has(.ui-setting-item-head-shell>*:first-child)
+    .ui-setting-item-head-shell:not(:has(.ui-setting-item-head:hover))
+      &:hover
+      &:active
+        background none
 
 // .setting-group
 //   display flex

@@ -1,0 +1,120 @@
+@keyframes settings-page-in
+  0%, 50%
+    opacity 0
+    scale .98
+.page-settings
+  padding 0 0 0 324px
+.settings-p-list
+  width 324px
+  height 100vh
+  position fixed
+  top 0
+  left 0
+  padding 54px 8px 4px 4px
+  overflow hidden overlay
+  display flex
+  flex-direction column
+  gap 4px
+.settings-indicator
+  pointer-events none
+  position absolute
+  width 3px
+  height 16px
+  border-radius 3px
+  background var(--theme)
+  left 4px
+  top 10px + 54px
+  transition .3s top cubic-bezier(1, 0, 0, 1)
+.settings-tab
+  display flex
+  align-items center
+  padding 6px 10px
+  gap 6px
+  border-radius 6px
+  transition .2s background
+  &:hover
+    background var(--btn-bg-hover)
+  &:active
+    background var(--btn-bg-active)
+    ui-lang
+      color var(--btn-color-active)
+  &.settings-tab-current
+    background var(--btn-bg)
+.settings-list-separator
+  height 1px
+  margin 8px 0
+  background var(--color-disabled)
+.settings-p-bodys
+  height 100%
+  width 100%
+.settings-body
+  height 100vh
+  width 100%
+  padding 64px 16px 32px 0
+  overflow hidden scroll
+  display none
+  &.settings-body-current
+    display block
+    animation .3s settings-page-in
+  &>*
+    max-width 1080px
+    margin auto
+.settings-content
+  &>div
+  &>ui-lang
+    font-weight calc(800 * var(--weight-factor))
+  &>*
+    margin-top 8px
+    display block
+    &>*
+      font-weight calc(400 * var(--weight-factor))
+.settings-body-name
+  display block
+  font-size 32px
+  font-weight calc(800 * var(--weight-factor))
+  padding-bottom 16px
+
+.settings-license
+  all unset
+  display block
+  height 512px
+  pointer-events none
+
+.settings-links
+  ui-link button
+    background #0000
+    border-color #0000
+
+.settings-user
+  border-radius 6px
+  display flex
+  align-items center
+  background var(--bg3)
+  padding 32px
+  gap 32px
+.setting-user-avatar
+  height 128px
+  width 128px
+  border-radius 100%
+  .ui-image-info
+  .ui-image-clean
+  .ui-image-default
+  .ui-image-web
+    display none
+  .ui-image-local
+    top 0
+    left 0
+    height 100%
+    width 100%
+    justify-content center
+    font-size 64px
+    &:hover
+      background var(--bg-tsp2)
+.setting-user-name
+  flex 0 1 512px
+  background #0000
+  border-color #0000
+  font-size 18px
+
+.settings-select
+  flex 1

@@ -153,6 +153,7 @@ settings:
 
   application: 应用程序
   language: 语言
+  language_auto: 自动
   reset_settings:
     title: 重置设置
     description: 恢复所有设置为默认值，数据库不受影响
@@ -222,5 +223,10 @@ settings:
     title: 开放源代码
     license: 许可证
     third_party: 第三方源代码
+  about_dev: 关于开发者
   
   extensions: 扩展程序
+  open_ext_dir: 打开扩展程序安装目录
+  scan_ext:
+    title: 重新扫描扩展程序
+    button: 扫描

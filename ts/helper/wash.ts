@@ -30,6 +30,14 @@ function washObject(obj: any): any {
   return object;
 }
 
+function washEvent(obj: Event): any {
+  let ev: any = {};
+  for (const key in obj) {
+    ev[key] = (obj as any)[key];
+  }
+  return ev;
+}
+
 export function wash<T>(obj: any) {
   if (typeof obj !== 'object') return obj as T;
   if (Array.isArray(obj)) {
@@ -40,6 +48,9 @@ export function wash<T>(obj: any) {
   }
   if (obj instanceof Map) {
     return washMap(obj) as T;
+  }
+  if (obj instanceof Event) {
+    return washEvent(obj) as T;
   }
   return washObject(obj) as T;
 }

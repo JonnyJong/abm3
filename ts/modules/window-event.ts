@@ -74,5 +74,8 @@ export class WindowEvent{
     ipcMain.handle('theme:color', ()=>{
       return ('#' + systemPreferences.getAccentColor()).slice(0, 7);
     });
+    ipcMain.handle('app:version', ()=>{
+      return app.getVersion();
+    });
   }
 }

@@ -25,6 +25,7 @@ export class UIIcon extends HTMLElement{
       img.onload = ()=>{
         img.style.display = '';
       };
+      this.append(img);
       return;
     }
     this.innerHTML = `<div class="icon icon-${this._key}"></div>`;

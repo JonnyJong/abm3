@@ -16,16 +16,17 @@ $danger = #F44336
   --theme $theme
   --theme-hover lighten($theme, 5%)
   --theme-active lighten($theme, 10%)
-  --theme-color isDark($theme) ? #fff : #000
-  --theme-color-active isDark($theme) ? #cecece : #5d5d5d
-  --theme-color-disabled isDark($theme) ? #787878 : #9d9d9d
+  --theme-color dark($theme) ? #fff : #000
+  --theme-color-active dark($theme) ? #cecece : #5d5d5d
+  --theme-color-disabled dark($theme) ? #787878 : #9d9d9d
+  --theme-weight-factor dark($theme) ? 0.75 : 1
   --danger $danger
   --danger-hover lighten($danger, 15%)
   --danger-active lighten($danger, 30%)
   --danger-color #fff
   --danger-color-active #cecece
   --danger-color-disabled #787878
-  --select isDark($theme) ? #fff : #000
+  --select dark($theme) ? #fff : #000
   --weight-factor 1
   --loading-bg loading-bg 1s infinite alternate
 

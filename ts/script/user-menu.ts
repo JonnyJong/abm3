@@ -2,6 +2,7 @@ import { Dialog } from "../ui/dialog";
 import { Menu, MenuItem } from "../ui/menu";
 import { db } from "./db";
 import { history } from "./page";
+import { settings } from "./settings";
 
 const separator: MenuItem = { type: 'separator' };
 const tryLuck: MenuItem = {
@@ -75,4 +76,5 @@ export async function initUserMenu() {
     let menu = new Menu([tryLuck, separator, editBangumi, ...(history.now.page._options.name === 'bangumi' ? [separator, editThisBangumi, removeThisBangumi] : []), separator, openSettings]);
     menu.show((document.querySelector('.user')?.getBoundingClientRect() as DOMRect));
   });
+  (document.querySelector('.user-avatar') as HTMLImageElement).src = settings.getAvatar();
 }

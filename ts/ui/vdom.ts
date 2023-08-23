@@ -859,7 +859,6 @@ export class VDOM{
         break;
       case "select":
         vdom = new VSelect();
-        vdom.value = template.value;
         if (Array.isArray(template.values)) {
           vdom.values = template.values;
         }
@@ -869,6 +868,7 @@ export class VDOM{
         if (typeof template.group === 'string') {
           vdom.group = template.group;
         }
+        vdom.value = template.value;
         if (typeof template.dataKey === 'string') {
           vdom.dataKey = template.dataKey;
         }
@@ -1496,6 +1496,9 @@ export class VImagePicker extends VDOMWithData{
   set default(value: string) {
     this._element.default = value;
   }
+  get error(): boolean {
+    return this._element.error;
+  }
   reset(): void {
     return this._element.reset();
   }
@@ -1818,7 +1821,7 @@ export class VTags extends VDOMWithData{
   set value(value: string[]) {
     this._element.value = value;
   }
-  get autoComplete(): ((value: string)=>string[] | void) | undefined {
+  get autoComplete(): (value: string)=>string[] | void {
     return this._element.autoComplete;
   }
   set autoComplete(value: (value: string)=>string[] | void) {

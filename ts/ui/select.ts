@@ -101,6 +101,7 @@ export class UISelect extends HTMLElement{
       (item as any).key = value;
       item.addEventListener('click', ()=>{
         this.value = value;
+        this.dispatchEvent(new Event('change'));
         this._show(false);
       });
       this._list.append(item);

@@ -8,6 +8,7 @@ rack:
   - type: all
     value: ''
     fold: false
+autoUpdate: false
 extensions: {}
 # <Extension Path>:
 #   enable: true

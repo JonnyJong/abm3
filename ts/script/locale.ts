@@ -48,6 +48,7 @@ async function loadLocale(id: string) {
 
 function updateUILang() {
   document.querySelectorAll('ui-lang').forEach((el)=>(el as UILang).update());
+  window.dispatchEvent(new Event('locale'));
 }
 
 export async function updateLocale(id: string) {
@@ -71,4 +72,27 @@ export function getLang(key: string, namespace?: string, localeName?: string) {
 
 export function lang(key: string, namespace?: string, locale?: string){
   return`<ui-lang${locale ? ` locale="${locale}"` : ''}>${key}${namespace ? `@${namespace}` : ''}</ui-lang>`;
+}
+
+export async function getLocaleList() {
+  let list: {name: string, value: string}[] = [{
+    name: '<ui-lang>settings.language_auto</ui-lang>',
+    value: 'auto',
+  }];
+  for (const locale of locales) {
+    let file = await readFile(path.join(process.cwd(), 'locales', locale), 'utf-8');
+    let name: string = '';
+    switch (path.extname(locale)) {
+      case '.yml':
+      case '.yaml':
+        name = yaml.parse(file).name;
+        break
+      case '.json':
+        name = JSON.parse(file).name;
+        break;
+    }
+    if (!name) continue;
+    list.push({ name, value: locale.split('.')[0]});
+  }
+  return list;
 }

@@ -4,9 +4,12 @@ import { download } from "../helper/image";
 import { access, constants, readdir, rename, unlink } from "fs/promises";
 import { ipcRenderer } from "electron";
 import stylus from "stylus";
-// import { SettingTemplate } from "../ui/template";
+import { VDOMTemplate, VDivTemplate, VIconTemplate, VImageTemplate, VLangTemplate, VSettingItemTemplate } from "../ui/vdom";
+import { updateLocale } from "./locale";
 
 const DEFAULT_AVATAR = '../assets/defaultAvatar.bmp';
+
+let systemThemeColor: string = '#f837be';
 
 class DBMover{
   status: 'checking' | 'failed' | 'scaning' | 'moveing' | 'saving' | 'successed' = 'checking';
@@ -64,6 +67,7 @@ class Settings{
     ipcRenderer.send('theme', this._config.store.theme);
   }
   private async _setColor() {
+    systemThemeColor = await ipcRenderer.invoke('theme:color');
     let theme = this._config.store.themeColor;
     if (theme === 'system') {
       theme = await ipcRenderer.invoke('theme:color');
@@ -73,7 +77,11 @@ class Settings{
   --theme $theme
   --theme-hover lighten($theme, 5%)
   --theme-active lighten($theme, 10%)
-  --select isDark($theme) ? #fff : #000
+  --select dark($theme) ? #fff : #000
+  --theme-color dark($theme) ? #fff : #000
+  --theme-color-active dark($theme) ? #cecece : #5d5d5d
+  --theme-color-disabled dark($theme) ? #787878 : #9d9d9d
+  --theme-weight-factor dark($theme) ? 0.75 : 1
   @media (prefers-color-scheme: dark)
     --theme-hover lighten($theme, -15%)
     --theme-active lighten($theme, -20%)`);
@@ -91,7 +99,7 @@ class Settings{
       this._config.store.db = getDefaultConfigDir();
     }
   }
-  getDB() {
+  getDB(): string {
     return this._config.store.db;
   }
   setDB(path: string) {
@@ -101,22 +109,23 @@ class Settings{
       await this._config.save();
     });
   }
-  getLocale() {
+  getLocale(): string {
     return this._config.store.locale;
   }
   async setLocale(name: string) {
     if (typeof name !== 'string') return;
     this._config.store.locale = name;
     await this._config.save();
+    await updateLocale(this._config.store.locale);
   }
-  getAvatar() {
+  getAvatar(): string {
     if (this._config.store.avatar === '' || this._config.store.avatar === DEFAULT_AVATAR) {
       return DEFAULT_AVATAR;
     }
     return path.join(this.getDB(), this._config.store.avatar);
   }
   async setAvatar(value: string) {
-    if (typeof value !== 'string') return;
+    if (typeof value !== 'string' || value === this.getAvatar()) return;
     let path: string;
     if (value !== '' && value !== DEFAULT_AVATAR) {
       path = await download(value, this.getDB());
@@ -129,7 +138,15 @@ class Settings{
     this._config.store.avatar = path;
     await this._config.save();
   }
-  getTheme() {
+  getUsername(): string {
+    return this._config.store.username;
+  }
+  async setUsername(value: string) {
+    if (typeof value !== 'string') return;
+    this._config.store.username = value;
+    await this._config.save();
+  }
+  getTheme(): 'system' | 'light' | 'dark' {
     return this._config.store.theme;
   }
   async setTheme(value: 'system' | 'light' | 'dark') {
@@ -138,8 +155,12 @@ class Settings{
     await this._config.save();
     this._setTheme();
   }
-  getThemeColor() {
-    return this._config.store.themeColor;
+  getThemeColor(): string {
+    let value: string = this._config.store.themeColor;
+    if (value === 'system') {
+      value = systemThemeColor;
+    }
+    return value;
   }
   async setThemeColor(value: string) {
     if (typeof value !== 'string') return;
@@ -156,6 +177,14 @@ class Settings{
     this._config.store.rack = racks;
     await this._config.save();
   }
+  getAutoUpdate(): boolean{
+    return this._config.store.autoUpdate;
+  }
+  async setAutoUpdate(value: boolean) {
+    if (typeof value !== 'boolean') return;
+    this._config.store.autoUpdate = value;
+    await this._config.save();
+  }
   async reset() {
     await this.setAvatar('');
     let db = this._config.store.db;
@@ -168,13 +197,13 @@ class Settings{
 export let settings = new Settings();
 
 export type SettingsPage = {
-  name: string,
-  // template: SettingTemplate,
-  icon?: string,
-  screenshot?: string,
-  description?: string,
+  name: VLangTemplate,
+  template: (VDivTemplate | VSettingItemTemplate | VLangTemplate)[],
+  icon?: VIconTemplate,
+  screenshot?: VImageTemplate,
+  description?: VDOMTemplate,
   shortcuts?: {
-    name: string,
+    name: VDOMTemplate,
     link: string,
   }[],
 };

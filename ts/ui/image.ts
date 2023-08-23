@@ -95,6 +95,7 @@ export class UIImagePicker extends HTMLElement{
       this._img.classList.remove('ui-image-img-hide');
       this._error = false;
       this._info.innerHTML = '';
+      this.dispatchEvent(new Event('change'));
     });
     if (this.hasAttribute('value')) {
       this.value = (this.getAttribute('value') as string);
@@ -122,6 +123,7 @@ export class UIImagePicker extends HTMLElement{
       return;
     }
     this._img.src = this._value;
+    this.dispatchEvent(new Event('change'));
   }
   get default(): string {
     return this._defaultValue;

@@ -12,7 +12,7 @@ export class UITags extends HTMLElement{
     this._input = (document.createElement('ui-text') as UIText);
     this._input.classList.add('ui-tags-input');
   }
-  autoComplete?: (value: string)=>string[] | void;
+  autoComplete: (value: string)=>string[] | void = ()=>{};
   connectedCallback() {
     if (this._inited) return;
     this._inited = true;

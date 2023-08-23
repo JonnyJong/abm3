@@ -2,6 +2,231 @@ name: English
 
 app:
   name: A Bangumi Manager
+  back: Back
+  home: Home
 
 search:
-  type_to_search: Type to search...
+  advanced_search: Advanced Search
+  type_to_search: Type to search for...
+  filter: Filter
+  clear: Clear
+  rate: Rating
+  categories: Categories
+  exclude_categories: Exclude Categories
+  tags: Tags
+  favorite: Favorite
+  non_favorite: Non Favorite
+  found_before: 'Found '
+  found_after: ' bangumi(s)'
+
+
+user_menu:
+  try_luck: Try Luck
+  edit_bangumi: Add/Edit Bangumi
+  edit_this_bangumi: Edit This Bangumi
+  del_this_bangumi: Delete This Bangumi
+  settings: Settings
+  confirm_delete_before: 'Confirmed to delete "'
+  confirm_delete_after: '"?'
+  confirm_delete_detail: This operation cannot be undone
+
+home:
+  rcmd_check: Check Details
+  rcmd_subtitle: Weekly Recommendation
+  rack_add: Adding a Display Rack
+  rack_sort: Order
+  rack_sort_title: Arrangement of Display Racks
+
+edit:
+  new: Create Bangumi
+  title: Title
+  tags: Tags
+  categories: Categories
+  markdown: Markdown
+  seasons: Seasons
+  set: Sets
+  watched: Watcheds
+  links: Links
+  links_name: Name
+  links_url: URL
+  save: Save
+  saving: Saving
+  confirm_before: 'Confirm that you want to save changes to "'
+  confirm_after: '"?'
+  confirm_content: This operation cannot be undone
+  reset: Reset
+  reset_confirm: Confirmed to clear all changes?
+  bangumi_has_been_delete: Bangumi being edited has been deleted
+
+bangumi:
+  error: Bangumi doesn't exist.
+  error_detail: May have been deleted or some error occurred
+  related: Related Recommendations
+
+markdown:
+  copy: Copy
+  paste: Paste
+  heading: Heading
+  image: Image
+  quote: Quote
+  hr: Dividing Line
+  bangumi: Quoting Bangumi
+  clear: Clear
+  pin: Pin
+  fit: Fit Page
+
+  h1: H1
+  h2: H2
+  h3: H3
+  h4: H4
+  h5: H5
+  h6: H6
+
+  img_embed: Convert to Embedded
+  img_link: Convert to Link
+  img_choose: Select Image
+  img_del: Delete Image
+
+  quote_from: ——
+
+  clear_info: Confirm clearing the editor? This operation is not reversible!
+  clear_confirm: Confirmation of emptying
+
+  embed_img: Embedded Image
+  quote_img: Quoting Image
+
+text:
+  clear: Clear
+
+color:
+  hex: HEX
+  r: Red
+  g: Green
+  b: Blue
+  h: Hue
+  s: Saturation
+  v: Value
+
+  choose: Select Color
+
+dialog:
+  error: Error
+  confirm: Confirm
+  cancel: Cancel
+
+image:
+  error: Unable to load image
+  loading: Loading image...
+  empty: No image selected
+  input_url: Input Image Link
+
+tags:
+  add: Add
+
+rack:
+  content: Content
+  select_type: Select a display content
+  all_bangumi: All Bangumi
+  expand: Expand / Collapse
+  edit: Edit
+  category: 'Category: '
+  tag: 'Tag: '
+  edit_rack: Edit Display Rack
+  category_miss: Category "%s" does not exist
+  tag_miss: Tag "%s" does not exist
+
+settings:
+  confirm: Confrim
+  reset: Reset
+
+  general: General
+
+  personalized: Personalized
+  nickname: Nickname
+  theme:
+    title: Theme
+    system: OS Default
+    light: Light
+    dark: Dark
+  theme_color: Theme Color
+  use_system_color: Use System Theme Color
+
+  application: Application
+  language: Language
+  language_auto: Auto
+  reset_settings:
+    title: Reset Settings
+    description: Restore all settings to default, database is not affected
+    button: Reset
+    dialog: 
+      title: Confirmed to restore settings?
+      content: This operation is not recoverable
+    before_relaunch: Soon to be re-launched ABM
+  
+  database: Database
+
+  mark:
+    title: Mark
+    category: Categories
+    tag: Tags
+
+  rcmd_weights:
+    title: Weekly Recommendation Weights
+    category: Categories
+    tag: Tags
+    favorite: Favorite
+
+  special_categories:
+    title: Special Categories
+    watched: Watched
+    pay: Fee-based
+    serialized: Serialized
+
+  archive:
+    title: Archive
+    rename:
+      button: Rename
+      category: Rename Category
+      tag: Rename Tag
+    merge:
+      button: Merge
+      category: Merge Category
+      tag: Merge Tag
+    delete:
+      button: Delete
+      category: Delete Category
+      tag: Delete Tag
+
+  manage: Manage
+  open_db_dir: Open the database directory
+  move_db:
+    title: Move Database
+    button: Move
+  backup:
+    title: Backup Database
+    button: Creating a Backup
+  recover:
+    title: Recovery of databases
+    button: Load Backup
+
+  danger: Hazardous operations
+  reset_db:
+    title: Reset Database
+    button: Reset
+
+  about: About
+  version:
+    title: Version
+    check_update: Check for updates
+    auto_check_update: Automatically check for updates
+  open_source:
+    title: Open Source
+    license: License
+    third_party: Third-party Source Code
+  about_dev: About Developer
+  
+  extensions: Extensions
+  open_ext_dir: Open the extension installation directory
+  scan_ext:
+    title: Rescanning extensions
+    button: Scan
