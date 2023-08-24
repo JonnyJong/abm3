@@ -187,6 +187,8 @@ export type VDivTemplate = {
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
   locale?: VDOMLocale,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VSpanTemplate = {
@@ -198,6 +200,8 @@ export type VSpanTemplate = {
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
   locale?: VDOMLocale,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VBTemplate = {
@@ -209,6 +213,8 @@ export type VBTemplate = {
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
   locale?: VDOMLocale,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VITemplate = {
@@ -220,6 +226,8 @@ export type VITemplate = {
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
   locale?: VDOMLocale,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VUTemplate = {
@@ -231,6 +239,8 @@ export type VUTemplate = {
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
   locale?: VDOMLocale,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VDelTemplate = {
@@ -242,6 +252,8 @@ export type VDelTemplate = {
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
   locale?: VDOMLocale,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VBRTemplate = {
@@ -250,6 +262,8 @@ export type VBRTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VImageTemplate = {
@@ -260,6 +274,8 @@ export type VImageTemplate = {
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
   locale?: VDOMLocale,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VButtonTemplate = {
@@ -271,6 +287,8 @@ export type VButtonTemplate = {
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
   locale?: VDOMLocale,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VInputTemplate = {
@@ -283,6 +301,8 @@ export type VInputTemplate = {
   style?: VDOMStyle,
   locale?: VDOMLocale,
   dataKey?: string,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VTextAreaTemplate = {
@@ -295,6 +315,8 @@ export type VTextAreaTemplate = {
   style?: VDOMStyle,
   locale?: VDOMLocale,
   dataKey?: string,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VColorTemplate = {
@@ -305,6 +327,8 @@ export type VColorTemplate = {
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
   dataKey?: string,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VImagePickerTemplate = {
@@ -317,6 +341,8 @@ export type VImagePickerTemplate = {
   style?: VDOMStyle,
   locale?: VDOMLocale,
   dataKey?: string,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VLangTemplate = {
@@ -328,6 +354,8 @@ export type VLangTemplate = {
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
   templateMap?: LangTemplateMap,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VIconTemplate = {
@@ -339,6 +367,8 @@ export type VIconTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VListTemplate = {
@@ -351,6 +381,8 @@ export type VListTemplate = {
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
   dataKey?: string,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VLoaderTemplate = {
@@ -360,6 +392,8 @@ export type VLoaderTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VProgressTemplate = {
@@ -369,6 +403,8 @@ export type VProgressTemplate = {
   classList?: string[],
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VNumberTemplate = {
@@ -382,6 +418,8 @@ export type VNumberTemplate = {
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
   dataKey?: string,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VRangeTemplate = {
@@ -395,6 +433,8 @@ export type VRangeTemplate = {
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
   dataKey?: string,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VSelectTemplate = {
@@ -409,6 +449,8 @@ export type VSelectTemplate = {
   style?: VDOMStyle,
   locale?: VDOMLocale,
   dataKey?: string,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VSwitchTemplate = {
@@ -419,6 +461,8 @@ export type VSwitchTemplate = {
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
   dataKey?: string,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VTagsTemplate = {
@@ -430,6 +474,8 @@ export type VTagsTemplate = {
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
   dataKey?: string,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VTextTemplate = {
@@ -445,6 +491,8 @@ export type VTextTemplate = {
   style?: VDOMStyle,
   locale?: VDOMLocale,
   dataKey?: string,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VSettingItemTemplate = {
@@ -460,6 +508,8 @@ export type VSettingItemTemplate = {
   style?: VDOMStyle,
   locale?: VDOMLocale,
   dataKey?: string,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VSettingItemChildTemplate = {
@@ -474,6 +524,8 @@ export type VSettingItemChildTemplate = {
   style?: VDOMStyle,
   locale?: VDOMLocale,
   dataKey?: string,
+  disabled?: boolean,
+  inert?: boolean,
 };
 
 export type VLinkTemplate = {
@@ -485,6 +537,8 @@ export type VLinkTemplate = {
   attribute?: VDOMAttribute,
   style?: VDOMStyle,
   locale?: VDOMLocale,
+  disabled?: boolean,
+  inert?: boolean,
 }
 
 export type VDOMTemplate = VDivTemplate | VSpanTemplate | VITemplate | VBTemplate | VUTemplate | VDelTemplate | VBRTemplate | VImageTemplate | VButtonTemplate | VInputTemplate | VTextAreaTemplate | VColorTemplate | VImagePickerTemplate | VLangTemplate | VIconTemplate | VListTemplate | VLoaderTemplate | VProgressTemplate | VNumberTemplate | VRangeTemplate | VSelectTemplate | VSwitchTemplate | VTagsTemplate | VTextTemplate | VSettingItemTemplate | VSettingItemChildTemplate | VLinkTemplate;
@@ -679,6 +733,12 @@ function initVDOM(vdom: VDOM, template: VDOMTemplate) {
       if (typeof template.events[type] !== 'function') continue;
       vdom.event.on(type, template.events[type] as VDOMEventHandler);
     }
+  }
+  if (typeof template.disabled === 'boolean') {
+    vdom.disabled = template.disabled;
+  }
+  if (typeof template.inert === 'boolean') {
+    vdom.inert = template.inert;
   }
   switch (typeof template.style) {
     case "string":

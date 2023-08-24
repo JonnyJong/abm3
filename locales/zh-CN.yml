@@ -165,6 +165,10 @@ settings:
   
   database: 数据库
 
+  save: 保存
+  select_category: 选择分类
+  select_tag: 选择标签
+
   mark:
     title: 标记
     category: 分类
@@ -181,6 +185,7 @@ settings:
     watched: 看完
     pay: 付费
     serialized: 连载中
+    none: 无
 
   archive:
     title: 归档
@@ -188,10 +193,16 @@ settings:
       button: 重命名
       category: 重命名分类
       tag: 重命名标签
+      category_failed: 重命名失败，目标分类不存在，或新名称为空，或新名称和已有分类重名。
+      tag_failed: 重命名失败，目标标签不存在，或新名称为空，或新名称和已有标签重名。
     merge:
       button: 合并
       category: 合并分类
       tag: 合并标签
+      select_category_main: 选择主分类
+      select_category_branch: 选择分支分类
+      select_tag_main: 选择主标签
+      select_tag_branch: 选择分支标签
     delete:
       button: 删除
       category: 删除分类
@@ -202,9 +213,19 @@ settings:
   move_db:
     title: 移动数据库
     button: 移动
+    checking: 检查中...
+    failed: 失败
+    scaning: 扫描中...
+    moving: 移动中：
+    saving: 保存变更中...
+    successed: 成功
+    dialog:
+      title: 确认移动数据库？
+      content: 此操作不可逆，移动时请不要关闭此程序或计算机，建议备份后再移动数据库
   backup:
     title: 备份数据库
     button: 创建备份
+    wait: 正在创建备份...
   recover:
     title: 恢复数据库
     button: 加载备份
@@ -213,6 +234,10 @@ settings:
   reset_db:
     title: 重置数据库
     button: 重置
+    dialog:
+      title: 确认重置数据库？
+      content: 此操作不可逆，重置后将重新启动番剧管理器
+    before_relaunch: 正在重置
 
   about: 关于
   version:

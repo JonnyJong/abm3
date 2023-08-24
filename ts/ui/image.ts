@@ -1,5 +1,5 @@
 import { ipcRenderer } from "electron";
-import { getImage } from "../helper/get-file";
+import { getImage } from "../helper/dialog";
 import { Dialog } from "./dialog";
 import { UIText } from "./text";
 import path from "path";

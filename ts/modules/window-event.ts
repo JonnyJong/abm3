@@ -37,7 +37,7 @@ export class WindowEvent{
     ipcMain.on('relaunch',()=>{
       app.relaunch();
     });
-    ipcMain.on('url',(_, url)=>{
+    ipcMain.on('open:url',(_, url)=>{
       shell.openExternal(url);
     });
     ipcMain.handle('getAppData', ()=>{
@@ -76,6 +76,9 @@ export class WindowEvent{
     });
     ipcMain.handle('app:version', ()=>{
       return app.getVersion();
+    });
+    ipcMain.on('open:path', (_, link)=>{
+      shell.openPath(path.join(link));
     });
   }
 }

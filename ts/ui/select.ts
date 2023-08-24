@@ -36,16 +36,18 @@ export class UISelect extends HTMLElement{
     (this.querySelector('.ui-select') as HTMLDivElement).addEventListener('click',()=>{
       if (this._values.length === 0) return;
       this._setList();
+      let size = this._list.children.length;
+      if (size === 0) return;
       // 确定简单位置
       // Determine the simple location
       let rect = this.getBoundingClientRect();
       let x = rect.left;
       let y = rect.top;
-      let h = 12 + 32 * this._values.length + 4 * (this._values.length - 1); // 高度 height
+      let h = 12 + 32 * size + 4 * (size - 1); // 高度 height
       let w = rect.width;
       let index = Array.from(this._list.children).findIndex((el)=>(el as any).key === this._value);
       if (index === -1) {
-        index = Math.floor(Math.min(this._values.length / 2, (window.innerHeight - 62) / 72 - 2));
+        index = Math.floor(Math.min(size / 2, (window.innerHeight - 62) / 72 - 2));
       }
       let o = 6 + 36 * index; // 偏移 offset
       let realH = Math.min(h, window.innerHeight - 100);

@@ -19,7 +19,7 @@ export class UILink extends HTMLElement{
     }
     this.addEventListener('click', ()=>{
       if (this._link === '') return;
-      ipcRenderer.send('url', this._link);
+      ipcRenderer.send('open:url', this._link);
     });
   }
   get text(): string {

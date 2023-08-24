@@ -1,6 +1,6 @@
 import path from "path";
 import { download } from "../helper/image";
-import { readFile, unlink, writeFile } from "fs/promises";
+import { readFile, readdir, unlink, writeFile } from "fs/promises";
 import { nextId } from "../helper/id";
 import { settings } from "./settings";
 
@@ -216,6 +216,7 @@ export class Bangumi{
   }
 }
 export class DB{
+  ver: number = 0;
   inited: boolean = false;
   id: string = 'a0';
   items: {
@@ -339,9 +340,10 @@ export class DB{
   }
   async removeCategory(name: string){
     if (!this.categories[name]) return false;
-    for (const item of Array.from(this.categories[name])) {
+    for (const item of this.categories[name]) {
       this.items[item].categories.delete(name);
     }
+    delete this.categories[name];
     delete this.mark.categories[name];
     await this.save();
     dispatchEvent(new Event('db'));
@@ -349,9 +351,10 @@ export class DB{
   }
   async removeTag(name: string){
     if (!this.tags[name]) return false;
-    for (const item of Array.from(this.tags[name])) {
+    for (const item of this.tags[name]) {
       this.items[item].tags.delete(name);
     }
+    delete this.tags[name];
     delete this.mark.tags[name];
     await this.save();
     dispatchEvent(new Event('db'));
@@ -410,6 +413,14 @@ export class DB{
     await this.save();
     dispatchEvent(new Event('db'));
     return true;
+  }
+  async reset() {
+    let dbPath = settings.getDB();
+    let images = await readdir(path.join(dbPath, 'images'));
+    for (const img of images) {
+      await unlink(path.join(dbPath, 'images', img));
+    }
+    await unlink(path.join(dbPath, 'db.json'));
   }
 }
 

@@ -10,15 +10,20 @@ textarea
   transition .1s border, .1s background
   font-family NotoSans
   line-height 1
-  &:hover
+  &:hover:not([disabled])
     background var(--input-bg-hover)
     &::-webkit-input-placeholder
       color var(--input-placeholder-hover)
-  &:focus
+  &:focus:not([disabled])
     background var(--input-bg-focus)
     border-bottom-color var(--theme)
     &::-webkit-input-placeholder
       color var(--input-placeholder-focus)
+  &[disabled]
+    background var(--input-bg-disabled)
+    color var(--input-color-disabled)
+    border-color var(--input-border-disabled)
+    border-bottom-color var(--input-border-bottom-disabled)
 ::-webkit-input-placeholder
   color var(--input-placeholder)
 textarea

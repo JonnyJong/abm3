@@ -35,10 +35,12 @@ export class UINumber extends HTMLElement{
     if (this._addTimer !== null) {
       clearTimeout(this._addTimer);
       this._addTimer = null;
+      this.dispatchEvent(new Event('change'));
     }
     if (this._reduceTimer !== null) {
       clearTimeout(this._reduceTimer);
       this._reduceTimer = null;
+      this.dispatchEvent(new Event('change'));
     }
   }
   connectedCallback() {
@@ -59,6 +61,7 @@ export class UINumber extends HTMLElement{
     });
     this._input.addEventListener('blur', ()=>{
       this.value = Number(this._input.value);
+      this.dispatchEvent(new Event('change'));
     });
     this._input.addEventListener('keydown',({key})=>{
       if (key !== 'Enter') return;

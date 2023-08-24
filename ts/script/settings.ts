@@ -1,23 +1,30 @@
 import path from "path";
 import Config, { getDefaultConfigDir } from "../modules/config";
 import { download } from "../helper/image";
-import { access, constants, readdir, rename, unlink } from "fs/promises";
+import { access, constants, mkdir, readdir, rename, unlink } from "fs/promises";
 import { ipcRenderer } from "electron";
 import stylus from "stylus";
 import { VDOMTemplate, VDivTemplate, VIconTemplate, VImageTemplate, VLangTemplate, VSettingItemTemplate } from "../ui/vdom";
 import { updateLocale } from "./locale";
+import archiver from "archiver";
+import { sha256 } from "../helper/hash";
+import { createWriteStream, existsSync } from "fs";
+import { ErrorDialog } from "../ui/dialog";
 
 const DEFAULT_AVATAR = '../assets/defaultAvatar.bmp';
 
 let systemThemeColor: string = '#f837be';
 
 class DBMover{
-  status: 'checking' | 'failed' | 'scaning' | 'moveing' | 'saving' | 'successed' = 'checking';
+  status: 'checking' | 'failed' | 'scaning' | 'moving' | 'saving' | 'successed' = 'checking';
   msg: string = '';
   finished: number = 0;
   total: number = 0;
   constructor(origin: string, target: string, movedHandler: Function) {
-    this._processer(origin, target, movedHandler);
+    this._processer(origin, target, movedHandler).catch((error)=>{
+      new ErrorDialog(`<div style="word-break:break-word;white-space:nowrap;">${JSON.stringify(error)}</div>`);
+      console.error(error);
+    });
   }
   onProgress: (dbMover: DBMover)=>void = ()=>{};
   private async _processer(origin: string, target: string, movedHandler: Function) {
@@ -41,11 +48,17 @@ class DBMover{
       files.push(path.join(images, file).replace(origin, ''));
     }
     this.total = files.length; 
-    this.status = 'moveing';
+    this.status = 'moving';
     this.onProgress(this);
+    if (!existsSync(path.join(target, 'images'))) {
+      await mkdir(path.join(target, 'images'));
+    }
     for (const file of files) {
       this.msg = file;
       this.onProgress(this);
+      if (existsSync(path.join(target, file))) {
+        unlink(path.join(target, file));
+      }
       await rename(path.join(origin, file), path.join(target, file));
       this.finished++;
     }
@@ -215,3 +228,23 @@ export function registerSettingsPage(page: SettingsPage) {
 export function getSettingsPages() {
   return settingsPages;
 }
+
+export async function backup(filePath: string) {
+  if (typeof filePath !== 'string') return;
+  let dbPath = settings.getDB();
+  let hash = await sha256(path.join(dbPath, 'db.json'));
+  let output = createWriteStream(filePath);
+  let archive = archiver('zip', {
+    comment: hash,
+    zlib: {
+      level: 9,
+    },
+  });
+
+  archive.pipe(output);
+  archive.file(path.join(dbPath, 'db.json'), { name: 'db.json' });
+  archive.directory(path.join(dbPath, 'images'), 'images');
+
+  await archive.finalize();
+}
+export async function restore() {}

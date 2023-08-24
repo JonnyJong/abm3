@@ -1,12 +1,14 @@
 import { ipcRenderer } from "electron";
 import { getLocaleList, lang } from "../locale";
 import { SinglePageOptions } from "../page";
-import { SettingsPage, registerSettingsPage, settings } from "../settings";
-import { VColor, VDOM, VDOMTemplate, VDiv, VIcon, VImagePicker, VInput, VSelect, VSettingItemTemplate } from "../../ui/vdom";
+import { SettingsPage, backup, settings } from "../settings";
+import { VColor, VDOM, VDOMTemplate, VDiv, VIcon, VImagePicker, VInput, VNumber, VSelect, VSettingItemTemplate } from "../../ui/vdom";
 import { UIIcon } from "../../ui/icon";
 import { UIColor } from "../../ui/color";
-import { Dialog } from "../../ui/dialog";
+import { Dialog, ErrorDialog } from "../../ui/dialog";
 import { timer } from "../../helper/timer";
+import { db } from "../db";
+import { saveFile, saveInFolder } from "../../helper/dialog";
 
 let pageListElement: HTMLDivElement;
 let pageBodysElement: HTMLDivElement;
@@ -41,6 +43,7 @@ function createPage(page: SettingsPage) {
     body.classList.add('settings-body-current');
     pageListIndicator.style.top = tab.offsetTop + 10 + 'px';
   });
+  return content;
 }
 
 async function initSettingsGeneral() {
@@ -259,6 +262,36 @@ async function initSettingsGeneral() {
 }
 
 async function initSettingsDatabase() {
+  function DBToList(value: {[x: string]: any}) {
+    let list: {id: string, value: any}[] = [];
+    for (const id of Object.keys(value)) {
+      list.push({id, value: value[id]});
+    }
+    return list;
+  }
+
+  function ListToDB(list: {id: string, value: any}[]) {
+    let value: {[x: string]: any} = {};
+    for (const item of list) {
+      if (item.id === undefined) continue;
+      value[item.id] = item.value;
+    }
+    return value;
+  }
+
+  function dbToSelect(obj: any, withNone?: boolean) {
+    let list: {name: string, value: any}[] = [];
+    if (withNone) {
+      list.push({name: '<ui-lang>settings.special_categories.none</ui-lang>', value: null});
+    }
+    for (const key of Object.keys(obj)) {
+      list.push({name: key, value: key});
+    }
+    return list;
+  }
+
+  let content: VDiv;
+
   const database: SettingsPage = {
     name: {
       type: 'lang',
@@ -283,15 +316,40 @@ async function initSettingsDatabase() {
           type: 'icon',
           key: 'Archive',
         },
+        head: [{
+          type: 'button',
+          children: [
+            {
+              type: 'icon',
+              key: 'Save',
+            },
+            {
+              type: 'lang',
+              key: 'settings.save',
+            },
+          ],
+          events: {
+            click: async ()=>{
+              db.mark.categories = ListToDB(content.querySelectorAll('[settings-data="mark.categories"]')[0].data.mark.categories);
+              await db.save();
+              window.dispatchEvent(new Event('db'));
+              ;
+            },
+          },
+        }],
         body: [{
           type: 'list',
           dataKey: 'mark.categories',
+          attribute: {'settings-data': 'mark.categories'},
           template: [
             {
               type: 'select',
               dataKey: 'id',
               group: 'mark-category',
               classList: ['settings-select'],
+              attribute: {select: 'categories'},
+              placeholder: lang('settings.select_category'),
+              values: dbToSelect(db.categories),
             },
             {
               type: 'color',
@@ -299,6 +357,7 @@ async function initSettingsDatabase() {
               value: '#888888',
             },
           ],
+          value: DBToList(db.mark.categories),
         }],
       },
       {
@@ -311,15 +370,40 @@ async function initSettingsDatabase() {
           type: 'icon',
           key: 'Tag',
         },
+        head: [{
+          type: 'button',
+          children: [
+            {
+              type: 'icon',
+              key: 'Save',
+            },
+            {
+              type: 'lang',
+              key: 'settings.save',
+            },
+          ],
+          events: {
+            click: async ()=>{
+              db.mark.tags = ListToDB(content.querySelectorAll('[settings-data="mark.tags"]')[0].data.mark.tags);
+              await db.save();
+              window.dispatchEvent(new Event('db'));
+              ;
+            },
+          },
+        }],
         body: [{
           type: 'list',
           dataKey: 'mark.tags',
+          attribute: {'settings-data': 'mark.tags'},
           template: [
             {
               type: 'select',
               dataKey: 'id',
               group: 'mark-tags',
               classList: ['settings-select'],
+              attribute: {select: 'tags'},
+              placeholder: lang('settings.select_tag'),
+              values: dbToSelect(db.tags),
             },
             {
               type: 'color',
@@ -327,6 +411,7 @@ async function initSettingsDatabase() {
               value: '#888888',
             },
           ],
+          value: DBToList(db.mark.tags),
         }],
       },
       {
@@ -343,23 +428,49 @@ async function initSettingsDatabase() {
           type: 'icon',
           key: 'Archive',
         },
+        head: [{
+          type: 'button',
+          children: [
+            {
+              type: 'icon',
+              key: 'Save',
+            },
+            {
+              type: 'lang',
+              key: 'settings.save',
+            },
+          ],
+          events: {
+            click: async ()=>{
+              db.recommendation.weights.categories = ListToDB(content.querySelectorAll('[settings-data="rcmd.categories"]')[0].data.recommendation.weights.categories);
+              await db.save();
+              window.dispatchEvent(new Event('db'));
+              ;
+            },
+          },
+        }],
         body: [{
           type: 'list',
           dataKey: 'recommendation.weights.categories',
+          attribute: {'settings-data': 'rcmd.categories'},
           template: [
             {
               type: 'select',
               dataKey: 'id',
               group: 'rcmd-category',
               classList: ['settings-select'],
+              attribute: {select: 'categories'},
+              placeholder: lang('settings.select_category'),
+              values: dbToSelect(db.categories),
             },
             {
               type: 'number',
               dataKey: 'value',
               value: 0,
-              step: 0.1,
+              step: 1,
             },
           ],
+          value: DBToList(db.recommendation.weights.categories),
         }],
       },
       {
@@ -372,23 +483,49 @@ async function initSettingsDatabase() {
           type: 'icon',
           key: 'Tag',
         },
+        head: [{
+          type: 'button',
+          children: [
+            {
+              type: 'icon',
+              key: 'Save',
+            },
+            {
+              type: 'lang',
+              key: 'settings.save',
+            },
+          ],
+          events: {
+            click: async ()=>{
+              db.recommendation.weights.tags = ListToDB(content.querySelectorAll('[settings-data="rcmd.tags"]')[0].data.recommendation.weights.tags);
+              await db.save();
+              window.dispatchEvent(new Event('db'));
+              ;
+            },
+          },
+        }],
         body: [{
           type: 'list',
           dataKey: 'recommendation.weights.tags',
+          attribute: {'settings-data': 'rcmd.tags'},
           template: [
             {
               type: 'select',
               dataKey: 'id',
               group: 'rcmd-tag',
               classList: ['settings-select'],
+              attribute: {select: 'tags'},
+              placeholder: lang('settings.select_tag'),
+              values: dbToSelect(db.tags),
             },
             {
               type: 'number',
               dataKey: 'value',
               value: 0,
-              step: 0.1,
+              step: 1,
             },
           ],
+          value: DBToList(db.recommendation.weights.tags),
         }],
       },
       {
@@ -405,7 +542,14 @@ async function initSettingsDatabase() {
           type: 'number',
           dataKey: 'recommendation.weights.favorites',
           value: 1,
-          step: 0.1,
+          step: 1,
+          events: {
+            change: async ({target})=>{
+              db.recommendation.weights.favorites = (target as VNumber).value;
+              await db.save();
+              window.dispatchEvent(new Event('db'));
+            },
+          },
         }],
       },
       {
@@ -425,6 +569,16 @@ async function initSettingsDatabase() {
         head: [{
           type: 'select',
           dataKey: 'specialCategory.watched',
+          attribute: {select: 'categories', 'select-with-none': 'true'},
+          values: dbToSelect(db.categories, true),
+          value: db.specialCategory.watched,
+          events: {
+            change: async ({target})=>{
+              db.specialCategory.watched = (target as VSelect).value;
+              await db.save();
+              window.dispatchEvent(new Event('db'));
+            },
+          },
         }],
       },
       {
@@ -440,6 +594,16 @@ async function initSettingsDatabase() {
         head: [{
           type: 'select',
           dataKey: 'specialCategory.pay',
+          attribute: {select: 'categories', 'select-with-none': 'true'},
+          values: dbToSelect(db.categories, true),
+          value: db.specialCategory.payable,
+          events: {
+            change: async ({target})=>{
+              db.specialCategory.payable = (target as VSelect).value;
+              await db.save();
+              window.dispatchEvent(new Event('db'));
+            },
+          },
         }],
       },
       {
@@ -455,6 +619,16 @@ async function initSettingsDatabase() {
         head: [{
           type: 'select',
           dataKey: 'specialCategory.serialized',
+          attribute: {select: 'categories', 'select-with-none': 'true'},
+          values: dbToSelect(db.categories, true),
+          value: db.specialCategory.serialized,
+          events: {
+            change: async ({target})=>{
+              db.specialCategory.serialized = (target as VSelect).value;
+              await db.save();
+              window.dispatchEvent(new Event('db'));
+            },
+          },
         }],
       },
       {
@@ -474,16 +648,62 @@ async function initSettingsDatabase() {
         head: [
           {
             type: 'select',
+            placeholder: lang('settings.select_category'),
+            values: dbToSelect(db.categories),
+            attribute: {'setting-data': 'rename.category.target', select: 'categories'},
+            events: {
+              change: ({target})=>{
+                let input = (content.querySelectorAll('[setting-data="rename.category.value"]')[0] as VInput);
+                let btn = content.querySelectorAll('[setting-data="rename.category.action"]')[0];
+                if (typeof (target as VSelect).value !== 'string') {
+                  input.disabled = true;
+                  input.value = '';
+                  btn.disabled = true;
+                  return;
+                }
+                input.disabled = false;
+              },
+            },
           },
           {
             type: 'input',
+            attribute: {'setting-data': 'rename.category.value'},
+            disabled: true,
+            events: {
+              input: ({target})=>{
+                let btn = content.querySelectorAll('[setting-data="rename.category.action"]')[0];
+                if ((target as VInput).value === '' || Object.keys(db.categories).includes((target as VInput).value)) {
+                  btn.disabled = true;
+                  return;
+                }
+                btn.disabled = false;
+              },
+            },
           },
           {
             type: 'button',
+            attribute: {'setting-data': 'rename.category.action'},
+            disabled: true,
             children: [{
               type: 'lang',
-              key: 'settings.archive.rename.button'
+              key: 'settings.archive.rename.button',
+              inert: true,
             }],
+            events: {
+              click: async (ev)=>{
+                let target = (content.querySelectorAll('[setting-data="rename.category.target"]')[0] as VSelect);
+                let input = (content.querySelectorAll('[setting-data="rename.category.value"]')[0] as VInput);
+                if (typeof target.value !== 'string' || input.value === '' || Object.keys(db.categories).includes(input.value)) {
+                  new ErrorDialog(lang('settings.archive.rename.category_failed'));
+                  return;
+                };
+                await db.renameCategory(target.value, input.value);
+                target.value = undefined;
+                input.value = '';
+                input.disabled = true;
+                (ev.target as VDOM).disabled = true;
+              },
+            },
           },
         ],
       },
@@ -500,16 +720,62 @@ async function initSettingsDatabase() {
         head: [
           {
             type: 'select',
+            placeholder: lang('settings.select_category'),
+            values: dbToSelect(db.tags),
+            attribute: {'setting-data': 'rename.tag.target', select: 'tags'},
+            events: {
+              change: ({target})=>{
+                let input = (content.querySelectorAll('[setting-data="rename.tag.value"]')[0] as VInput);
+                let btn = content.querySelectorAll('[setting-data="rename.tag.action"]')[0];
+                if (typeof (target as VSelect).value !== 'string') {
+                  input.disabled = true;
+                  input.value = '';
+                  btn.disabled = true;
+                  return;
+                }
+                input.disabled = false;
+              },
+            },
           },
           {
             type: 'input',
+            attribute: {'setting-data': 'rename.tag.value'},
+            disabled: true,
+            events: {
+              input: ({target})=>{
+                let btn = content.querySelectorAll('[setting-data="rename.tag.action"]')[0];
+                if ((target as VInput).value === '' || Object.keys(db.tags).includes((target as VInput).value)) {
+                  btn.disabled = true;
+                  return;
+                }
+                btn.disabled = false;
+              },
+            },
           },
           {
             type: 'button',
+            attribute: {'setting-data': 'rename.tag.action'},
+            disabled: true,
             children: [{
               type: 'lang',
-              key: 'settings.archive.rename.button'
+              key: 'settings.archive.rename.button',
+              inert: true,
             }],
+            events: {
+              click: async (ev)=>{
+                let target = (content.querySelectorAll('[setting-data="rename.tag.target"]')[0] as VSelect);
+                let input = (content.querySelectorAll('[setting-data="rename.tag.value"]')[0] as VInput);
+                if (typeof target.value !== 'string' || input.value === '' || Object.keys(db.tags).includes(input.value)) {
+                  new ErrorDialog(lang('settings.archive.rename.tag_failed'));
+                  return;
+                };
+                await db.renameTag(target.value, input.value);
+                target.value = undefined;
+                input.value = '';
+                input.disabled = true;
+                (ev.target as VDOM).disabled = true;
+              },
+            },
           },
         ],
       },
@@ -527,17 +793,61 @@ async function initSettingsDatabase() {
           {
             type: 'select',
             group: 'merge-category',
+            placeholder: lang('settings.archive.merge.select_category_main'),
+            values: dbToSelect(db.categories),
+            attribute: {'settings-data': 'merge.category.main', select: 'categories'},
+            events: {
+              change: ({target})=>{
+                let main = (target as VSelect).value;
+                let branch = (content.querySelectorAll('[settings-data="merge.category.branch"]')[0] as VSelect).value;
+                let btn = content.querySelectorAll('[settings-data="merge.category.action"]')[0];
+                if (typeof main === 'string' && typeof branch === 'string' && main !== branch) {
+                  btn.disabled = false;
+                  return;
+                }
+                btn.disabled = true;
+              },
+            },
           },
           {
             type: 'select',
             group: 'merge-category',
+            placeholder: lang('settings.archive.merge.select_category_branch'),
+            values: dbToSelect(db.categories),
+            attribute: {'settings-data': 'merge.category.branch', select: 'categories'},
+            events: {
+              change: ({target})=>{
+                let main = (content.querySelectorAll('[settings-data="merge.category.main"]')[0] as VSelect).value;
+                let branch = (target as VSelect).value;
+                let btn = content.querySelectorAll('[settings-data="merge.category.action"]')[0];
+                if (typeof main === 'string' && typeof branch === 'string' && main !== branch) {
+                  btn.disabled = false;
+                  return;
+                }
+                btn.disabled = true;
+              },
+            },
           },
           {
             type: 'button',
+            disabled: true,
             children: [{
               type: 'lang',
-              key: 'settings.archive.merge.button'
+              key: 'settings.archive.merge.button',
+              inert: true,
             }],
+            attribute: {'settings-data': 'merge.category.action'},
+            events: {
+              click: async ({target})=>{
+                let main = (content.querySelectorAll('[settings-data="merge.category.main"]')[0] as VSelect);
+                let branch = (content.querySelectorAll('[settings-data="merge.category.branch"]')[0] as VSelect);
+                if (typeof main.value !== 'string' || typeof branch.value !== 'string' || main.value === branch.value) return;
+                await db.mergeCategory(main.value, branch.value);
+                main.value = undefined;
+                branch.value = undefined;
+                (target as VDOM).disabled = true;
+              },
+            },
           },
         ],
       },
@@ -555,17 +865,61 @@ async function initSettingsDatabase() {
           {
             type: 'select',
             group: 'merge-tag',
+            placeholder: lang('settings.archive.merge.select_tag_main'),
+            values: dbToSelect(db.tags),
+            attribute: {'settings-data': 'merge.tag.main', select: 'tags'},
+            events: {
+              change: ({target})=>{
+                let main = (target as VSelect).value;
+                let branch = (content.querySelectorAll('[settings-data="merge.tag.branch"]')[0] as VSelect).value;
+                let btn = content.querySelectorAll('[settings-data="merge.tag.action"]')[0];
+                if (typeof main === 'string' && typeof branch === 'string' && main !== branch) {
+                  btn.disabled = false;
+                  return;
+                }
+                btn.disabled = true;
+              },
+            },
           },
           {
             type: 'select',
             group: 'merge-tag',
+            placeholder: lang('settings.archive.merge.select_tag_branch'),
+            values: dbToSelect(db.tags),
+            attribute: {'settings-data': 'merge.tag.branch', select: 'tags'},
+            events: {
+              change: ({target})=>{
+                let main = (content.querySelectorAll('[settings-data="merge.tag.main"]')[0] as VSelect).value;
+                let branch = (target as VSelect).value;
+                let btn = content.querySelectorAll('[settings-data="merge.tag.action"]')[0];
+                if (typeof main === 'string' && typeof branch === 'string' && main !== branch) {
+                  btn.disabled = false;
+                  return;
+                }
+                btn.disabled = true;
+              },
+            },
           },
           {
             type: 'button',
+            disabled: true,
             children: [{
               type: 'lang',
-              key: 'settings.archive.merge.button'
+              key: 'settings.archive.merge.button',
+              inert: true,
             }],
+            attribute: {'settings-data': 'merge.tag.action'},
+            events: {
+              click: async ({target})=>{
+                let main = (content.querySelectorAll('[settings-data="merge.tag.main"]')[0] as VSelect);
+                let branch = (content.querySelectorAll('[settings-data="merge.tag.branch"]')[0] as VSelect);
+                if (typeof main.value !== 'string' || typeof branch.value !== 'string' || main.value === branch.value) return;
+                await db.mergeTag(main.value, branch.value);
+                main.value = undefined;
+                branch.value = undefined;
+                (target as VDOM).disabled = true;
+              },
+            },
           },
         ],
       },
@@ -582,13 +936,33 @@ async function initSettingsDatabase() {
         head: [
           {
             type: 'select',
+            placeholder: lang('settings.select_category'),
+            values: dbToSelect(db.categories),
+            attribute: {'settings-data': 'delete.category.select', select: 'categories'},
+            events: {
+              change: ({target})=>{
+                content.querySelectorAll('[settings-data="delete.category.action"]')[0].disabled = (typeof (target as VSelect).value !== 'string');
+              },
+            },
           },
           {
             type: 'button',
+            disabled: true,
             children: [{
               type: 'lang',
-              key: 'settings.archive.delete.button'
+              key: 'settings.archive.delete.button',
+              inert: true,
             }],
+            attribute: {'settings-data': 'delete.category.action'},
+            events: {
+              click: async ({target})=>{
+                let select = (content.querySelectorAll('[settings-data="delete.category.select"]')[0] as VSelect);
+                if (typeof select.value !== 'string') return;
+                await db.removeCategory(select.value);
+                select.value = undefined;
+                (target as VDOM).disabled = true;
+              },
+            },
           },
         ],
       },
@@ -605,13 +979,33 @@ async function initSettingsDatabase() {
         head: [
           {
             type: 'select',
+            placeholder: lang('settings.select_tag'),
+            values: dbToSelect(db.tags),
+            attribute: {'settings-data': 'delete.tag.select', select: 'tags'},
+            events: {
+              change: ({target})=>{
+                content.querySelectorAll('[settings-data="delete.tag.action"]')[0].disabled = (typeof (target as VSelect).value !== 'string');
+              },
+            },
           },
           {
             type: 'button',
+            disabled: true,
             children: [{
               type: 'lang',
-              key: 'settings.archive.delete.button'
+              key: 'settings.archive.delete.button',
+              inert: true,
             }],
+            attribute: {'settings-data': 'delete.tag.action'},
+            events: {
+              click: async ({target})=>{
+                let select = (content.querySelectorAll('[settings-data="delete.tag.select"]')[0] as VSelect);
+                if (typeof select.value !== 'string') return;
+                await db.removeTag(select.value);
+                select.value = undefined;
+                (target as VDOM).disabled = true;
+              },
+            },
           },
         ],
       },
@@ -635,6 +1029,9 @@ async function initSettingsDatabase() {
             type: 'icon',
             key: 'OpenInNewWindow'
           }],
+          events: {
+            click: ()=>ipcRenderer.send('open:path', settings.getDB()),
+          },
         }],
       },
       {
@@ -647,13 +1044,78 @@ async function initSettingsDatabase() {
           type: 'icon',
           key: 'MoveToFolder',
         },
-        head: [{
-          type: 'button',
-          children: [{
-            type: 'lang',
-            key: 'settings.move_db.button'
-          }],
-        }],
+        head: [
+          {
+            type: 'div',
+            classList: ['settings-move-info'],
+            attribute: {'settings-data': 'db.move.info'},
+          },
+          {
+            type: 'button',
+            children: [{
+              type: 'lang',
+              key: 'settings.move_db.button',
+              inert: true,
+            }],
+            events: {
+              click: async ({target})=>{
+                async function move() {
+                  let result = await saveInFolder(settings.getDB());
+                  if (result.canceled) return;
+                  (target as VDOM).disabled = true;
+                  let info = (content.querySelectorAll('[settings-data="db.move.info"]')[0] as VDiv)._element;
+                  settings.setDB(result.filePaths[0]).onProgress = (mover)=>{
+                    switch (mover.status) {
+                      case "checking":
+                        info.innerHTML = '<ui-lang>settings.move_db.checking</ui-lang>';
+                        return;
+                      case "failed":
+                        info.innerHTML = `<ui-lang>settings.move_db.failed</ui-lang> ${mover.msg}`;
+                        (target as VDOM).disabled = false;
+                        return;
+                      case "scaning":
+                        info.innerHTML = '<ui-lang>settings.move_db.scaning</ui-lang>';
+                        return;
+                      case "moving":
+                        info.innerHTML = `<ui-lang>settings.move_db.moving</ui-lang>${mover.finished}/${mover.total} ${mover.msg}`;
+                        return;
+                      case "saving":
+                        info.innerHTML = '<ui-lang>settings.move_db.saving</ui-lang>';
+                        return;
+                      case "successed":
+                        info.innerHTML = '';
+                        (target as VDOM).disabled = false;
+                        return;
+                    }
+                  };
+                }
+                let dialogContent = document.createElement('ui-lang');
+                dialogContent.innerHTML = 'settings.move_db.dialog.content';
+                let dialog = new Dialog({
+                  title: '<ui-lang>settings.move_db.dialog.title</ui-lang>',
+                  content: dialogContent,
+                  buttons: [
+                    {
+                      text: '<ui-lang>dialog.confirm</ui-lang>',
+                      action: ()=>{
+                        move();
+                        dialog.close();
+                      },
+                      level: 'danger',
+                    },
+                    {
+                      text: '<ui-lang>dialog.cancel</ui-lang>',
+                      action: ()=>{
+                        dialog.close();
+                      },
+                    },
+                  ],
+                });
+                dialog.show();
+              },
+            },
+          }
+        ],
       },
       {
         type: 'setting',
@@ -669,8 +1131,20 @@ async function initSettingsDatabase() {
           type: 'button',
           children: [{
             type: 'lang',
-            key: 'settings.backup.button'
+            key: 'settings.backup.button',
+            inert: true,
           }],
+          events: {
+            click: async ({target})=>{
+              let {canceled, filePath} = await saveFile();
+              if (canceled || typeof filePath !== 'string') return;
+              (target as VDOM)._element.innerHTML = `<ui-lang inert>settings.backup.wait</ui-lang>`;
+              (target as VDOM).disabled = true;
+              await backup(filePath);
+              (target as VDOM)._element.innerHTML = `<ui-lang inert>settings.backup.button</ui-lang>`;
+              (target as VDOM).disabled = false;
+            },
+          },
         }],
       },
       {
@@ -687,7 +1161,8 @@ async function initSettingsDatabase() {
           type: 'button',
           children: [{
             type: 'lang',
-            key: 'settings.recover.button'
+            key: 'settings.recover.button',
+            inert: true,
           }],
         }],
       },
@@ -709,13 +1184,60 @@ async function initSettingsDatabase() {
           type: 'button',
           children: [{
             type: 'lang',
-            key: 'settings.reset_db.button'
+            key: 'settings.reset_db.button',
+            inert: true,
           }],
+          events: {
+            click: ()=>{
+              let content = document.createElement('ui-lang');
+              content.innerHTML = 'settings.reset_db.dialog.content';
+              let dialog = new Dialog({
+                title: '<ui-lang>settings.reset_db.dialog.title</ui-lang>',
+                content,
+                buttons: [
+                  {
+                    text: '<ui-lang>dialog.confirm</ui-lang>',
+                    action: async ()=>{
+                      dialog.close();
+                      let wait = new Dialog({
+                        title: '<ui-lang>settings.reset_db.before_relaunch</ui-lang>',
+                        content: document.createElement('div'),
+                        buttons: [],
+                      });
+                      wait.show();
+                      await db.reset();
+                      location.reload();
+                    },
+                    level: 'danger',
+                  },
+                  {
+                    text: '<ui-lang>dialog.cancel</ui-lang>',
+                    action: ()=>{
+                      dialog.close();
+                    },
+                  },
+                ],
+              });
+              dialog.show();
+            },
+          },
         }],
       },
     ],
   };
-  createPage(database);
+  content = createPage(database);
+  window.addEventListener('db', ()=>{
+    content.querySelectorAll('[select]').forEach((vdom)=>{
+      switch (vdom.getAttribute('select')) {
+        case 'categories':
+          (vdom as VSelect).values = dbToSelect(db.categories, vdom.hasAttribute('select-with-none'));
+          break;
+        case 'tags':
+          (vdom as VSelect).values = dbToSelect(db.tags, vdom.hasAttribute('select-with-none'));
+          break;
+      }
+    });
+  });
 }
 
 async function initSettingsAbout() {
@@ -781,9 +1303,9 @@ async function initSettingsAbout() {
           key: 'Key',
         },
         body: [{
-          type: 'textarea',
+          type: 'div',
           classList: ['settings-license'],
-          value: `MIT License
+          text: `MIT License
 
 Copyright (c) 2023 Jonny
 
@@ -828,14 +1350,24 @@ SOFTWARE.`,
         head: [
           {
             type: 'link',
+            text: `Website`,
+            link: 'https://www.electronjs.org',
+          },
+          {
+            type: 'link',
             text: `Github`,
             link: 'https://github.com/electron/electron',
           },
+          {
+            type: 'link',
+            text: `NPM`,
+            link: 'https://www.npmjs.com/package/electron',
+          },
         ],
         body: [{
-          type: 'textarea',
+          type: 'div',
           classList: ['settings-license'],
-          value: `Copyright (c) Electron contributors
+          text: `Copyright (c) Electron contributors
 Copyright (c) 2013-2020 GitHub Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining
@@ -859,6 +1391,55 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`,
         }],
       },
       {
+        type: 'setting',
+        name: [{
+          type: 'div',
+          text: 'Archiver',
+        }],
+        description: [{
+          type: 'div',
+          text: '6.0.0',
+        }],
+        head: [
+          {
+            type: 'link',
+            text: `Github`,
+            link: 'https://github.com/archiverjs/node-archiver',
+          },
+          {
+            type: 'link',
+            text: `NPM`,
+            link: 'https://www.npmjs.com/package/archiver',
+          },
+        ],
+        body: [{
+          type: 'div',
+          classList: ['settings-license'],
+          text: `Copyright (c) 2012-2014 Chris Talkington, contributors.
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.`,
+        }],
+      },
+      {
         type: 'lang',
         key: 'settings.about_dev',
       },
@@ -872,27 +1453,23 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`,
           type: 'icon',
           key: 'Person',
         },
-        body: [{
-          type: 'div',
-          classList: ['settings-links'],
-          children: [
-            {
-              type: 'link',
-              text: `Jonny's blog`,
-              link: 'https://jonnys.top',
-            },
-            {
-              type: 'link',
-              text: `Github`,
-              link: 'https://github.com/JonnyJong',
-            },
-            {
-              type: 'link',
-              text: `Npm`,
-              link: 'https://www.npmjs.com/~jonnyjonny',
-            }
-          ],
-        }],
+        head: [
+          {
+            type: 'link',
+            text: `Jonny's blog`,
+            link: 'https://jonnys.top',
+          },
+          {
+            type: 'link',
+            text: `Github`,
+            link: 'https://github.com/JonnyJong',
+          },
+          {
+            type: 'link',
+            text: `NPM`,
+            link: 'https://www.npmjs.com/~jonnyjonny',
+          }
+        ],
       },
     ],
   };

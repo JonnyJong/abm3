@@ -49,6 +49,14 @@ function checkMap(a: Map<any, any>, b: Map<any, any>): boolean {
 }
 
 function checkObject(a: any, b: any): boolean {
+  if (a == null || b === null) {
+    if (a === b) return true;
+    else return false;
+  }
+  if (a == undefined || b === undefined) {
+    if (a === b) return true;
+    else return false;
+  }
   let keys = Object.keys(a);
   if (keys.length !== Object.keys(b).length) return false;
   for (const key of keys) {
