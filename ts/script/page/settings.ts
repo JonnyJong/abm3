@@ -1200,7 +1200,7 @@ async function initSettingsDatabase() {
                     action: async ()=>{
                       dialog.close();
                       let wait = new Dialog({
-                        title: '<ui-lang>settings.reset_db.before_relaunch</ui-lang>',
+                        title: '<ui-lang>settings.reset_db.resetting</ui-lang>',
                         content: document.createElement('div'),
                         buttons: [],
                       });

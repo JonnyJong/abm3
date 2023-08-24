@@ -237,7 +237,7 @@ settings:
     dialog:
       title: 确认重置数据库？
       content: 此操作不可逆，重置后将重新启动番剧管理器
-    before_relaunch: 正在重置
+    resetting: 正在重置
 
   about: 关于
   version:
