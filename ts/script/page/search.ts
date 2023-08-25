@@ -84,6 +84,11 @@ async function setFilter() {
   for (const item of tagsVDOM) {
     item.remove();
   }
+
+  try {
+    let filterCount = filter.querySelectorAll('.search-filter-item-active').length;
+    (filter.querySelector('.search-filter-count') as HTMLSpanElement).textContent = filterCount === 0 ? '' : ' - ' + filterCount;
+  } catch {}
 }
 
 function filterClickHandler(ev: VDOMEvent) {

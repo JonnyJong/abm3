@@ -1,14 +1,14 @@
 import { ipcRenderer } from "electron";
 import { getLocaleList, lang } from "../locale";
 import { SinglePageOptions } from "../page";
-import { SettingsPage, backup, settings } from "../settings";
+import { SettingsPage, backup, restore, settings } from "../settings";
 import { VColor, VDOM, VDOMTemplate, VDiv, VIcon, VImagePicker, VInput, VNumber, VSelect, VSettingItemTemplate } from "../../ui/vdom";
 import { UIIcon } from "../../ui/icon";
 import { UIColor } from "../../ui/color";
 import { Dialog, ErrorDialog } from "../../ui/dialog";
 import { timer } from "../../helper/timer";
 import { db } from "../db";
-import { saveFile, saveInFolder } from "../../helper/dialog";
+import { saveZip, saveInFolder, getZip } from "../../helper/dialog";
 
 let pageListElement: HTMLDivElement;
 let pageBodysElement: HTMLDivElement;
@@ -1136,7 +1136,7 @@ async function initSettingsDatabase() {
           }],
           events: {
             click: async ({target})=>{
-              let {canceled, filePath} = await saveFile();
+              let {canceled, filePath} = await saveZip();
               if (canceled || typeof filePath !== 'string') return;
               (target as VDOM)._element.innerHTML = `<ui-lang inert>settings.backup.wait</ui-lang>`;
               (target as VDOM).disabled = true;
@@ -1153,6 +1153,10 @@ async function initSettingsDatabase() {
           type: 'lang',
           key: 'settings.recover.title',
         }],
+        description: [{
+          type: 'lang',
+          key: 'settings.recover.description',
+        }],
         icon: {
           type: 'icon',
           key: 'Upload',
@@ -1164,6 +1168,15 @@ async function initSettingsDatabase() {
             key: 'settings.recover.button',
             inert: true,
           }],
+          events: {
+            click: async ({target})=>{
+              let {canceled, filePaths} = await getZip();
+              if (canceled || typeof filePaths[0] !== 'string') return;
+              (target as VDOM).disabled = true;
+              await restore(filePaths[0]);
+              (target as VDOM).disabled = false;
+            }
+          },
         }],
       },
       {
@@ -1394,49 +1407,48 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`,
         type: 'setting',
         name: [{
           type: 'div',
-          text: 'Archiver',
+          text: 'ADM-ZIP',
         }],
         description: [{
           type: 'div',
-          text: '6.0.0',
+          text: '0.5.10',
         }],
         head: [
           {
             type: 'link',
             text: `Github`,
-            link: 'https://github.com/archiverjs/node-archiver',
+            link: 'https://github.com/cthackers/adm-zip',
           },
           {
             type: 'link',
             text: `NPM`,
-            link: 'https://www.npmjs.com/package/archiver',
+            link: 'https://www.npmjs.com/package/adm-zip',
           },
         ],
         body: [{
           type: 'div',
           classList: ['settings-license'],
-          text: `Copyright (c) 2012-2014 Chris Talkington, contributors.
+          text: `MIT License
 
-Permission is hereby granted, free of charge, to any person
-obtaining a copy of this software and associated documentation
-files (the "Software"), to deal in the Software without
-restriction, including without limitation the rights to use,
-copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following
-conditions:
+Copyright (c) 2012 Another-D-Mention Software and other contributors
 
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE.`,
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.`,
         }],
       },
       {

@@ -19,12 +19,22 @@ export function saveInFolder(defaultPath?: string): Promise<OpenDialogReturnValu
   });
 }
 
-export function saveFile(): Promise<SaveDialogReturnValue> {
+export function saveZip(): Promise<SaveDialogReturnValue> {
   return ipcRenderer.invoke('dialog:save', {
     filters: [{
       name: 'zip',
       extensions: ['zip'],
     }],
     properties: ['createDirectory', 'dontAddToRecent', 'showOverwriteConfirmation'],
+  });
+}
+
+export function getZip(): Promise<OpenDialogReturnValue> {
+  return ipcRenderer.invoke('dialog:open', {
+    filters: [{
+      name: 'zip',
+      extensions: ['zip'],
+    }],
+    properties: ['openFile','dontAddToRecent'],
   });
 }

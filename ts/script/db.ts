@@ -420,7 +420,9 @@ export class DB{
     for (const img of images) {
       await unlink(path.join(dbPath, 'images', img));
     }
-    await unlink(path.join(dbPath, 'db.json'));
+    try {
+      await unlink(path.join(dbPath, 'db.json'));
+    } catch {}
   }
 }
 

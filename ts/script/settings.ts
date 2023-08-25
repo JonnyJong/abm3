@@ -1,15 +1,16 @@
 import path from "path";
 import Config, { getDefaultConfigDir } from "../modules/config";
 import { download } from "../helper/image";
-import { access, constants, mkdir, readdir, rename, unlink } from "fs/promises";
+import { access, constants, mkdir, readdir, rename, unlink, writeFile } from "fs/promises";
 import { ipcRenderer } from "electron";
 import stylus from "stylus";
 import { VDOMTemplate, VDivTemplate, VIconTemplate, VImageTemplate, VLangTemplate, VSettingItemTemplate } from "../ui/vdom";
 import { updateLocale } from "./locale";
-import archiver from "archiver";
 import { sha256 } from "../helper/hash";
-import { createWriteStream, existsSync } from "fs";
-import { ErrorDialog } from "../ui/dialog";
+import { existsSync } from "fs";
+import { Dialog, ErrorDialog } from "../ui/dialog";
+import AdmZip from "adm-zip";
+import { db } from "./db";
 
 const DEFAULT_AVATAR = '../assets/defaultAvatar.bmp';
 
@@ -229,22 +230,117 @@ export function getSettingsPages() {
   return settingsPages;
 }
 
+function restoreWarning(): Promise<boolean> {
+  let content = document.createElement('ui-lang');
+  content.innerHTML = 'settings.recover.warning_changed';
+  return new Promise((resolve)=>{
+    let dialog = new Dialog({
+      title: '<ui-lang>settings.recover.warning</ui-lang>',
+      content,
+      buttons: [
+        {
+          text: '<ui-lang>dialog.confirm</ui-lang>',
+          action: async ()=>{
+            dialog.close();
+            resolve(true);
+          },
+          level: 'danger',
+        },
+        {
+          text: '<ui-lang>dialog.cancel</ui-lang>',
+          action: ()=>{
+            dialog.close();
+            resolve(false);
+          },
+        },
+      ],
+    });
+    dialog.show();
+  });
+}
+
 export async function backup(filePath: string) {
+  // ready
   if (typeof filePath !== 'string') return;
   let dbPath = settings.getDB();
   let hash = await sha256(path.join(dbPath, 'db.json'));
-  let output = createWriteStream(filePath);
-  let archive = archiver('zip', {
-    comment: hash,
-    zlib: {
-      level: 9,
-    },
+  // compress all files
+  let zip = new AdmZip();
+  zip.addLocalFile(path.join(dbPath, 'db.json'), '');
+  await zip.addLocalFolderPromise(path.join(dbPath, 'images'), {
+    zipPath: 'images',
   });
-
-  archive.pipe(output);
-  archive.file(path.join(dbPath, 'db.json'), { name: 'db.json' });
-  archive.directory(path.join(dbPath, 'images'), 'images');
-
-  await archive.finalize();
+  // set hash comment
+  zip.addZipComment(hash);
+  // write zip file
+  await zip.writeZipPromise(filePath, { overwrite: true });
 }
-export async function restore() {}
+export async function restore(filePath: string) {
+  let waitContent = document.createElement('ui-lang');
+  waitContent.innerHTML = '<ui-lang>settings.recover.dialog.content</ui-lang>'
+  let wait = new Dialog({
+    title: '<ui-lang>settings.recover.dialog.title</ui-lang>',
+    content: waitContent,
+    buttons: [],
+  });
+  wait.show();
+  // ready
+  let dbPath = settings.getDB();
+  let zip: AdmZip;
+  try {
+    zip = new AdmZip(filePath);
+  } catch (error) {
+    new ErrorDialog('<ui-lang>settings.recover.error_read_zip</ui-lang>');
+    console.error(error);
+    wait.close();
+    return;
+  }
+  // get hash
+  let hash = zip.getZipComment();
+  // check hash
+  if (typeof hash !== 'string' || hash.length !== 64) {
+    if (!(await restoreWarning())) {
+      wait.close();
+      return;
+    };
+  }
+  // check files
+  let entries = zip.getEntries();
+  let checkDB = false;
+  let checkImages = false;
+  for (const entry of entries) {
+    if (entry.name === 'db.json') {
+      checkDB = true;
+    }
+    if (entry.entryName.indexOf('images') === 0) {
+      checkImages = true;
+    }
+    if (checkDB && checkImages) {
+      break;
+    }
+  }
+  if (!checkDB || !checkImages) {
+    wait.close();
+    new ErrorDialog('<ui-lang>settings.recover.error_check</ui-lang>');
+    return;
+  }
+  // check db.json
+  let dbJSON = zip.readFile('db.json');
+  if (!dbJSON) {
+    wait.close();
+    new ErrorDialog('<ui-lang>settings.recover.error_read_db</ui-lang>');
+    return;
+  }
+  if (hash !== await sha256(dbJSON)) {
+    if (!(await restoreWarning())) {
+      wait.close();
+      return;
+    };
+  }
+  // reset db
+  await db.reset();
+  // extract
+  zip.extractAllTo(dbPath, true, false);
+  // reload
+  location.reload();
+}

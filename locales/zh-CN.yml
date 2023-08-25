@@ -228,7 +228,16 @@ settings:
     wait: 正在创建备份...
   recover:
     title: 恢复数据库
+    description: 恢复到备份的数据库，覆盖当前的数据库
     button: 加载备份
+    warning: 注意
+    warning_changed: 备份文件可能被修改，继续从该备份恢复？
+    error_read_zip: 无法读取该备份文件，该文件可能不是 zip 压缩包或已经损坏
+    error_check: 备份文件检查不通过，缺少“db.json”或“images”文件夹
+    error_read_db: 不能从备份文件中加载“db.json”，恢复操作终止
+    dialog:
+      title: 正在恢复中
+      content: 恢复完成后将重新启动，请不要关闭此程序或计算机
 
   danger: 危险操作
   reset_db:
