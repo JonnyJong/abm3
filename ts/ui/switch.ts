@@ -65,7 +65,6 @@ export class UISwitch extends HTMLElement{
     return this._value;
   }
   set value(value: boolean) {
-    console.log(value);
     let oldValue = this._value;
     this._value = !!value;
     this._shell.classList.toggle('ui-switch-open', this._value);

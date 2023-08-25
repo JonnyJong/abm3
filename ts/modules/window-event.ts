@@ -40,9 +40,10 @@ export class WindowEvent{
     ipcMain.on('open:url',(_, url)=>{
       shell.openExternal(url);
     });
-    ipcMain.handle('getAppData', ()=>{
+    ipcMain.handle('path:data', ()=>{
       return path.join(app.getPath('home'), '.jonny', app.getName());
     });
+    ipcMain.handle('path:root', ()=>app.getAppPath());
     ipcMain.on('drag',async (ev, file)=>{
       let icon;
       try {
@@ -79,6 +80,16 @@ export class WindowEvent{
     });
     ipcMain.on('open:path', (_, link)=>{
       shell.openPath(path.join(link));
+    });
+    ipcMain.on('update:install',()=>{
+      switch (process.platform) {
+        case "win32":
+          shell.openPath(path.join(app.getAppPath(), 'update.bat'));
+          break;
+        case "linux":
+          shell.openPath(path.join(app.getAppPath(), 'update.sh'));
+          break;
+      }
     });
   }
 }

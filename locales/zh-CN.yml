@@ -253,6 +253,18 @@ settings:
     title: 版本
     check_update: 检查更新
     auto_check_update: 自动检查更新
+    checking: 检查中...
+    downloading: 下载中：
+    install: 重启并更新
+    description:
+      error_fetch: 检查更新失败，错误代码：
+      no_update: 当前为最新版本，无需更新
+  update:
+    error_offline: 没有网络连接
+    error_fetch: 错误代码：
+    found: 发现更新：
+    error_download: 下载错误，错误代码：
+    ready: 下载完成，准备安装更新
   open_source:
     title: 开放源代码
     license: 许可证

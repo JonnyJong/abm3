@@ -92,7 +92,7 @@ async function initConfig() {
   if (app) {
     configDir = path.join(app.getPath('home'), '.jonny', app.getName());
   } else {
-    configDir = await ipcRenderer.invoke('getAppData');
+    configDir = await ipcRenderer.invoke('path:data');
   }
 }
 function getDefaultConfigDir() {

@@ -2,13 +2,14 @@ import { ipcRenderer } from "electron";
 import { getLocaleList, lang } from "../locale";
 import { SinglePageOptions } from "../page";
 import { SettingsPage, backup, restore, settings } from "../settings";
-import { VColor, VDOM, VDOMTemplate, VDiv, VIcon, VImagePicker, VInput, VNumber, VSelect, VSettingItemTemplate } from "../../ui/vdom";
+import { VColor, VDOM, VDOMTemplate, VDiv, VIcon, VImagePicker, VInput, VNumber, VSelect, VSettingItemTemplate, VSwitch } from "../../ui/vdom";
 import { UIIcon } from "../../ui/icon";
 import { UIColor } from "../../ui/color";
 import { Dialog, ErrorDialog } from "../../ui/dialog";
 import { timer } from "../../helper/timer";
 import { db } from "../db";
 import { saveZip, saveInFolder, getZip } from "../../helper/dialog";
+import { checkUpdate } from "../update";
 
 let pageListElement: HTMLDivElement;
 let pageBodysElement: HTMLDivElement;
@@ -1272,19 +1273,35 @@ async function initSettingsAbout() {
         type: 'setting',
         name: [{
           type: 'div',
-          text: await ipcRenderer.invoke('app:version')
+          text: await ipcRenderer.invoke('app:version'),
         }],
         icon: {
           type: 'icon',
           key: 'ArrowSyncCircle',
         },
-        head: [{
-          type: 'button',
-          children: [{
-            type: 'lang',
-            key: 'settings.version.check_update',
-          }],
-        }],
+        attribute: {'settings-update': 'setting'},
+        head: [
+          {
+            type: 'progress',
+            attribute: {'settings-update': 'progress'},
+            style: 'display: none',
+            value: NaN,
+          },
+          {
+            type: 'button',
+            attribute: {'settings-update': 'button'},
+            children: [{
+              type: 'lang',
+              key: 'settings.version.check_update',
+              inert: true,
+            }],
+            events: {
+              click: ()=>{
+                checkUpdate(true);
+              },
+            },
+          }
+        ],
         body: [],
       },
       {
@@ -1299,6 +1316,12 @@ async function initSettingsAbout() {
         },
         head: [{
           type: 'switch',
+          value: settings.getAutoUpdate(),
+          events: {
+            change: ({target})=>{
+              settings.setAutoUpdate((target as VSwitch).value);
+            },
+          },
         }],
       },
       {
@@ -1564,7 +1587,7 @@ async function initSettingsPages() {
   await initSettingsGeneral();
   await initSettingsDatabase();
   await initSettingsAbout();
-  await initSettingsExtensions();
+  // await initSettingsExtensions();
 }
 
 const page: SinglePageOptions = {
