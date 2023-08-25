@@ -41,8 +41,13 @@ export class UISwitch extends HTMLElement{
     window.addEventListener('pointermove', this._pointermoveHandler);
     if (this._inited) return;
     this._inited = true;
-    this.value = this.getAttribute('value') === 'true';
-    this.disabled = this.hasAttribute('disabled');
+    let value = this.getAttribute('value');
+    if (['true', 'false'].includes(value as string) && !this._value) {
+      this.value = value === 'true';
+    }
+    if (!this._disabled) {
+      this.disabled = this.hasAttribute('disabled');
+    }
     this.append(this._shell);
     this._shell.addEventListener('pointerdown', (ev)=>{
       if (this._disabled) return;
@@ -60,9 +65,11 @@ export class UISwitch extends HTMLElement{
     return this._value;
   }
   set value(value: boolean) {
+    console.log(value);
     let oldValue = this._value;
     this._value = !!value;
     this._shell.classList.toggle('ui-switch-open', this._value);
+    if (!this._inited) return;
     if (!!value !== oldValue) {
       this.dispatchEvent(new Event('change'));
     }
