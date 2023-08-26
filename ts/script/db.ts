@@ -3,6 +3,7 @@ import { download } from "../helper/image";
 import { readFile, readdir, unlink, writeFile } from "fs/promises";
 import { nextId } from "../helper/id";
 import { settings } from "./settings";
+import { shuffle } from "../helper/array";
 
 type Link = {
   name: string,
@@ -430,4 +431,68 @@ export let db = new DB();
 
 export async function initDB() {
   await db.init();
+}
+
+export async function getRcmd(force?: boolean) {
+  // Check expiration date
+  if (!force && Date.now() - db.recommendation.generationTime < 604800000) {
+    if (db.recommendation.item) {
+      return db.items[db.recommendation.item]
+    }
+    return undefined;
+  }
+  // Get new expiration date
+  let newDate = new Date();
+  newDate.setHours(0, 0, 0, 0);
+  newDate.setTime(newDate.getTime() - newDate.getDay() * 86400000);
+  // When nothing in db
+  if (Object.keys(db.items).length === 0){
+    db.recommendation.item = null;
+    db.recommendation.generationTime = newDate.getTime();
+    db.save();
+    return undefined;
+  }
+  // Create pool
+  let pool: {[id: string]: number} = {};
+  let favoritesPool: {[name: string]: number} = {};
+  for (const id of Object.keys(db.items)) {
+    let weights = 0;
+    for (const name of db.items[id].categories) {
+      if (typeof db.recommendation.weights.categories[name] === 'number') {
+        weights += db.recommendation.weights.categories[name];
+      }
+    }
+    for (const name of db.items[id].tags) {
+      if (typeof db.recommendation.weights.tags[name] === 'number') {
+        weights += db.recommendation.weights.tags[name];
+      }
+      if (db.items[id].favorite) {
+        if (typeof favoritesPool[name] === 'number') {
+          favoritesPool[name] += db.recommendation.weights.favorites;
+        } else {
+          favoritesPool[name] = db.recommendation.weights.favorites;
+        }
+      }
+    }
+    if (id === db.recommendation.item) continue;
+    pool[id] = weights;
+  }
+  // Set favorites weights
+  for (const name of Object.keys(favoritesPool)) {
+    for (const id of db.tags[name]) {
+      pool[id] += favoritesPool[name];
+    }
+  }
+  // Convert to Array, sort, intercept, mess up
+  let poolArray: {id: string, weights: number}[] = [];
+  for (const id of Object.keys(pool)) {
+    poolArray.push({id, weights: pool[id]});
+  }
+  poolArray.sort((b, a)=>a.weights - b.weights);
+  poolArray = poolArray.slice(0, 48);
+  poolArray = shuffle(poolArray);
+  db.recommendation.item = poolArray[Math.floor(Math.random() * poolArray.length)].id;
+  db.recommendation.generationTime = newDate.getTime();
+  db.save();
+  return db.items[db.recommendation.item];
 }

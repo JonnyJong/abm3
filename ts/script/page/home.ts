@@ -1,8 +1,11 @@
 import { Dialog } from "../../ui/dialog";
 import { element } from "../../helper/layout";
 import { UIRack, createSetRackTypeDialog } from "../../ui/rack";
-import { SinglePageOptions } from "../page";
+import { SinglePageOptions, history } from "../page";
 import { settings } from "../settings";
+import { db, getRcmd } from "../db";
+import { timer } from "../../helper/timer";
+import path from "path";
 
 type RackObject = {element: UIRack, type: 'none' | 'all' | 'category' | 'tag' | 'custom', value: string, fold: boolean};
 
@@ -65,6 +68,76 @@ function createRackSorter() {
   };
 }
 
+async function setRcmd(element: HTMLElement, force?: boolean) {
+  const defaultSrc = '../assets/defaultCover.png';
+  let title = element.querySelector('.rcmd-title') as HTMLDivElement;
+  let bg = element.querySelector('.rcmd-bg') as HTMLImageElement;
+  let cover = element.querySelector('.rcmd-cover') as HTMLImageElement;
+  let btn = element.querySelector('.rcmd-check') as HTMLButtonElement;
+  let item = await getRcmd(force);
+  if (!item) {
+    title.innerHTML = '<ui-lang>home.rcmd_nothing</ui-lang>';
+    btn.innerHTML = '<ui-lang>home.rcmd_regenerate</ui-lang>';
+    bg.src = defaultSrc;
+    cover.src = defaultSrc;
+    bg.classList.toggle('rcmd-bg-blur', true);
+    return;
+  }
+  let noHeader = false;
+  let bgSrc = '';
+  let coverSrc = '';
+  for (const season of item.seasons) {
+    if (season.cover && !coverSrc) {
+      coverSrc = path.join(settings.getDB(), 'images', season.cover);
+    }
+    if (season.header && !bgSrc) {
+      bgSrc = path.join(settings.getDB(), 'images', season.header);
+    }
+  }
+  if (!coverSrc) {
+    coverSrc = defaultSrc;
+  }
+  if (!bgSrc) {
+    noHeader = true;
+    bgSrc = coverSrc;
+  }
+  bg.src = bgSrc;
+  bg.classList.toggle('rcmd-bg-blur', noHeader);
+  cover.src = coverSrc;
+  title.textContent = item.title;
+  btn.innerHTML = '<ui-lang>home.rcmd_check</ui-lang>';
+}
+let rmcdInited = false;
+function initRcmd(element: HTMLElement) {
+  if (rmcdInited) return;
+  rmcdInited = true;
+  let cover = element.querySelector('.rcmd-cover') as HTMLImageElement;
+  setRcmd(element);
+  (element.querySelector('.rcmd-check') as HTMLButtonElement).addEventListener('click', async ()=>{
+    if (db.recommendation.item === null) {
+      return setRcmd(element, true);
+    }
+    let img = cover.cloneNode() as HTMLImageElement;
+    img.classList.add('ui-bangumi-animation');
+    let rect = cover.getBoundingClientRect();
+    img.style.left = rect.left + 'px';
+    img.style.top = rect.top + 'px';
+    img.style.height = rect.height + 'px';
+    img.style.width = rect.width + 'px';
+    document.body.append(img);
+    (document.querySelector('.page-current') as any)?.page.hide();
+    await timer(100);
+    img.style.top = window.innerHeight * 0.9 - 128 + 'px';
+    img.style.left = (window.innerWidth - Math.min(window.innerWidth - 32, 1104)) / 2 + 'px';
+    img.style.height = '400px';
+    img.style.width = '300px';
+    await timer(100);
+    history.open('bangumi', db.recommendation.item);
+    await timer(300);
+    img.remove();
+  });
+}
+
 
 const page: SinglePageOptions = {
   name: 'home',
@@ -117,7 +190,9 @@ const page: SinglePageOptions = {
       for (const rack of container.children) {
         (rack as UIRack).updateVList();
       }
+      initRcmd(element);
     });
+    window.addEventListener('db',()=>setRcmd(element));
   },
   onBack(element, option) {
   },

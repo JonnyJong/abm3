@@ -1,8 +1,8 @@
 @keyframes rcmd-bg
   from
-    opacity .9
-  to
     opacity .8
+  to
+    opacity .7
 @keyframes rcmd-check
   from
     left -200%
@@ -18,20 +18,35 @@
     display flex
     justify-content space-between
     gap 64px
+  &:not(:has(.rcmd-bg-blur)):after
+    content ''
+    display block
+    position absolute
+    top 0
+    left 0
+    height calc(100% + 128px)
+    width 100%
+    background-image radial-gradient(farthest-side, #0000, var(--bg-tsp3) 60%, var(--bg-tsp2)), linear-gradient(#0000 80%, var(--bg))
+    background-size: 200vw 200vh, 100%, 100%
+    background-position: 0 50%, 0 0
 .rcmd-bg
   position absolute
   top 0
   left -64px
   width calc(100% + 128px)
-  height 100%
+  height calc(100% + 128px)
   object-fit cover
+.rcmd-bg-blur
+  height 100%
   filter blur(64px)
   animation rcmd-bg 5s infinite alternate
 .rcmd-info
+  position relative
   display flex
   flex-direction column
   justify-content center
   gap 16px
+  z-index 1
 .rcmd-title
   font-size 48px
   font-weight 300

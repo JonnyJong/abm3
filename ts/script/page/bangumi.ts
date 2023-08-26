@@ -6,6 +6,7 @@ import path from "path";
 import { settings } from "../settings";
 import { UIRack } from "../../ui/rack";
 import { render } from "../../helper/markdown";
+import { shuffle } from "../../helper/array";
 
 function autoHeaderCover(item: Bangumi) {
   let base = path.join(settings.getDB(), 'images');
@@ -107,19 +108,6 @@ function initRateButton(element: HTMLElement, id: string, page: Page) {
     }
     rate.innerHTML = html;
   });
-}
-
-const shuffle = (arr: any[])=>{
-  let m = arr.length
-  let index
-  let tmp
-  while (m > 1) {
-    index = Math.floor(Math.random() * m--)
-    tmp = arr[m]
-    arr[m] = arr[index]
-    arr[index] = tmp
-  }
-  return arr;
 }
 
 async function initRelated(element: HTMLElement, id: string, page: Page) {

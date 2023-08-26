@@ -33,6 +33,8 @@ user_menu:
 home:
   rcmd_check: 查看详情
   rcmd_subtitle: 每周推荐
+  rcmd_nothing: 本周暂无推荐
+  rcmd_regenerate: 重新生成
   rack_add: 添加陈列架
   rack_sort: 排序
   rack_sort_title: 排列陈列架

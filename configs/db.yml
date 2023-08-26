@@ -24,10 +24,10 @@ recommendation:
   generationTime: 0
   item: null
   weights:
-    categories: []
+    categories: {}
     # - id: <Category Name>
     #   value: <string>
-    tags: []
+    tags: {}
     # - id: <Tag Name>
     #   value: <string>
     favorites: 1
