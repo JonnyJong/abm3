@@ -38,6 +38,19 @@ function setProg(value: number, hide?: boolean) {
   }
 }
 
+function stringToVersion(str: string): [number, number, number] {
+  let v = str.split('.');
+  let result: [number, number, number] = [0,0,0];
+  for (let i = 0; i < v.length; i++) {
+    result[i] = Number(v[i]);
+    if (isNaN(result[i])) {
+      result[i] = 0;
+    }
+    if (i === 2) break;
+  }
+  return result;
+}
+
 export async function checkUpdate(userCheck?: boolean) {
   if (updateReadyed) {
     return installUpdate();
@@ -55,7 +68,7 @@ export async function checkUpdate(userCheck?: boolean) {
     }
     return;
   }
-  nowVersion = (await ipcRenderer.invoke('app:version')).split('.');
+  nowVersion = stringToVersion(await ipcRenderer.invoke('app:version'));
   let data: Response = await fetch(GITHUB_RELEASE_API, {
     headers: {
       'Cache-Control': 'no-cache',
@@ -71,7 +84,7 @@ export async function checkUpdate(userCheck?: boolean) {
     return;
   }
   let json = await data.json();
-  newVersion = json.tag_name.split('.');
+  newVersion = stringToVersion(json.tag_name);
   for (let i = 0; i < 3; i++) {
     if (nowVersion[i] >= newVersion[i]) {
       setButton('<ui-lang>settings.version.check_update<ui-lang>', false);
