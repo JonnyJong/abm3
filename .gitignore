@@ -4,3 +4,4 @@ layout/index.html
 style/main.css
 configs/*.json
 locales/*.json
+out

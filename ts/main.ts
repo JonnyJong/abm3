@@ -17,7 +17,7 @@ app.on('ready',()=>{
     resizable: true,
     enableLargerThanScreen: false,
     title: app.getName(),
-    icon: path.join(process.cwd(), './assets/icons/icon.ico'),
+    icon: path.join(__dirname, '../assets/icons/icon.ico'),
     backgroundColor: nativeTheme.shouldUseDarkColors ? '#202020' : '#f3f3f3',
     minWidth: 1160,
     minHeight: 600,

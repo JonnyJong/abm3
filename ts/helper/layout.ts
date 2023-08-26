@@ -4,7 +4,7 @@ import { compileFile, compileTemplate } from "pug";
 let cache: Map<string, compileTemplate> = new Map();
 
 export function layout(name: string, options?: any) {
-  let layoutPath = path.join(process.cwd(), 'layout', name + '.pug');
+  let layoutPath = path.join(__dirname, '../../layout', name + '.pug');
   let template = cache.get(layoutPath);
   if (!template) {
     template = compileFile(layoutPath);

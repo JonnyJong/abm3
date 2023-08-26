@@ -17,7 +17,7 @@ export default class Config{
     return readFile(path.join(configDir, this.name + '.json'), 'utf-8').then((value)=>this.decoder(value));
   }
   _loadDefault(){
-    return readFile(path.join(process.cwd(), './configs/', this.name + '.json'), 'utf-8').then(JSON.parse).catch(()=>{
+    return readFile(path.join(__dirname, '../../configs/', this.name + '.json'), 'utf-8').then(JSON.parse).catch(()=>{
       return {};
     })
   }
@@ -51,7 +51,7 @@ class ConfigSync{
   }
   _loadDefault(){
     try {
-      return JSON.parse(fs.readFileSync(path.join(process.cwd(), './configs/', this.name + '.json'), 'utf-8'));
+      return JSON.parse(fs.readFileSync(path.join(__dirname, '../../configs/', this.name + '.json'), 'utf-8'));
     } catch {};
     return {};
   }
