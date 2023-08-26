@@ -10,6 +10,7 @@ import { timer } from "../../helper/timer";
 import { db } from "../db";
 import { saveZip, saveInFolder, getZip } from "../../helper/dialog";
 import { checkUpdate } from "../update";
+import { license, third_party, developer } from "./settings.json"
 
 let pageListElement: HTMLDivElement;
 let pageBodysElement: HTMLDivElement;
@@ -1326,6 +1327,31 @@ async function initSettingsAbout() {
       },
       {
         type: 'lang',
+        key: 'settings.help.title',
+      },
+      {
+        type: 'setting',
+        name: [{
+          type: 'lang',
+          key: 'settings.help.get_help',
+        }],
+        icon: {
+          type: 'icon',
+          key: 'Help',
+        },
+        head: [{
+          type: 'button',
+          children: [{
+            type: 'icon',
+            key: 'OpenInNewWindow'
+          }],
+          events: {
+            click: ()=>ipcRenderer.send('open:url', 'https://jonnys.top/lib/apps/abm/help'),
+          },
+        }],
+      },
+      {
+        type: 'lang',
         key: 'settings.open_source.title',
       },
       {
@@ -1341,165 +1367,12 @@ async function initSettingsAbout() {
         body: [{
           type: 'div',
           classList: ['settings-license'],
-          text: `MIT License
-
-Copyright (c) 2023 Jonny
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.`,
+          text: license,
         }],
       },
       {
         type: 'lang',
         key: 'settings.open_source.third_party',
-      },
-      {
-        type: 'setting',
-        icon: {
-          type: 'icon',
-          key: '../assets/third_party/electron.png',
-          image: true,
-        },
-        name: [{
-          type: 'div',
-          text: 'Electron',
-        }],
-        description: [{
-          type: 'div',
-          text: '25.3.0',
-        }],
-        head: [
-          {
-            type: 'link',
-            text: `Website`,
-            link: 'https://www.electronjs.org',
-          },
-          {
-            type: 'link',
-            text: `Github`,
-            link: 'https://github.com/electron/electron',
-          },
-          {
-            type: 'link',
-            text: `NPM`,
-            link: 'https://www.npmjs.com/package/electron',
-          },
-        ],
-        body: [{
-          type: 'div',
-          classList: ['settings-license'],
-          text: `Copyright (c) Electron contributors
-Copyright (c) 2013-2020 GitHub Inc.
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`,
-        }],
-      },
-      {
-        type: 'setting',
-        name: [{
-          type: 'div',
-          text: 'ADM-ZIP',
-        }],
-        description: [{
-          type: 'div',
-          text: '0.5.10',
-        }],
-        head: [
-          {
-            type: 'link',
-            text: `Github`,
-            link: 'https://github.com/cthackers/adm-zip',
-          },
-          {
-            type: 'link',
-            text: `NPM`,
-            link: 'https://www.npmjs.com/package/adm-zip',
-          },
-        ],
-        body: [{
-          type: 'div',
-          classList: ['settings-license'],
-          text: `MIT License
-
-Copyright (c) 2012 Another-D-Mention Software and other contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.`,
-        }],
-      },
-      {
-        type: 'lang',
-        key: 'settings.about_dev',
-      },
-      {
-        type: 'setting',
-        name: [{
-          type: 'div',
-          text: 'Jonny',
-        }],
-        icon: {
-          type: 'icon',
-          key: 'Person',
-        },
-        head: [
-          {
-            type: 'link',
-            text: `Jonny's blog`,
-            link: 'https://jonnys.top',
-          },
-          {
-            type: 'link',
-            text: `Github`,
-            link: 'https://github.com/JonnyJong',
-          },
-        ],
       },
     ],
   };
@@ -1516,6 +1389,41 @@ SOFTWARE.`,
       }],
     });
   }
+  for (const item of third_party) {
+    let obj: VSettingItemTemplate = {
+      type: 'setting',
+      name: [{
+        type: 'div',
+        text: item.name,
+      }],
+      description: [{
+        type: 'div',
+        text: item.version,
+      }],
+      head: [],
+      body: [{
+        type: 'div',
+        classList: ['settings-license'],
+        text: item.license,
+      }],
+    };
+    for (const link of item.links) {
+      obj.head?.push({
+        type: 'link',
+        text: link.name,
+        link: link.url,
+      });
+    }
+    if (item.icon) {
+      obj.icon = {
+        type: 'icon',
+        image: true,
+        key: item.icon,
+      };
+    }
+    about.template.push(obj);
+  }
+  about.template.push(...developer as any);
   createPage(about);
 }
 

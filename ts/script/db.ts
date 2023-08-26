@@ -4,6 +4,7 @@ import { readFile, readdir, unlink, writeFile } from "fs/promises";
 import { nextId } from "../helper/id";
 import { settings } from "./settings";
 import { shuffle } from "../helper/array";
+import { timer } from "../helper/timer";
 
 type Link = {
   name: string,
@@ -440,6 +441,9 @@ export async function initDB() {
 }
 
 export async function getRcmd(force?: boolean) {
+  if (!db.inited) {
+    await timer(500);
+  }
   // Check expiration date
   if (!force && Date.now() - db.recommendation.generationTime < 604800000) {
     if (db.recommendation.item) {

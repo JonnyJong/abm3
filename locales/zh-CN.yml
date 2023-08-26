@@ -270,6 +270,9 @@ settings:
     error_download: 下载错误，错误代码：
     ready: 下载完成，准备安装更新
     browser: 在浏览器中查看
+  help:
+    title: 帮助
+    get_help: 获取帮助
   open_source:
     title: 开放源代码
     license: 许可证

@@ -270,6 +270,9 @@ settings:
     error_download: 'Download error, error code: '
     ready: Download complete, ready to install update
     browser: View in browser
+  help:
+    title: Help
+    get_help: Get Help
   open_source:
     title: Open Source
     license: License
