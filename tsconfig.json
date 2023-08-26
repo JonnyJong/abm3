@@ -14,7 +14,8 @@
     "rootDir": "./ts",
     "outDir": "./scripts",
     "sourceMap": true,
-    "pretty": false
+    "pretty": false,
+    "removeComments": true
   },
   "compileOnSave": true,
   "include": [
