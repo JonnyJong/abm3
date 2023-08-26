@@ -257,6 +257,9 @@ export async function backup(filePath: string) {
   // compress all files
   let zip = new AdmZip();
   zip.addLocalFile(path.join(dbPath, 'db.json'), '');
+  if (!existsSync(path.join(dbPath, 'images'))) {
+    mkdir(path.join(dbPath, 'images'));
+  }
   await zip.addLocalFolderPromise(path.join(dbPath, 'images'), {
     zipPath: 'images',
   });
@@ -330,6 +333,9 @@ export async function restore(filePath: string) {
   // reset db
   await db.reset();
   // extract
+  if (!existsSync(path.join(dbPath, 'images'))) {
+    mkdir(path.join(dbPath, 'images'));
+  }
   zip.extractAllTo(dbPath, true, false);
   // reload
   location.reload();

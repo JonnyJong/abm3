@@ -37,8 +37,9 @@ app.on('ready',()=>{
   win.on('ready-to-show', ()=>{
     windowState.show();
   });
-  // DEV: Remove this when build release version
-  win.webContents.openDevTools();
+  if (!app.isPackaged) {
+    win.webContents.openDevTools();
+  }
 
   new WindowEvent(win);
 

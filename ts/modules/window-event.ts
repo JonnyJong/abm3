@@ -85,5 +85,8 @@ export class WindowEvent{
       shell.openPath(app.getAppPath());
       win.close();
     });
+    ipcMain.handle('dev:check',()=>{
+      return !app.isPackaged;
+    });
   }
 }

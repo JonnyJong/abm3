@@ -424,10 +424,14 @@ export class DB{
   }
   async reset() {
     let dbPath = settings.getDB();
-    let images = await readdir(path.join(dbPath, 'images'));
-    for (const img of images) {
-      await unlink(path.join(dbPath, 'images', img));
-    }
+    try {
+      let images = await readdir(path.join(dbPath, 'images'));
+      for (const img of images) {
+        try {
+          await unlink(path.join(dbPath, 'images', img));
+        } catch {}
+      }
+    } catch {}
     try {
       await unlink(path.join(dbPath, 'db.json'));
     } catch {}

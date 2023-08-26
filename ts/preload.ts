@@ -1,3 +1,4 @@
+import { ipcRenderer } from "electron";
 import { timer } from "./helper/timer";
 import { initConfig } from "./modules/config";
 import { initDB } from "./script/db";
@@ -9,6 +10,11 @@ import { checkUpdate } from "./script/update";
 import { initUserMenu } from "./script/user-menu";
 import { initWindowEvent } from "./script/window-event";
 import { initUI } from "./ui/main";
+import { ErrorDialog } from "./ui/dialog";
+
+window.onerror = (ev)=>{
+  new ErrorDialog(JSON.stringify(ev));
+};
 
 document.addEventListener('DOMContentLoaded',async ()=>{
   initWindowEvent();
@@ -37,5 +43,7 @@ document.addEventListener('DOMContentLoaded',async ()=>{
   }
 });
 
-// DEV: Remove this when build release version
-window.addEventListener('keypress',({key})=> key === "\u0012" ? location.reload() : '');
+ipcRenderer.invoke('dev:check').then((isDev)=>{
+  if (!isDev) return;
+  window.addEventListener('keypress',({key})=> key === "\u0012" ? location.reload() : '');
+})
