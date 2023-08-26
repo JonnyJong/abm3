@@ -2,13 +2,11 @@ import { ipcRenderer } from "electron";
 import { Dialog, ErrorDialog } from "../ui/dialog";
 import { UISettingItem } from "../ui/settings";
 import { UIProgress } from "../ui/progress";
-import { mkdir, writeFile } from "fs/promises";
+import { writeFile } from "fs/promises";
 import path from "path";
-import AdmZip from "adm-zip";
-import { existsSync } from "fs";
 
-const GITHUB_RELEASE = 'https://api.github.com/repos/januwA/flutter_anime_app/releases/latest';
-// const GITHUB_RELEASE = 'https://api.github.com/repos/JonnyJong/abm3/releases/latest';
+const GITHUB_RELEASE_API = 'https://api.github.com/repos/JonnyJong/abm3/releases/latest';
+const GITHUB_RELEASE = 'https://github.com/JonnyJong/abm3/releases/latest';
 
 let updateUrl: string = '';
 let nowVersion: [number, number, number] = [0,0,0];
@@ -42,8 +40,10 @@ function setProg(value: number, hide?: boolean) {
 
 export async function checkUpdate(userCheck?: boolean) {
   if (updateReadyed) {
-    installUpdate();
-    return;
+    return installUpdate();
+  }
+  if (updateUrl) {
+    return download();
   }
   setButton('<ui-lang>settings.version.checking</ui-lang>', true);
   setProg(NaN, false);
@@ -56,7 +56,7 @@ export async function checkUpdate(userCheck?: boolean) {
     return;
   }
   nowVersion = (await ipcRenderer.invoke('app:version')).split('.');
-  let data: Response = await fetch(GITHUB_RELEASE, {
+  let data: Response = await fetch(GITHUB_RELEASE_API, {
     headers: {
       'Cache-Control': 'no-cache',
     },
@@ -72,21 +72,54 @@ export async function checkUpdate(userCheck?: boolean) {
   }
   let json = await data.json();
   newVersion = json.tag_name.split('.');
-  // for (let i = 0; i < 3; i++) {
-  //   if (nowVersion[i] >= newVersion[i]) {
-  //     setButton('<ui-lang>settings.version.check_update<ui-lang>', false);
-  //     setDesc('<ui-lang>settings.version.description.no_update<ui-lang>');
-  //     setProg(NaN, true);
-  //     return;
-  //   }
-  // }
+  for (let i = 0; i < 3; i++) {
+    if (nowVersion[i] >= newVersion[i]) {
+      setButton('<ui-lang>settings.version.check_update<ui-lang>', false);
+      setDesc('<ui-lang>settings.version.description.no_update<ui-lang>');
+      setProg(NaN, true);
+      return;
+    }
+  }
   if (nowVersion[1] < newVersion[1]) {
     fullUpdate = true;
   }
-  // TODO: 根据是否是大更新，选择下载更新包
-  // updateUrl = json.assets[0].browser_download_url;
-  updateUrl = '../down.zip';
-  download();
+  updateUrl = json.assets.find((item: any)=>item.name === `abm-${process.platform}-update${fullUpdate ? '-full' : ''}.zip`).browser_download_url;
+  setButton('<ui-lang>settings.version.download<ui-lang>', false);
+  setDesc('<ui-lang>settings.version.description.wait_download<ui-lang>');
+  setProg(NaN, true);
+  showUpdateDialog(json.body);
+}
+
+async function showUpdateDialog(info: string) {
+  let content = document.createElement('div');
+  content.textContent = info;
+  content.style.whiteSpace = 'pre';
+  let dialog = new Dialog({
+    title: '<ui-lang>settings.update.found</ui-lang>' + newVersion.join('.'),
+    content,
+    buttons: [
+      {
+        text: '<ui-lang>settings.version.download</ui-lang>',
+        action: ()=>{
+          download();
+          dialog.close();
+        },
+      },
+      {
+        text: '<ui-lang>settings.update.browser</ui-lang>',
+        action: ()=>{
+          ipcRenderer.send('open:url', GITHUB_RELEASE);
+          dialog.close();
+        },
+      },
+      {
+        text: '<ui-lang>dialog.cancel</ui-lang>',
+        action: ()=>{
+          dialog.close();
+        },
+      },
+    ],
+  });
 }
 
 async function download() {
@@ -116,13 +149,7 @@ async function download() {
 async function saveUpdatePackage(data: any) {
   let root = await ipcRenderer.invoke('path:root');
   let pkg = path.join(root, 'update.zip');
-  let dir = path.join(root, 'update');
   await writeFile(pkg, Buffer.from(data));
-  let zip = new AdmZip(pkg);
-  if (!existsSync(dir)) {
-    await mkdir(dir);
-  }
-  zip.extractAllTo(dir, true, false);
   readyUpdate();
 }
 

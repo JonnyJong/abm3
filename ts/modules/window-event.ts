@@ -82,14 +82,6 @@ export class WindowEvent{
       shell.openPath(path.join(link));
     });
     ipcMain.on('update:install',()=>{
-      switch (process.platform) {
-        case "win32":
-          shell.openPath(path.join(app.getAppPath(), 'update.bat'));
-          break;
-        case "linux":
-          shell.openPath(path.join(app.getAppPath(), 'update.sh'));
-          break;
-      }
     });
   }
 }
