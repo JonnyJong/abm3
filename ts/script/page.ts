@@ -132,6 +132,7 @@ export function initPage() {
   document.querySelector('.history-back')?.addEventListener('click',()=>history.back());
   document.querySelector('.history-home')?.addEventListener('click',()=>history.home());
   window.addEventListener('mousedown', ({button})=>{
+    if (document.querySelector('.ui-dialog-show,.flyout-show-bottom,.flyout-show-top,.menu-show-top,.menu-show-bottom')) return;
     if (button === 3) history.back();
   });
   history.init();

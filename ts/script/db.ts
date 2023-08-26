@@ -343,6 +343,7 @@ export class DB{
     if (!this.categories[name]) return false;
     for (const item of this.categories[name]) {
       this.items[item].categories.delete(name);
+      this.items[item].updated = new Date();
     }
     delete this.categories[name];
     delete this.mark.categories[name];
@@ -354,6 +355,7 @@ export class DB{
     if (!this.tags[name]) return false;
     for (const item of this.tags[name]) {
       this.items[item].tags.delete(name);
+      this.items[item].updated = new Date();
     }
     delete this.tags[name];
     delete this.mark.tags[name];
@@ -367,6 +369,7 @@ export class DB{
       this.items[item].categories.delete(branch);
       this.items[item].categories.add(main);
       this.categories[main].add(item);
+      this.items[item].updated = new Date();
     }
     delete this.categories[branch];
     delete this.mark.categories[branch];
@@ -380,6 +383,7 @@ export class DB{
       this.items[item].tags.delete(branch);
       this.items[item].tags.add(main);
       this.tags[main].add(item);
+      this.items[item].updated = new Date();
     }
     delete this.tags[branch];
     delete this.mark.tags[branch];
@@ -394,6 +398,7 @@ export class DB{
     for (const item of Array.from(this.categories[after])) {
       this.items[item].categories.delete(before);
       this.items[item].categories.add(after);
+      this.items[item].updated = new Date();
     }
     this.mark.categories[after] = this.mark.categories[before];
     delete this.mark.categories[before];
@@ -408,6 +413,7 @@ export class DB{
     for (const item of Array.from(this.tags[after])) {
       this.items[item].tags.delete(before);
       this.items[item].tags.add(after);
+      this.items[item].updated = new Date();
     }
     this.mark.tags[after] = this.mark.tags[before];
     delete this.mark.tags[before];

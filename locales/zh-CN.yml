@@ -258,7 +258,7 @@ settings:
     checking: 检查中...
     download: 下载更新
     downloading: 下载中：
-    install: 重启并更新
+    install: 关闭 ABM 并手动更新
     description:
       error_fetch: 检查更新失败，错误代码：
       no_update: 当前为最新版本，无需更新

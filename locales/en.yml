@@ -33,6 +33,8 @@ user_menu:
 home:
   rcmd_check: Check Details
   rcmd_subtitle: Weekly Recommendation
+  rcmd_nothing: No recommendation for this week
+  rcmd_regenerate: Regenerate
   rack_add: Adding a Display Rack
   rack_sort: Order
   rack_sort_title: Arrangement of Display Racks
@@ -165,6 +167,10 @@ settings:
   
   database: Database
 
+  save: Save
+  select_category: Select Category
+  select_tag: Select Tag
+
   mark:
     title: Mark
     category: Categories
@@ -181,6 +187,7 @@ settings:
     watched: Watched
     pay: Fee-based
     serialized: Serialized
+    none: None
 
   archive:
     title: Archive
@@ -188,10 +195,16 @@ settings:
       button: Rename
       category: Rename Category
       tag: Rename Tag
+      category_failed: Rename failed, the target category does not exist, or the new name is empty, or the new name is a rename of an existing category.
+      tag_failed: Rename failed, the target tag does not exist, or the new name is empty, or the new name is renamed to an existing tag.
     merge:
       button: Merge
       category: Merge Category
       tag: Merge Tag
+      select_category_main: Select Main Category
+      select_category_branch: Select Branch Category
+      select_tag_main: Select Main Tag
+      select_tag_branch: Select Branch Tag
     delete:
       button: Delete
       category: Delete Category
@@ -202,23 +215,61 @@ settings:
   move_db:
     title: Move Database
     button: Move
+    checking: Checking...
+    failed: Failed
+    scaning: Ccanning...
+    moving: 'Moving: '
+    saving: Saving changes...
+    successed: Successed
+    dialog:
+      title: Confirmation to move database?
+      content: This operation is irreversible, please do not shut down this program or computer when moving, it is recommended to back up before moving the database
   backup:
     title: Backup Database
     button: Creating a Backup
+    wait: Backups are being created...
   recover:
     title: Recovery of databases
+    description: Restore to backup database, overwrite current database
     button: Load Backup
+    warning: Warning
+    warning_changed: The backup file may have been modified, continue to restore from that backup?
+    error_read_zip: Cannot read the backup file, it may not be a zip archive or may be corrupted.
+    error_check: Backup file check failed, missing "db.json" or "images" folder.
+    error_read_db: Cannot load "db.json" from backup file, recovery operation terminates.
+    dialog:
+      title: Recovery in progress.
+      content: Recovery will restart when complete, do not shut down this program or your computer!
 
   danger: Hazardous operations
   reset_db:
     title: Reset Database
     button: Reset
+    dialog:
+      title: Confirm resetting the database?
+      content: This operation is irreversible and will restart ABM after the reset.
+    resetting: Resetting
 
   about: About
   version:
     title: Version
     check_update: Check for updates
     auto_check_update: Automatically check for updates
+    checking: Checking...
+    download: Download Updates
+    downloading: 'Downloading: '
+    install: Close ABM and update manually
+    description:
+      error_fetch: 'Check update failed with error code: '
+      no_update: Currently the latest version, no need to update
+      wait_download: Ready to download updates
+  update:
+    error_offline: No internet connection
+    error_fetch: 'Error code: '
+    found: 'Found Updates: '
+    error_download: 'Download error, error code: '
+    ready: Download complete, ready to install update
+    browser: View in browser
   open_source:
     title: Open Source
     license: License

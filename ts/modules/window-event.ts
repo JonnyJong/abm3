@@ -82,6 +82,8 @@ export class WindowEvent{
       shell.openPath(path.join(link));
     });
     ipcMain.on('update:install',()=>{
+      shell.openPath(app.getAppPath());
+      win.close();
     });
   }
 }

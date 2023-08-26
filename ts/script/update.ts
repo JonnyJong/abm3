@@ -104,6 +104,7 @@ async function showUpdateDialog(info: string) {
           download();
           dialog.close();
         },
+        level: 'confirm',
       },
       {
         text: '<ui-lang>settings.update.browser</ui-lang>',

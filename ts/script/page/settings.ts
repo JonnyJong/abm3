@@ -1499,11 +1499,6 @@ SOFTWARE.`,
             text: `Github`,
             link: 'https://github.com/JonnyJong',
           },
-          {
-            type: 'link',
-            text: `NPM`,
-            link: 'https://www.npmjs.com/~jonnyjonny',
-          }
         ],
       },
     ],
