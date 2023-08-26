@@ -1,6 +1,5 @@
 import { readFile, mkdir, access, writeFile } from "fs/promises";
 import path from "path";
-import yaml from "yaml";
 import fs = require("fs");
 import { app, ipcRenderer } from "electron";
 
@@ -19,12 +18,8 @@ export default class Config{
   }
   _loadDefault(){
     return readFile(path.join(process.cwd(), './configs/', this.name + '.json'), 'utf-8').then(JSON.parse).catch(()=>{
-      return readFile(path.join(process.cwd(), './configs/', this.name + '.yaml'), 'utf-8').then(yaml.parse);
-    }).catch(()=>{
-      return readFile(path.join(process.cwd(), './configs/', this.name + '.yml'), 'utf-8').then(yaml.parse);
-    }).catch(()=>{
       return {};
-    });
+    })
   }
   load(): Promise<any>{
     return this._loadConfig().catch(()=>this._loadDefault()).then((value)=>{
@@ -57,12 +52,6 @@ class ConfigSync{
   _loadDefault(){
     try {
       return JSON.parse(fs.readFileSync(path.join(process.cwd(), './configs/', this.name + '.json'), 'utf-8'));
-    } catch {};
-    try {
-      return yaml.parse(fs.readFileSync(path.join(process.cwd(), './configs/', this.name + '.yaml'), 'utf-8'));
-    } catch {};
-    try {
-      return yaml.parse(fs.readFileSync(path.join(process.cwd(), './configs/', this.name + '.yml'), 'utf-8'));
     } catch {};
     return {};
   }

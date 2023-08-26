@@ -1,9 +1,8 @@
 import path from "path";
 import Config, { getDefaultConfigDir } from "../modules/config";
 import { download } from "../helper/image";
-import { access, constants, mkdir, readdir, rename, unlink, writeFile } from "fs/promises";
+import { access, constants, mkdir, readdir, rename, unlink } from "fs/promises";
 import { ipcRenderer } from "electron";
-import stylus from "stylus";
 import { VDOMTemplate, VDivTemplate, VIconTemplate, VImageTemplate, VLangTemplate, VSettingItemTemplate } from "../ui/vdom";
 import { updateLocale } from "./locale";
 import { sha256 } from "../helper/hash";
@@ -11,6 +10,7 @@ import { existsSync } from "fs";
 import { Dialog, ErrorDialog } from "../ui/dialog";
 import AdmZip from "adm-zip";
 import { db } from "./db";
+import Color from "color";
 
 const DEFAULT_AVATAR = '../assets/defaultAvatar.bmp';
 
@@ -86,19 +86,9 @@ class Settings{
     if (theme === 'system') {
       theme = await ipcRenderer.invoke('theme:color');
     }
-    let css = stylus.render(`$theme = ${theme}
-:root
-  --theme $theme
-  --theme-hover lighten($theme, 5%)
-  --theme-active lighten($theme, 10%)
-  --select dark($theme) ? #fff : #000
-  --theme-color dark($theme) ? #fff : #000
-  --theme-color-active dark($theme) ? #cecece : #5d5d5d
-  --theme-color-disabled dark($theme) ? #787878 : #9d9d9d
-  --theme-weight-factor dark($theme) ? 0.75 : 1
-  @media (prefers-color-scheme: dark)
-    --theme-hover lighten($theme, -15%)
-    --theme-active lighten($theme, -20%)`);
+    let color = Color(theme);
+    let isDark = color.isDark();
+    let css = `:root{--theme:${theme};--theme-hover:${color.lighten(5).hex()};--theme-active:${color.lighten(10).hex()};--select:${isDark ? '#fff' : '#000'};--theme-color:${isDark ? '#fff' : '#000'};--theme-color-active:${isDark ? '#cecece' : '#5d5d5d'};--theme-color-disabled:${isDark ? '#787878' : '#9d9d9d'};--theme-weight-factor:${isDark ? '0.75' : '1'};}@media (prefers-color-scheme: dark){:root{--theme-hover:${color.lighten(-15).hex()};--theme-active:${color.lighten(-20).hex()};}}`;
     let style = document.createElement('style');
     style.className = 'style-theme';
     style.innerHTML = css;

@@ -1,6 +1,5 @@
 import { BrowserWindow, Menu, app, nativeTheme } from "electron";
 import path from "path";
-import style from "./modules/style";
 import WindowState from "./modules/window-state";
 import { WindowEvent } from "./modules/window-event";
 import { initDialog } from "./modules/dialog";
@@ -35,11 +34,10 @@ app.on('ready',()=>{
 
   win.loadFile(path.join(__dirname, '../layout/index.html'));
 
-  style.insert(path.join(process.cwd(), 'style/main.styl'), win.webContents);
-
   win.on('ready-to-show', ()=>{
     windowState.show();
   });
+  // DEV: Remove this when build release version
   win.webContents.openDevTools();
 
   new WindowEvent(win);

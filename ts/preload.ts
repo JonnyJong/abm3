@@ -37,5 +37,5 @@ document.addEventListener('DOMContentLoaded',async ()=>{
   }
 });
 
-// DEV
+// DEV: Remove this when build release version
 window.addEventListener('keypress',({key})=> key === "\u0012" ? location.reload() : '');

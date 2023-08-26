@@ -27,8 +27,8 @@
     },
     {
       "type": "shell",
-      "label": "pug",
-      "command": "pug ./layout/index.pug",
+      "label": "all: build",
+      "command": "node ./build.js",
       "presentation": {
         "echo": true,
         "reveal": "silent",
@@ -41,7 +41,7 @@
     {
       "label": "build",
       "dependsOrder": "parallel",
-      "dependsOn": ["tsc: watch", "pug"]
+      "dependsOn": ["tsc: watch", "all: build"]
     }
   ]
 }

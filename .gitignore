@@ -1,3 +1,6 @@
 node_modules
 scripts
 layout/index.html
+style/main.css
+configs/*.json
+locales/*.json

@@ -1,7 +1,4 @@
-import { readFile } from "fs/promises";
-import path from "path";
 import { UILang } from "../ui/lang";
-import yaml from "yaml";
 const locales: string[] = require('../../locales/manifest.json');
 
 // TODO: fallback function
@@ -24,20 +21,10 @@ async function loadLocale(id: string) {
     }
   }
   if (!target) {
-    target = 'en.yml';
+    target = 'en';
   }
-  let file = await readFile(path.join(process.cwd(), 'locales', target), 'utf-8');
-  let result: any = {};
-  switch (path.extname(target)) {
-    case '.yml':
-    case '.yaml':
-      result = yaml.parse(file);
-      break
-    case '.json':
-      result = JSON.parse(file);
-      break;
-  }
-  result.id = target.split('.')[0];
+  let result: any = require(`../../locales/${target}.json`);
+  result.id = target;
   return result;
 }
 
@@ -80,17 +67,7 @@ export async function getLocaleList() {
     value: 'auto',
   }];
   for (const locale of locales) {
-    let file = await readFile(path.join(process.cwd(), 'locales', locale), 'utf-8');
-    let name: string = '';
-    switch (path.extname(locale)) {
-      case '.yml':
-      case '.yaml':
-        name = yaml.parse(file).name;
-        break
-      case '.json':
-        name = JSON.parse(file).name;
-        break;
-    }
+    let name: string = require(`../../locales/${locale}.json`).name;
     if (!name) continue;
     list.push({ name, value: locale.split('.')[0]});
   }
