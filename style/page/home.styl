@@ -33,10 +33,11 @@
   position absolute
   top 0
   left -64px
-  width calc(100% + 128px)
+  width 100%
   height calc(100% + 128px)
   object-fit cover
 .rcmd-bg-blur
+  width calc(100% + 128px)
   height 100%
   filter blur(64px)
   animation rcmd-bg 5s infinite alternate
@@ -80,10 +81,12 @@
     color var(--btn-color-active)
     scale .97
 .rcmd-cover
+  position relative
   height 600px
   width 450px
   object-fit cover
   border-radius 6px
+  z-index 1
 .display-rack-control
   position relative
   display flex
