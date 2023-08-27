@@ -5,9 +5,8 @@ An animation library of your own, with support for tagging and categorization, a
 # 构建 / Build
 ```bash
 npm install -g typescript
-npm install -g pug
 npm install
-pug ./layout/index.pug
+node build.js
 tsc
 ```
 
