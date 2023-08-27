@@ -88,7 +88,7 @@ class Settings{
     }
     let color = Color(theme);
     let isDark = color.isDark();
-    let css = `:root{--theme:${theme};--theme-hover:${color.lighten(5).hex()};--theme-active:${color.lighten(10).hex()};--select:${isDark ? '#fff' : '#000'};--theme-color:${isDark ? '#fff' : '#000'};--theme-color-active:${isDark ? '#cecece' : '#5d5d5d'};--theme-color-disabled:${isDark ? '#787878' : '#9d9d9d'};--theme-weight-factor:${isDark ? '0.75' : '1'};}@media (prefers-color-scheme: dark){:root{--theme-hover:${color.lighten(-15).hex()};--theme-active:${color.lighten(-20).hex()};}}`;
+    let css = `:root{--theme:${theme};--theme-hover:${color.lighten(0.1).hex()};--theme-active:${color.lighten(0.2).hex()};--select:${isDark ? '#fff' : '#000'};--theme-color:${isDark ? '#fff' : '#000'};--theme-color-active:${isDark ? '#cecece' : '#5d5d5d'};--theme-color-disabled:${isDark ? '#787878' : '#9d9d9d'};--theme-weight-factor:${isDark ? '0.75' : '1'};}@media (prefers-color-scheme: dark){:root{--theme-hover:${color.darken(0.1).hex()};--theme-active:${color.darken(0.2).hex()};}}`;
     let style = document.createElement('style');
     style.className = 'style-theme';
     style.innerHTML = css;
