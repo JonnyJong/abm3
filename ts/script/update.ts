@@ -85,13 +85,17 @@ export async function checkUpdate(userCheck?: boolean) {
   }
   let json = await data.json();
   newVersion = stringToVersion(json.tag_name);
+  let needUpdate = false;
   for (let i = 0; i < 3; i++) {
-    if (nowVersion[i] >= newVersion[i]) {
-      setButton('<ui-lang>settings.version.check_update<ui-lang>', false);
-      setDesc('<ui-lang>settings.version.description.no_update<ui-lang>');
-      setProg(NaN, true);
-      return;
-    }
+    if (nowVersion[i] >= newVersion[i]) continue;
+    needUpdate = true;
+    break;
+  }
+  if (!needUpdate) {
+    setButton('<ui-lang>settings.version.check_update<ui-lang>', false);
+    setDesc('<ui-lang>settings.version.description.no_update<ui-lang>');
+    setProg(NaN, true);
+    return;
   }
   if (nowVersion[1] < newVersion[1]) {
     fullUpdate = true;
@@ -134,6 +138,7 @@ async function showUpdateDialog(info: string) {
       },
     ],
   });
+  dialog.show();
 }
 
 async function download() {
