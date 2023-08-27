@@ -51,7 +51,7 @@ else
         each season, i in item.seasons
           div(class="bangumi-links" + (i === 0 ? " bangumi-links-current": ""))
             each link in season.links
-              button(url=link.url)=link.name
+              ui-link(link=link.url)=link.name
   .bangumi-seasons.ui-width2
     each season, i in item.seasons
       div(class="bangumi-season" + (i === 0 ? " bangumi-season-current": ""))=season.title
