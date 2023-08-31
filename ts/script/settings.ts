@@ -189,6 +189,24 @@ class Settings{
     this._config.store.autoUpdate = value;
     await this._config.save();
   }
+  getUpdateSource(): string{
+    let value = this._config.store.updateSource;
+    if (typeof value !== 'string' || value === '') return 'https://api.github.com/repos/JonnyJong/abm3/releases/latest';
+    return value;
+  }
+  async setUpdateSource(value: string) {
+    if (typeof value !== 'string') return;
+    this._config.store.updateSource = value;
+    await this._config.save();
+  }
+  getCustomUpdateSource(): string{
+    return this._config.store.updateSourceCustom;
+  }
+  async setCustomUpdateSource(value: string) {
+    if (typeof value !== 'string') return;
+    this._config.store.updateSourceCustom = value;
+    await this._config.save();
+  }
   async reset() {
     await this.setAvatar('');
     let db = this._config.store.db;

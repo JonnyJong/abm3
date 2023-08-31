@@ -270,6 +270,8 @@ settings:
     error_download: 'Download error, error code: '
     ready: Download complete, ready to install update
     browser: View in browser
+  update_source: Update Source
+  update_source_custom: Custom
   help:
     title: Help
     get_help: Get Help

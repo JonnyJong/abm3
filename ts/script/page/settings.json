@@ -72,5 +72,19 @@
       ],
       "license": "MIT"
     }
+  ],
+  "update_source": [
+    {
+      "name": "Github",
+      "value": "https://api.github.com/repos/JonnyJong/abm3/releases/latest"
+    },
+    {
+      "name": "Jonny's Blog",
+      "value": "https://jonnys.top/lib/apps/abm/update.json"
+    },
+    {
+      "name": "<ui-lang>settings.update_source_custom</ui-lang>",
+      "value": "custom"
+    }
   ]
 }

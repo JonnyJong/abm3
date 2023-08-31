@@ -10,5 +10,7 @@ rack:
     fold: false
 autoUpdate: false
 extensions: {}
+updateSource: 'https://api.github.com/repos/JonnyJong/abm3/releases/latest'
+updateSourceCustom: ''
 # <Extension Path>:
 #   enable: true

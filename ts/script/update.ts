@@ -4,9 +4,7 @@ import { UISettingItem } from "../ui/settings";
 import { UIProgress } from "../ui/progress";
 import { writeFile } from "fs/promises";
 import path from "path";
-
-const GITHUB_RELEASE_API = 'https://api.github.com/repos/JonnyJong/abm3/releases/latest';
-const GITHUB_RELEASE = 'https://github.com/JonnyJong/abm3/releases/latest';
+import { settings } from "./settings";
 
 let updateUrl: string = '';
 let nowVersion: [number, number, number] = [0,0,0];
@@ -69,7 +67,11 @@ export async function checkUpdate(userCheck?: boolean) {
     return;
   }
   nowVersion = stringToVersion(await ipcRenderer.invoke('app:version'));
-  let data: Response = await fetch(GITHUB_RELEASE_API, {
+  let updateSource = settings.getUpdateSource();
+  if (updateSource === 'custom') {
+    updateSource = settings.getCustomUpdateSource();
+  }
+  let data: Response = await fetch(updateSource, {
     headers: {
       'Cache-Control': 'no-cache',
     },
@@ -104,10 +106,10 @@ export async function checkUpdate(userCheck?: boolean) {
   setButton('<ui-lang>settings.version.download<ui-lang>', false);
   setDesc('<ui-lang>settings.version.description.wait_download<ui-lang>');
   setProg(NaN, true);
-  showUpdateDialog(json.body);
+  showUpdateDialog(json.body, json.html_url);
 }
 
-async function showUpdateDialog(info: string) {
+async function showUpdateDialog(info: string, url: string) {
   let content = document.createElement('div');
   content.textContent = info;
   content.style.whiteSpace = 'pre';
@@ -126,7 +128,7 @@ async function showUpdateDialog(info: string) {
       {
         text: '<ui-lang>settings.update.browser</ui-lang>',
         action: ()=>{
-          ipcRenderer.send('open:url', GITHUB_RELEASE);
+          ipcRenderer.send('open:url', url);
           dialog.close();
         },
       },

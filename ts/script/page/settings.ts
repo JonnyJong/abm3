@@ -10,7 +10,8 @@ import { timer } from "../../helper/timer";
 import { db } from "../db";
 import { saveZip, saveInFolder, getZip } from "../../helper/dialog";
 import { checkUpdate } from "../update";
-import { license, third_party, developer } from "./settings.json"
+import { license, third_party, developer, update_source } from "./settings.json"
+import { UISelect } from "../../ui/select";
 
 let pageListElement: HTMLDivElement;
 let pageBodysElement: HTMLDivElement;
@@ -1323,6 +1324,59 @@ async function initSettingsAbout() {
               settings.setAutoUpdate((target as VSwitch).value);
             },
           },
+        }],
+      },
+      {
+        type: 'setting',
+        name: [{
+          type: 'lang',
+          key: 'settings.update_source',
+        }],
+        head: [{
+          type: 'select',
+          value: settings.getUpdateSource(),
+          values: update_source,
+          attribute: {'settings-update-source': 'select'},
+          events: {
+            change: ()=>{
+              let value = (document.querySelector('[settings-update-source="select"]') as UISelect).value;
+              settings.setUpdateSource(value);
+              (document.querySelector('[settings-update-source="input"]') as HTMLInputElement).disabled = value !== 'custom';
+            },
+          },
+        }],
+        body: [{
+          type: 'div',
+          children: [
+            {
+              type: 'input',
+              value: settings.getCustomUpdateSource(),
+              disabled: settings.getUpdateSource() !== 'custom',
+              style: 'flex:1',
+              attribute: {'settings-update-source': 'input'},
+            },
+            {
+              type: 'button',
+              children: [
+                {
+                  type: 'icon',
+                  key: 'Save',
+                },
+                {
+                  type: 'lang',
+                  key: 'settings.save',
+                },
+              ],
+              events: {
+                click: ()=>{
+                  let input = (document.querySelector('[settings-update-source="input"]') as HTMLInputElement);
+                  if (!input || input.disabled) return;
+                  settings.setCustomUpdateSource(input.value);
+                },
+              },
+            }
+          ],
+          style: 'display:flex;gap:8px;',
         }],
       },
       {

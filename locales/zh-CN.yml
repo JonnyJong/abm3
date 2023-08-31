@@ -270,6 +270,8 @@ settings:
     error_download: 下载错误，错误代码：
     ready: 下载完成，准备安装更新
     browser: 在浏览器中查看
+  update_source: 更新源
+  update_source_custom: 自定义
   help:
     title: 帮助
     get_help: 获取帮助
