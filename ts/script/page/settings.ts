@@ -1326,7 +1326,7 @@ async function initSettingsAbout() {
           },
         }],
       },
-      {
+      /* {
         type: 'setting',
         name: [{
           type: 'lang',
@@ -1378,7 +1378,7 @@ async function initSettingsAbout() {
           ],
           style: 'display:flex;gap:8px;',
         }],
-      },
+      }, */
       {
         type: 'lang',
         key: 'settings.help.title',
@@ -1400,7 +1400,7 @@ async function initSettingsAbout() {
             key: 'OpenInNewWindow'
           }],
           events: {
-            click: ()=>ipcRenderer.send('open:url', 'https://jonnys.top/lib/apps/abm/help'),
+            click: ()=>ipcRenderer.send('open:url', 'https://abm.jonnys.top/docs'),
           },
         }],
       },
